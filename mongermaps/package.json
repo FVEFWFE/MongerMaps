@@ -2,9 +2,8 @@
   "name": "mongermaps",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "SKIP_ENV_VALIDATION=1 next build",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
@@ -80,5 +79,8 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.38.0"
+  },
+  "engines": {
+    "node": ">=18.17.0"
   }
 }
