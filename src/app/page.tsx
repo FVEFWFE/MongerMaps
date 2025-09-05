@@ -1,152 +1,441 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { 
+  TrendingUp, 
+  Users, 
+  AlertTriangle, 
+  Star,
+  Globe,
+  MapPin,
+  DollarSign,
+  Lock,
+  ArrowRight,
+  Sparkles,
+  Trophy,
+  Target,
+  Zap
+} from "lucide-react";
 import { api } from "~/trpc/react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { cn } from "~/lib/utils";
+import { PaywallModal } from "~/components/paywall-modal";
+
+// Extended city data with Monger Rank factors
+const cities = [
+  {
+    slug: "pattaya",
+    name: "Pattaya",
+    country: "Thailand",
+    flag: "🇹🇭",
+    description: "The undisputed capital of mongering",
+    mongerRank: 1,
+    stats: {
+      venues: 247,
+      activeUsers: 1843,
+      vibeScore: 9.2,
+      alerts: 3,
+      fairPriceST: 1500,
+      currency: "THB",
+      newReports24h: 184,
+      topRatedVenues: 42
+    },
+    badges: ["Most Active", "Best Value", "24/7 Action"],
+    trending: true
+  },
+  {
+    slug: "bangkok",
+    name: "Bangkok",
+    country: "Thailand",
+    flag: "🇹🇭",
+    description: "Massive city with endless options",
+    mongerRank: 2,
+    stats: {
+      venues: 189,
+      activeUsers: 1254,
+      vibeScore: 8.7,
+      alerts: 1,
+      fairPriceST: 2000,
+      currency: "THB",
+      newReports24h: 126,
+      topRatedVenues: 31
+    },
+    badges: ["Diverse Scene", "High-End Options"],
+    trending: false
+  },
+  {
+    slug: "angeles",
+    name: "Angeles City",
+    country: "Philippines",
+    flag: "🇵🇭",
+    description: "Compact party zone with GFE paradise",
+    mongerRank: 3,
+    stats: {
+      venues: 134,
+      activeUsers: 892,
+      vibeScore: 8.9,
+      alerts: 2,
+      fairPriceST: 2500,
+      currency: "PHP",
+      newReports24h: 98,
+      topRatedVenues: 28
+    },
+    badges: ["Best GFE", "Walkable"],
+    trending: true
+  },
+  {
+    slug: "manila",
+    name: "Manila",
+    country: "Philippines",
+    flag: "🇵🇭",
+    description: "Capital with hidden gems",
+    mongerRank: 4,
+    stats: {
+      venues: 98,
+      activeUsers: 423,
+      vibeScore: 7.8,
+      alerts: 0,
+      fairPriceST: 3000,
+      currency: "PHP",
+      newReports24h: 45,
+      topRatedVenues: 12
+    },
+    badges: ["Emerging"],
+    comingSoon: true
+  },
+  {
+    slug: "jakarta",
+    name: "Jakarta",
+    country: "Indonesia",
+    flag: "🇮🇩",
+    description: "Emerging scene for veterans",
+    mongerRank: 5,
+    stats: {
+      venues: 76,
+      activeUsers: 234,
+      vibeScore: 7.5,
+      alerts: 0,
+      fairPriceST: 1200000,
+      currency: "IDR",
+      newReports24h: 23,
+      topRatedVenues: 8
+    },
+    badges: ["Under the Radar"],
+    comingSoon: true
+  },
+  {
+    slug: "phnom-penh",
+    name: "Phnom Penh",
+    country: "Cambodia",
+    flag: "🇰🇭",
+    description: "Wild west of Southeast Asia",
+    mongerRank: 6,
+    stats: {
+      venues: 89,
+      activeUsers: 567,
+      vibeScore: 8.1,
+      alerts: 1,
+      fairPriceST: 40,
+      currency: "USD",
+      newReports24h: 67,
+      topRatedVenues: 15
+    },
+    badges: ["Anything Goes"],
+    comingSoon: true
+  }
+];
 
 export default function HomePage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: session } = useSession();
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [paywallFeature, setPaywallFeature] = useState("");
+  
+  const isPaid = session?.user?.isPaid;
 
-  const leadCapture = api.lead.capture.useMutation({
-    onSuccess: () => {
-      router.push("/thank-you-offer");
-    },
-    onError: (error) => {
-      alert("Something went wrong. Please try again.");
-      setIsSubmitting(false);
-    },
-  });
+  const handleUnlockFeature = (feature: string) => {
+    setPaywallFeature(feature);
+    setShowPaywall(true);
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-
-    setIsSubmitting(true);
-    leadCapture.mutate({ email });
+  // Calculate dynamic Monger Score
+  const getMongerScore = (stats: typeof cities[0]["stats"]) => {
+    const score = (
+      (stats.vibeScore * 20) +
+      (stats.activeUsers / 50) +
+      (stats.topRatedVenues / 2) +
+      (stats.newReports24h / 10) -
+      (stats.alerts * 10)
+    );
+    return Math.min(100, Math.round(score));
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900">
-      <div className="container mx-auto px-4 py-16 max-w-4xl">
-        {/* Header */}
-        <header className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-            Get The Pattaya Fair Price Cheat Sheet
-          </h1>
-          <h2 className="text-2xl text-gray-300">
-            (2025 Data)
-          </h2>
-        </header>
-
-        {/* Sub-headline */}
-        <div className="text-center mb-12">
-          <p className="text-xl text-gray-300 font-semibold">
-            Stop Overpaying. We Analyzed 10,000+ Recent Reports to Reveal the Real-Time ST/LT Prices for Soi 6, Walking Street & GCs.
-          </p>
-        </div>
-
-        {/* Visual - Cheat Sheet Mockup */}
-        <div className="flex justify-center mb-12">
-          <div className="bg-gray-800 p-8 rounded-lg shadow-2xl border border-gray-700">
-            <div className="bg-gray-900 p-6 rounded">
-              <h3 className="text-xl font-bold mb-4 text-yellow-400">
-                📊 Fair Price Cheat Sheet - Pattaya 2025
-              </h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Soi 6 (Day):</span>
-                  <span className="text-green-400">ST: 1000-1500 THB</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Walking Street GoGo:</span>
-                  <span className="text-green-400">ST: 2500-3500 THB</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Gentlemen's Clubs:</span>
-                  <span className="text-green-400">ST: 3000-5000 THB</span>
-                </div>
-                <div className="mt-4 text-gray-500 text-xs">
-                  + 15 more venues with current prices...
-                </div>
+    <div className="min-h-screen bg-black">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-b from-zinc-900 to-black border-b border-zinc-800">
+        <div className="container mx-auto px-4 py-12">
+          <div className="text-center max-w-4xl mx-auto">
+            <Badge className="mb-4 bg-yellow-500/20 text-yellow-500 border-yellow-500/50">
+              <Sparkles className="h-3 w-3 mr-1" />
+              Live Intelligence Network
+            </Badge>
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              MongerMaps
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8">
+              Real-time intelligence for Southeast Asia's hottest destinations.
+              <br />
+              <span className="text-yellow-500">Find the gems. Avoid the rip-offs.</span>
+            </p>
+            
+            {/* Live Stats Bar */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-500">2,847</div>
+                <div className="text-xs text-muted-foreground">Active Members</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">842</div>
+                <div className="text-xs text-muted-foreground">Live Reports Today</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-500">1,247</div>
+                <div className="text-xs text-muted-foreground">Verified Venues</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-500">12</div>
+                <div className="text-xs text-muted-foreground">Active Scam Alerts</div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Body Copy */}
-        <div className="mb-12 space-y-6 text-gray-300">
-          <p className="text-lg">
-            <strong>Tired of delusional prices?</strong> Still relying on ISG posts from 2019?
-          </p>
-          
-          <p>
-            I got sick of the outdated information, so I spent 1000 hours analyzing 2.6M+ forum posts to extract the <em>real</em> prices being paid right now.
-          </p>
-          
-          <p>
-            This isn't marketing bullshit. It's data-backed intelligence from actual mongers on the ground.
-          </p>
-          
-          <p className="text-yellow-400 font-semibold">
-            Get the data-backed edge. For free.
-          </p>
+      {/* Cities Grid */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold">Cities by Monger Rank™</h2>
+          <Badge variant="outline" className="text-sm">
+            <Globe className="h-3 w-3 mr-1" />
+            Updated Live
+          </Badge>
         </div>
 
-        {/* CTA Form */}
-        <div className="bg-gray-800 p-8 rounded-lg shadow-2xl border border-gray-700">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
-                Enter your email to get instant access:
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="your@email.com"
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-400 text-white placeholder-gray-500"
-                disabled={isSubmitting}
-              />
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {cities.map((city) => {
+            const mongerScore = getMongerScore(city.stats);
             
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-900 font-bold py-4 px-6 rounded-lg hover:from-yellow-300 hover:to-orange-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? "Processing..." : "Send Me The Free Cheat Sheet"}
-            </button>
-            
-            <p className="text-xs text-gray-500 text-center">
-              We respect your privacy. No spam, ever. Unsubscribe anytime.
-            </p>
-          </form>
+            return (
+              <Card 
+                key={city.slug}
+                className={cn(
+                  "relative overflow-hidden transition-all hover:shadow-xl",
+                  city.comingSoon && "opacity-75",
+                  city.trending && "ring-2 ring-yellow-500/50"
+                )}
+              >
+                {/* Monger Rank Badge */}
+                <div className="absolute top-4 right-4 z-10">
+                  <Badge 
+                    className={cn(
+                      "text-lg font-bold px-3 py-1",
+                      city.mongerRank === 1 && "bg-yellow-500 text-black",
+                      city.mongerRank === 2 && "bg-gray-400 text-black",
+                      city.mongerRank === 3 && "bg-orange-600"
+                    )}
+                  >
+                    #{city.mongerRank}
+                  </Badge>
+                </div>
+
+                {city.trending && (
+                  <div className="absolute top-4 left-4 z-10">
+                    <Badge className="bg-red-500 text-white">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      HOT
+                    </Badge>
+                  </div>
+                )}
+
+                <CardHeader>
+                  <CardTitle className="text-2xl flex items-center gap-2">
+                    <span className="text-3xl">{city.flag}</span>
+                    {city.name}
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">{city.country}</p>
+                  <p className="text-sm mt-2">{city.description}</p>
+                  
+                  {/* Badges */}
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {city.badges.map((badge) => (
+                      <Badge key={badge} variant="secondary" className="text-xs">
+                        {badge}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  {/* Monger Score */}
+                  <div className="flex items-center justify-between p-3 bg-zinc-900 rounded-lg">
+                    <span className="text-sm font-medium">Monger Score™</span>
+                    <div className="flex items-center gap-2">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={cn(
+                              "h-4 w-4",
+                              i < Math.floor(mongerScore / 20)
+                                ? "text-yellow-500 fill-yellow-500"
+                                : "text-zinc-700"
+                            )}
+                          />
+                        ))}
+                      </div>
+                      <span className="font-bold">{mongerScore}</span>
+                    </div>
+                  </div>
+
+                  {/* Quick Stats Grid */}
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <span>{city.stats.venues} venues</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <span>{city.stats.activeUsers.toLocaleString()} active</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                      <span>Vibe: {city.stats.vibeScore}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className={cn(
+                        "h-4 w-4",
+                        city.stats.alerts > 0 ? "text-red-500" : "text-green-500"
+                      )} />
+                      <span className={cn(
+                        city.stats.alerts > 0 ? "text-red-500" : "text-green-500"
+                      )}>
+                        {city.stats.alerts} alerts
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Live Activity */}
+                  <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-green-500 font-medium">Live Activity</span>
+                      <Badge variant="outline" className="text-xs border-green-500/50 text-green-500">
+                        <Zap className="h-3 w-3 mr-1" />
+                        {city.stats.newReports24h} new
+                      </Badge>
+                    </div>
+                    {isPaid ? (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Fair Price ST: {city.stats.fairPriceST} {city.stats.currency}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground mt-1 blur-sm select-none">
+                        Fair Price ST: ??? {city.stats.currency}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* CTA Button */}
+                  {city.comingSoon ? (
+                    <Button className="w-full" variant="outline" disabled>
+                      Coming Soon
+                    </Button>
+                  ) : (
+                    <Link href={`/city/${city.slug}`} className="block">
+                      <Button className="w-full group">
+                        Enter {city.name}
+                        <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
-        {/* Trust Signals */}
-        <div className="mt-12 text-center text-gray-400">
-          <p className="mb-4">Trusted by 10,000+ mongers worldwide</p>
-          <div className="flex justify-center space-x-8">
-            <div>
-              <span className="text-2xl font-bold text-yellow-400">2.6M+</span>
-              <p className="text-sm">Posts Analyzed</p>
-            </div>
-            <div>
-              <span className="text-2xl font-bold text-yellow-400">1000+</span>
-              <p className="text-sm">Hours of Research</p>
-            </div>
-            <div>
-              <span className="text-2xl font-bold text-yellow-400">100%</span>
-              <p className="text-sm">Data-Driven</p>
-            </div>
-          </div>
+        {/* Bottom CTAs */}
+        <div className="grid md:grid-cols-2 gap-6 mt-12">
+          {/* Make Money Mongering CTA */}
+          <Card className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-yellow-500" />
+                Make Money Mongering
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                Turn your mongering adventures into recurring income. 
+                Learn how veterans are earning $5k+/month through field reports and referrals.
+              </p>
+              <Link href="/make-money">
+                <Button variant="outline" className="w-full border-yellow-500/50 hover:bg-yellow-500/10">
+                  Learn More
+                  <Trophy className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          {/* Premium Upgrade CTA */}
+          <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-purple-500" />
+                Unlock Full Intelligence
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                Get real-time prices, venue heat maps, scam alerts, and access to our veteran community.
+                Stop gambling, start winning.
+              </p>
+              {isPaid ? (
+                <Badge className="w-full justify-center py-2 bg-green-500/20 text-green-500 border-green-500/50">
+                  You have full access
+                </Badge>
+              ) : (
+                <Button 
+                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                  onClick={() => handleUnlockFeature("full platform access")}
+                >
+                  <Lock className="h-4 w-4 mr-2" />
+                  Get Premium Access
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Trust Indicators */}
+        <div className="text-center mt-12 pb-8">
+          <p className="text-sm text-muted-foreground">
+            Trusted by 2,847+ savvy mongers • 
+            <span className="text-yellow-500"> 50,000+ verified reports</span> • 
+            Veteran-owned & operated
+          </p>
         </div>
       </div>
-    </main>
+
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature={paywallFeature}
+      />
+    </div>
   );
 }

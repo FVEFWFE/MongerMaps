@@ -1,8 +1,8 @@
 "use client"
 
 import type { ColumnDef } from "@tanstack/react-table"
-import { Badge } from "~/components/ui/badge"
-import { Button } from "~/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { ArrowUpDown } from "lucide-react"
 
 export type IntelReport = {
@@ -14,7 +14,6 @@ export type IntelReport = {
   pricePaid: string
   service: string
   tags: string[]
-  isBlurred?: boolean
 }
 
 export const columns: ColumnDef<IntelReport>[] = [
@@ -31,15 +30,6 @@ export const columns: ColumnDef<IntelReport>[] = [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
-    },
-    cell: ({ row }) => {
-      const isBlurred = row.original.isBlurred;
-      const venue = row.getValue("venue") as string;
-      return isBlurred ? (
-        <span className="blur-sm select-none">{venue}</span>
-      ) : (
-        <span>{venue}</span>
-      );
     },
   },
   {
