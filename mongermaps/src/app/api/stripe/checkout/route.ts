@@ -3,10 +3,6 @@ import Stripe from "stripe";
 import { getServerAuthSession } from "~/server/auth";
 import { env } from "~/env";
 
-const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2023-10-16",
-});
-
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerAuthSession();
@@ -19,6 +15,17 @@ export async function POST(req: NextRequest) {
     }
     
     const { priceId } = await req.json();
+    
+    if (!env.STRIPE_SECRET_KEY) {
+      return NextResponse.json(
+        { error: "Stripe is not configured" },
+        { status: 500 }
+      );
+    }
+    
+    const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+      apiVersion: "2023-10-16",
+    });
     
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
