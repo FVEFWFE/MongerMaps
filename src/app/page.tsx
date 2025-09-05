@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
@@ -19,11 +19,16 @@ import {
   Sparkles,
   Trophy,
   Target,
-  Zap
+  Zap,
+  Grid3X3,
+  ChevronDown,
+  Search as SearchIcon
 } from "lucide-react";
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
 import { PaywallModal } from "~/components/paywall-modal";
+import { SidebarFilters } from "~/components/sidebar-filters";
+import { CityCard } from "~/components/city-card";
 
 // Extended city data with Monger Rank factors
 const cities = [
@@ -42,10 +47,17 @@ const cities = [
       fairPriceST: 1500,
       currency: "THB",
       newReports24h: 184,
-      topRatedVenues: 42
+      topRatedVenues: 42,
+      temperature: 32,
+      internetSpeed: 85,
+      airQuality: 45
     },
     badges: ["Most Active", "Best Value", "24/7 Action"],
-    trending: true
+    trending: true,
+    image: "/bangkok-skyline-with-temples.jpg",
+    region: "asia",
+    temperature: "warm",
+    cost: "cheap"
   },
   {
     slug: "bangkok",
@@ -62,10 +74,17 @@ const cities = [
       fairPriceST: 2000,
       currency: "THB",
       newReports24h: 126,
-      topRatedVenues: 31
+      topRatedVenues: 31,
+      temperature: 33,
+      internetSpeed: 92,
+      airQuality: 55
     },
     badges: ["Diverse Scene", "High-End Options"],
-    trending: false
+    trending: false,
+    image: "/bangkok-skyline-with-temples.jpg",
+    region: "asia",
+    temperature: "warm",
+    cost: "cheap"
   },
   {
     slug: "angeles",
@@ -82,10 +101,17 @@ const cities = [
       fairPriceST: 2500,
       currency: "PHP",
       newReports24h: 98,
-      topRatedVenues: 28
+      topRatedVenues: 28,
+      temperature: 31,
+      internetSpeed: 78,
+      airQuality: 40
     },
     badges: ["Best GFE", "Walkable"],
-    trending: true
+    trending: true,
+    image: "/placeholder.jpg",
+    region: "asia",
+    temperature: "warm",
+    cost: "cheap"
   },
   {
     slug: "manila",
@@ -102,10 +128,17 @@ const cities = [
       fairPriceST: 3000,
       currency: "PHP",
       newReports24h: 45,
-      topRatedVenues: 12
+      topRatedVenues: 12,
+      temperature: 30,
+      internetSpeed: 82,
+      airQuality: 50
     },
     badges: ["Emerging"],
-    comingSoon: true
+    comingSoon: true,
+    image: "/placeholder.jpg",
+    region: "asia",
+    temperature: "warm",
+    cost: "mid"
   },
   {
     slug: "jakarta",
@@ -119,13 +152,20 @@ const cities = [
       activeUsers: 234,
       vibeScore: 7.5,
       alerts: 0,
-      fairPriceST: 1200000,
-      currency: "IDR",
+      fairPriceST: 80,
+      currency: "USD",
       newReports24h: 23,
-      topRatedVenues: 8
+      topRatedVenues: 8,
+      temperature: 32,
+      internetSpeed: 75,
+      airQuality: 65
     },
     badges: ["Under the Radar"],
-    comingSoon: true
+    comingSoon: true,
+    image: "/placeholder.jpg",
+    region: "asia",
+    temperature: "warm",
+    cost: "cheap"
   },
   {
     slug: "phnom-penh",
@@ -142,10 +182,99 @@ const cities = [
       fairPriceST: 40,
       currency: "USD",
       newReports24h: 67,
-      topRatedVenues: 15
+      topRatedVenues: 15,
+      temperature: 34,
+      internetSpeed: 70,
+      airQuality: 45
     },
     badges: ["Anything Goes"],
-    comingSoon: true
+    comingSoon: true,
+    image: "/placeholder.jpg",
+    region: "asia",
+    temperature: "warm",
+    cost: "cheap"
+  },
+  // Additional cities to fill the grid
+  {
+    slug: "dubai",
+    name: "Dubai",
+    country: "UAE",
+    flag: "🇦🇪",
+    description: "Luxury scene with high-end experiences",
+    mongerRank: 7,
+    stats: {
+      venues: 45,
+      activeUsers: 234,
+      vibeScore: 7.9,
+      alerts: 0,
+      fairPriceST: 500,
+      currency: "USD",
+      newReports24h: 32,
+      topRatedVenues: 12,
+      temperature: 35,
+      internetSpeed: 98,
+      airQuality: 30
+    },
+    badges: ["Luxury", "Discrete"],
+    comingSoon: true,
+    image: "/dubai-skyline-burj-khalifa.png",
+    region: "middle-east",
+    temperature: "warm",
+    cost: "expensive"
+  },
+  {
+    slug: "lisbon",
+    name: "Lisbon",
+    country: "Portugal",
+    flag: "🇵🇹",
+    description: "European gem with growing scene",
+    mongerRank: 8,
+    stats: {
+      venues: 56,
+      activeUsers: 189,
+      vibeScore: 7.2,
+      alerts: 0,
+      fairPriceST: 150,
+      currency: "EUR",
+      newReports24h: 23,
+      topRatedVenues: 8,
+      temperature: 24,
+      internetSpeed: 92,
+      airQuality: 25
+    },
+    badges: ["Euro Scene", "Safe"],
+    comingSoon: true,
+    image: "/lisbon-colorful-buildings-and-trams.jpg",
+    region: "europe",
+    temperature: "mild",
+    cost: "mid"
+  },
+  {
+    slug: "berlin",
+    name: "Berlin",
+    country: "Germany",
+    flag: "🇩🇪",
+    description: "Alternative scene capital",
+    mongerRank: 9,
+    stats: {
+      venues: 78,
+      activeUsers: 456,
+      vibeScore: 8.0,
+      alerts: 0,
+      fairPriceST: 200,
+      currency: "EUR",
+      newReports24h: 45,
+      topRatedVenues: 15,
+      temperature: 18,
+      internetSpeed: 95,
+      airQuality: 20
+    },
+    badges: ["Alternative", "Liberal"],
+    comingSoon: true,
+    image: "/berlin-brandenburg-gate-and-modern-architecture.jpg",
+    region: "europe",
+    temperature: "mild",
+    cost: "mid"
   }
 ];
 
@@ -153,6 +282,10 @@ export default function HomePage() {
   const { data: session } = useSession();
   const [showPaywall, setShowPaywall] = useState(false);
   const [paywallFeature, setPaywallFeature] = useState("");
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({
+    temperature: ["warm"],
+    region: ["asia"],
+  });
   
   const isPaid = session?.user?.isPaid;
 
@@ -161,273 +294,216 @@ export default function HomePage() {
     setShowPaywall(true);
   };
 
-  // Calculate dynamic Monger Score
-  const getMongerScore = (stats: typeof cities[0]["stats"]) => {
-    const score = (
-      (stats.vibeScore * 20) +
-      (stats.activeUsers / 50) +
-      (stats.topRatedVenues / 2) +
-      (stats.newReports24h / 10) -
-      (stats.alerts * 10)
-    );
-    return Math.min(100, Math.round(score));
-  };
+  // Filter cities based on active filters
+  const filteredCities = useMemo(() => {
+    return cities.filter((city) => {
+      // Temperature filter
+      if (activeFilters.temperature?.length > 0) {
+        if (!activeFilters.temperature.includes(city.temperature)) {
+          return false;
+        }
+      }
+
+      // Region filter
+      if (activeFilters.region?.length > 0) {
+        if (!activeFilters.region.includes(city.region)) {
+          return false;
+        }
+      }
+
+      // Cost filter
+      if (activeFilters.cost?.length > 0) {
+        if (!activeFilters.cost.includes(city.cost)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [activeFilters]);
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-b from-zinc-900 to-black border-b border-zinc-800">
-        <div className="container mx-auto px-4 py-12">
-          <div className="text-center max-w-4xl mx-auto">
-            <Badge className="mb-4 bg-yellow-500/20 text-yellow-500 border-yellow-500/50">
-              <Sparkles className="h-3 w-3 mr-1" />
-              Live Intelligence Network
-            </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">
-              MongerMaps
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Real-time intelligence for Southeast Asia's hottest destinations.
-              <br />
-              <span className="text-yellow-500">Find the gems. Avoid the rip-offs.</span>
-            </p>
-            
-            {/* Live Stats Bar */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-500">2,847</div>
-                <div className="text-xs text-muted-foreground">Active Members</div>
+    <div className="min-h-screen bg-gray-900 text-white">
+      {/* Header */}
+      <header className="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+        <div className="max-w-full mx-auto px-4">
+          <div className="flex items-center justify-between h-12">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center">
+                <div className="w-6 h-6 bg-red-500 rounded-sm flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">M</span>
+                </div>
+                <span className="ml-2 text-lg font-semibold text-white">MongerMaps</span>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">842</div>
-                <div className="text-xs text-muted-foreground">Live Reports Today</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-500">1,247</div>
-                <div className="text-xs text-muted-foreground">Verified Venues</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-red-500">12</div>
-                <div className="text-xs text-muted-foreground">Active Scam Alerts</div>
-              </div>
+              <nav className="hidden md:flex items-center space-x-4 text-sm">
+                <Link href="/" className="text-gray-300 hover:text-white">
+                  Cities
+                </Link>
+                <Link href="/global-rankings" className="text-gray-300 hover:text-white">
+                  Rankings
+                </Link>
+                <Link href="/make-money" className="text-gray-300 hover:text-white">
+                  Earn
+                </Link>
+                <Link href="/intel-database" className="text-gray-300 hover:text-white">
+                  Intel
+                </Link>
+              </nav>
+            </div>
+
+            <div className="flex items-center space-x-3">
+              <Button variant="ghost" size="sm" className="text-xs text-gray-300 hover:text-white hover:bg-gray-700">
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" className="text-xs text-gray-300 hover:text-white hover:bg-gray-700">
+                Sort: Overall <ChevronDown className="h-4 w-4 ml-1" />
+              </Button>
+              {!isPaid && (
+                <Button 
+                  size="sm" 
+                  className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1"
+                  onClick={() => handleUnlockFeature("premium access")}
+                >
+                  Upgrade
+                </Button>
+              )}
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Cities Grid */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold">Cities by Monger Rank™</h2>
-          <Badge variant="outline" className="text-sm">
-            <Globe className="h-3 w-3 mr-1" />
-            Updated Live
-          </Badge>
+      {/* Main Content */}
+      <div className="max-w-full mx-auto px-4 py-4">
+        {/* Mobile Filter Button */}
+        <div className="lg:hidden mb-4">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="w-full text-sm border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+          >
+            <SearchIcon className="h-4 w-4 mr-2" />
+            Filters
+          </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cities.map((city) => {
-            const mongerScore = getMongerScore(city.stats);
-            
-            return (
-              <Card 
-                key={city.slug}
-                className={cn(
-                  "relative overflow-hidden transition-all hover:shadow-xl",
-                  city.comingSoon && "opacity-75",
-                  city.trending && "ring-2 ring-yellow-500/50"
-                )}
+        <div className="flex gap-4">
+          {/* Sidebar Filters */}
+          <SidebarFilters 
+            onFilterChange={setActiveFilters}
+            className="hidden lg:block"
+          />
+
+          {/* Main Content Area */}
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-lg font-semibold text-white">Best cities for mongering</h1>
+              <div className="text-xs text-gray-400">Showing {filteredCities.length} of {cities.length} cities</div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              {filteredCities.map((city) => (
+                <CityCard
+                  key={city.slug}
+                  {...city}
+                  isPaid={isPaid}
+                />
+              ))}
+            </div>
+
+            {/* Load More Button */}
+            <div className="text-center mt-6">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-sm bg-transparent border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
               >
-                {/* Monger Rank Badge */}
-                <div className="absolute top-4 right-4 z-10">
-                  <Badge 
-                    className={cn(
-                      "text-lg font-bold px-3 py-1",
-                      city.mongerRank === 1 && "bg-yellow-500 text-black",
-                      city.mongerRank === 2 && "bg-gray-400 text-black",
-                      city.mongerRank === 3 && "bg-orange-600"
-                    )}
+                Load more cities
+              </Button>
+            </div>
+          </div>
+
+          {/* Right Sidebar */}
+          <div className="w-64 flex-shrink-0 hidden xl:block">
+            {/* Trending Cities */}
+            <div className="bg-gray-800 rounded border border-gray-700 p-4 mb-4">
+              <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                Trending Now
+              </h4>
+              <div className="space-y-2">
+                {filteredCities.slice(0, 4).map((city) => (
+                  <Link 
+                    key={city.slug}
+                    href={city.comingSoon ? "#" : `/city/${city.slug}`}
+                    className="flex items-center space-x-2 p-1 hover:bg-gray-700 rounded cursor-pointer"
                   >
-                    #{city.mongerRank}
-                  </Badge>
-                </div>
-
-                {city.trending && (
-                  <div className="absolute top-4 left-4 z-10">
-                    <Badge className="bg-red-500 text-white">
-                      <TrendingUp className="h-3 w-3 mr-1" />
-                      HOT
-                    </Badge>
-                  </div>
-                )}
-
-                <CardHeader>
-                  <CardTitle className="text-2xl flex items-center gap-2">
-                    <span className="text-3xl">{city.flag}</span>
-                    {city.name}
-                  </CardTitle>
-                  <p className="text-sm text-muted-foreground">{city.country}</p>
-                  <p className="text-sm mt-2">{city.description}</p>
-                  
-                  {/* Badges */}
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {city.badges.map((badge) => (
-                      <Badge key={badge} variant="secondary" className="text-xs">
-                        {badge}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardHeader>
-
-                <CardContent className="space-y-4">
-                  {/* Monger Score */}
-                  <div className="flex items-center justify-between p-3 bg-zinc-900 rounded-lg">
-                    <span className="text-sm font-medium">Monger Score™</span>
-                    <div className="flex items-center gap-2">
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={cn(
-                              "h-4 w-4",
-                              i < Math.floor(mongerScore / 20)
-                                ? "text-yellow-500 fill-yellow-500"
-                                : "text-zinc-700"
-                            )}
-                          />
-                        ))}
-                      </div>
-                      <span className="font-bold">{mongerScore}</span>
-                    </div>
-                  </div>
-
-                  {/* Quick Stats Grid */}
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span>{city.stats.venues} venues</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span>{city.stats.activeUsers.toLocaleString()} active</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                      <span>Vibe: {city.stats.vibeScore}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <AlertTriangle className={cn(
-                        "h-4 w-4",
-                        city.stats.alerts > 0 ? "text-red-500" : "text-green-500"
-                      )} />
-                      <span className={cn(
-                        city.stats.alerts > 0 ? "text-red-500" : "text-green-500"
-                      )}>
-                        {city.stats.alerts} alerts
+                    <div className="w-8 h-8 rounded overflow-hidden bg-gray-600">
+                      <span className="text-lg flex items-center justify-center h-full">
+                        {city.flag}
                       </span>
                     </div>
-                  </div>
-
-                  {/* Live Activity */}
-                  <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-green-500 font-medium">Live Activity</span>
-                      <Badge variant="outline" className="text-xs border-green-500/50 text-green-500">
-                        <Zap className="h-3 w-3 mr-1" />
-                        {city.stats.newReports24h} new
-                      </Badge>
+                    <div className="flex-1">
+                      <p className="font-medium text-xs text-white">{city.name}</p>
+                      <p className="text-xs text-gray-400">
+                        {isPaid ? `$${city.stats.fairPriceST}/mo` : "$???/mo"}
+                      </p>
                     </div>
-                    {isPaid ? (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Fair Price ST: {city.stats.fairPriceST} {city.stats.currency}
-                      </p>
-                    ) : (
-                      <p className="text-xs text-muted-foreground mt-1 blur-sm select-none">
-                        Fair Price ST: ??? {city.stats.currency}
-                      </p>
-                    )}
-                  </div>
+                    <div className="text-xs text-gray-400">#{city.mongerRank}</div>
+                  </Link>
+                ))}
+              </div>
+            </div>
 
-                  {/* CTA Button */}
-                  {city.comingSoon ? (
-                    <Button className="w-full" variant="outline" disabled>
-                      Coming Soon
-                    </Button>
-                  ) : (
-                    <Link href={`/city/${city.slug}`} className="block">
-                      <Button className="w-full group">
-                        Enter {city.name}
-                        <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                    </Link>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        {/* Bottom CTAs */}
-        <div className="grid md:grid-cols-2 gap-6 mt-12">
-          {/* Make Money Mongering CTA */}
-          <Card className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/20">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-yellow-500" />
-                Make Money Mongering
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                Turn your mongering adventures into recurring income. 
-                Learn how veterans are earning $5k+/month through field reports and referrals.
-              </p>
-              <Link href="/make-money">
-                <Button variant="outline" className="w-full border-yellow-500/50 hover:bg-yellow-500/10">
-                  Learn More
-                  <Trophy className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          {/* Premium Upgrade CTA */}
-          <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/20">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-purple-500" />
-                Unlock Full Intelligence
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                Get real-time prices, venue heat maps, scam alerts, and access to our veteran community.
-                Stop gambling, start winning.
-              </p>
-              {isPaid ? (
-                <Badge className="w-full justify-center py-2 bg-green-500/20 text-green-500 border-green-500/50">
-                  You have full access
-                </Badge>
-              ) : (
+            {/* Community Box */}
+            <div className="bg-gray-800 rounded border border-gray-700 p-4 mb-4">
+              <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                Community
+              </h4>
+              <div className="grid grid-cols-8 gap-1 mb-3">
+                {Array.from({ length: 32 }).map((_, i) => (
+                  <div key={i} className="w-6 h-6 bg-gray-600 rounded-full" />
+                ))}
+              </div>
+              <p className="text-xs text-gray-400 mb-3">2,847+ mongers worldwide</p>
+              {!isPaid && (
                 <Button 
-                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                  onClick={() => handleUnlockFeature("full platform access")}
+                  size="sm" 
+                  className="w-full bg-red-500 hover:bg-red-600 text-xs"
+                  onClick={() => handleUnlockFeature("community access")}
                 >
-                  <Lock className="h-4 w-4 mr-2" />
-                  Get Premium Access
+                  Join community
                 </Button>
               )}
-            </CardContent>
-          </Card>
-        </div>
+            </div>
 
-        {/* Trust Indicators */}
-        <div className="text-center mt-12 pb-8">
-          <p className="text-sm text-muted-foreground">
-            Trusted by 2,847+ savvy mongers • 
-            <span className="text-yellow-500"> 50,000+ verified reports</span> • 
-            Veteran-owned & operated
-          </p>
+            {/* Quick Actions */}
+            <div className="bg-gray-800 rounded border border-gray-700 p-4">
+              <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                Quick Actions
+              </h4>
+              <div className="space-y-2">
+                <Link href="/make-money" className="block">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="w-full text-xs justify-start border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >
+                    <DollarSign className="h-3 w-3 mr-2" />
+                    Make Money
+                  </Button>
+                </Link>
+                <Link href="/intel-database" className="block">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="w-full text-xs justify-start border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >
+                    <Target className="h-3 w-3 mr-2" />
+                    Intel Database
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
