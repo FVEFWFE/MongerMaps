@@ -396,7 +396,7 @@ export default function HomePage() {
           {/* Main Content Area */}
           <div className="flex-1">
             <div className="flex items-center justify-between mb-4">
-              <h1 className="text-lg font-semibold text-white">Best cities for mongering</h1>
+              <h1 className="text-lg font-semibold text-white">Best cities for mongering worldwide</h1>
               <div className="text-xs text-gray-400">Showing {filteredCities.length} of {cities.length} cities</div>
             </div>
 
