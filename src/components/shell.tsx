@@ -5,10 +5,10 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Bird, LayoutDashboard, MapPin, Database, Globe, User, Search, Copy, Menu, X } from "lucide-react"
-import { Button } from "~/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "~/components/ui/card"
-import { Avatar, AvatarFallback } from "~/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
   CommandDialog,
   CommandEmpty,
@@ -16,8 +16,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "~/components/ui/command"
-import { cn } from "~/lib/utils"
+} from "@/components/ui/command"
+import { cn } from "@/lib/utils"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },

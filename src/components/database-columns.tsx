@@ -5,21 +5,31 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown } from "lucide-react"
 
-export type IntelReport = {
+export type DatabaseReport = {
   id: string
-  time: string
+  date: string
   venue: string
+  city: string
   district: string
   playerScore: number
   pricePaid: string
   service: string
   tags: string[]
+  author: string
+  source: string
 }
 
-export const columns: ColumnDef<IntelReport>[] = [
+export const databaseColumns: ColumnDef<DatabaseReport>[] = [
   {
-    accessorKey: "time",
-    header: "Time",
+    accessorKey: "date",
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: "venue",
@@ -31,6 +41,10 @@ export const columns: ColumnDef<IntelReport>[] = [
         </Button>
       )
     },
+  },
+  {
+    accessorKey: "city",
+    header: "City",
   },
   {
     accessorKey: "district",
@@ -49,10 +63,11 @@ export const columns: ColumnDef<IntelReport>[] = [
     cell: ({ row }) => {
       const score = Number.parseFloat(row.getValue("playerScore"))
       const variant = score >= 8.5 ? "default" : score >= 7 ? "secondary" : "destructive"
-      const bgColor = score >= 8.5 ? "bg-green-500 hover:bg-green-600" : ""
+      const color =
+        score >= 8.5 ? "text-[hsl(142.1_76.2%_41.2%)]" : score >= 7 ? "text-yellow-500" : "text-[hsl(0_72.2%_50.6%)]"
 
       return (
-        <Badge variant={variant} className={bgColor}>
+        <Badge variant={variant} className={color}>
           {score}
         </Badge>
       )
@@ -83,13 +98,18 @@ export const columns: ColumnDef<IntelReport>[] = [
     },
   },
   {
-    id: "actions",
-    header: "Action",
+    accessorKey: "author",
+    header: "Author",
+  },
+  {
+    accessorKey: "source",
+    header: "Source",
     cell: ({ row }) => {
+      const source = row.getValue("source") as string
       return (
-        <Button variant="ghost" size="sm">
-          View Dossier
-        </Button>
+        <Badge variant="secondary" className="text-xs">
+          {source}
+        </Badge>
       )
     },
   },
