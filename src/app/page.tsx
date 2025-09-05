@@ -1,415 +1,441 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { Shell } from "~/components/shell";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { DataTable } from "~/components/data-table";
-import { columns } from "~/components/intel-columns";
-import { PaywallModal } from "~/components/paywall-modal";
 import { 
-  AlertTriangle, 
   TrendingUp, 
-  Target, 
-  ArrowUp, 
-  ArrowDown,
-  PlusCircle, 
-  X, 
+  Users, 
+  AlertTriangle, 
+  Star,
+  Globe,
+  MapPin,
+  DollarSign,
   Lock,
-  Eye,
-  EyeOff 
+  ArrowRight,
+  Sparkles,
+  Trophy,
+  Target,
+  Zap
 } from "lucide-react";
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
+import { PaywallModal } from "~/components/paywall-modal";
 
-type City = "pattaya" | "bangkok" | "angeles";
+// Extended city data with Monger Rank factors
+const cities = [
+  {
+    slug: "pattaya",
+    name: "Pattaya",
+    country: "Thailand",
+    flag: "🇹🇭",
+    description: "The undisputed capital of mongering",
+    mongerRank: 1,
+    stats: {
+      venues: 247,
+      activeUsers: 1843,
+      vibeScore: 9.2,
+      alerts: 3,
+      fairPriceST: 1500,
+      currency: "THB",
+      newReports24h: 184,
+      topRatedVenues: 42
+    },
+    badges: ["Most Active", "Best Value", "24/7 Action"],
+    trending: true
+  },
+  {
+    slug: "bangkok",
+    name: "Bangkok",
+    country: "Thailand",
+    flag: "🇹🇭",
+    description: "Massive city with endless options",
+    mongerRank: 2,
+    stats: {
+      venues: 189,
+      activeUsers: 1254,
+      vibeScore: 8.7,
+      alerts: 1,
+      fairPriceST: 2000,
+      currency: "THB",
+      newReports24h: 126,
+      topRatedVenues: 31
+    },
+    badges: ["Diverse Scene", "High-End Options"],
+    trending: false
+  },
+  {
+    slug: "angeles",
+    name: "Angeles City",
+    country: "Philippines",
+    flag: "🇵🇭",
+    description: "Compact party zone with GFE paradise",
+    mongerRank: 3,
+    stats: {
+      venues: 134,
+      activeUsers: 892,
+      vibeScore: 8.9,
+      alerts: 2,
+      fairPriceST: 2500,
+      currency: "PHP",
+      newReports24h: 98,
+      topRatedVenues: 28
+    },
+    badges: ["Best GFE", "Walkable"],
+    trending: true
+  },
+  {
+    slug: "manila",
+    name: "Manila",
+    country: "Philippines",
+    flag: "🇵🇭",
+    description: "Capital with hidden gems",
+    mongerRank: 4,
+    stats: {
+      venues: 98,
+      activeUsers: 423,
+      vibeScore: 7.8,
+      alerts: 0,
+      fairPriceST: 3000,
+      currency: "PHP",
+      newReports24h: 45,
+      topRatedVenues: 12
+    },
+    badges: ["Emerging"],
+    comingSoon: true
+  },
+  {
+    slug: "jakarta",
+    name: "Jakarta",
+    country: "Indonesia",
+    flag: "🇮🇩",
+    description: "Emerging scene for veterans",
+    mongerRank: 5,
+    stats: {
+      venues: 76,
+      activeUsers: 234,
+      vibeScore: 7.5,
+      alerts: 0,
+      fairPriceST: 1200000,
+      currency: "IDR",
+      newReports24h: 23,
+      topRatedVenues: 8
+    },
+    badges: ["Under the Radar"],
+    comingSoon: true
+  },
+  {
+    slug: "phnom-penh",
+    name: "Phnom Penh",
+    country: "Cambodia",
+    flag: "🇰🇭",
+    description: "Wild west of Southeast Asia",
+    mongerRank: 6,
+    stats: {
+      venues: 89,
+      activeUsers: 567,
+      vibeScore: 8.1,
+      alerts: 1,
+      fairPriceST: 40,
+      currency: "USD",
+      newReports24h: 67,
+      topRatedVenues: 15
+    },
+    badges: ["Anything Goes"],
+    comingSoon: true
+  }
+];
 
 export default function HomePage() {
   const { data: session } = useSession();
-  const [selectedCity, setSelectedCity] = useState<City>("pattaya");
-  const [filter, setFilter] = useState("");
   const [showPaywall, setShowPaywall] = useState(false);
-  const [paywallFeature, setPaywallFeature] = useState<string>("");
-  
-  // Fetch dashboard metrics
-  const { data: metrics, isLoading: metricsLoading } = api.intelligence.getDashboardMetrics.useQuery({
-    city: selectedCity
-  });
-  
-  // Fetch live intel feed
-  const { data: intelFeed, isLoading: feedLoading } = api.intelligence.getLiveIntelFeed.useQuery({
-    city: selectedCity,
-    limit: 10,
-    filter: filter || undefined
-  });
-  
-  // Fetch top venues
-  const { data: topVenues, isLoading: venuesLoading } = api.intelligence.getTopVenues.useQuery({
-    city: selectedCity,
-    limit: 3
-  });
+  const [paywallFeature, setPaywallFeature] = useState("");
   
   const isPaid = session?.user?.isPaid;
-  
+
   const handleUnlockFeature = (feature: string) => {
     setPaywallFeature(feature);
     setShowPaywall(true);
   };
-  
-  // Format KPI data based on real metrics
-  const kpiData = metrics ? [
-    {
-      title: `${selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)} Vibe Shift (24h)`,
-      value: metrics.vibeShift ? (parseFloat(metrics.vibeShift) > 0 ? `+${metrics.vibeShift}` : metrics.vibeShift) : "0",
-      subtext: parseFloat(metrics.vibeShift || "0") > 0 ? "Vibe Score™ rising" : "Vibe Score™ stable",
-      analysisText: `Analysis based on ${metrics.reportCount} new reports`,
-      positive: parseFloat(metrics.vibeShift || "0") > 0 ? true : parseFloat(metrics.vibeShift || "0") < 0 ? false : null,
-      visible: true, // Always visible to prove value
-    },
-    {
-      title: selectedCity === "pattaya" ? "Fair Price: Soi 6 ST" : "Fair Price: ST",
-      value: metrics.fairPrice ? `${metrics.fairPrice} THB` : "N/A",
-      subtext: "Market average",
-      touristPrice: metrics.fairPrice ? `${Math.round(metrics.fairPrice * 1.5)} THB` : null,
-      positive: null,
-      visible: true, // Number visible to tease value
-      detailsLocked: !isPaid, // But details are locked
-    },
-    {
-      title: "New Reports Processed (6h)",
-      value: metrics.reportCount?.toString() || "0",
-      subtext: isPaid ? "From multiple venues" : "Unlock for details",
-      positive: null,
-      visible: true, // Count visible
-      locked: !isPaid, // Content locked
-    },
-    {
-      title: "Active Scam Alerts",
-      value: metrics.activeAlerts?.toString() || "0",
-      subtext: `${selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)} Zone`,
-      positive: metrics.activeAlerts === 0,
-      visible: true, // FREE - builds trust
-    },
-  ] : [];
-  
-  const isLoading = metricsLoading || feedLoading || venuesLoading;
 
-  const cities: { value: City; label: string }[] = [
-    { value: "pattaya", label: "Pattaya" },
-    { value: "bangkok", label: "Bangkok" },
-    { value: "angeles", label: "Angeles City" }
-  ];
+  // Calculate dynamic Monger Score
+  const getMongerScore = (stats: typeof cities[0]["stats"]) => {
+    const score = (
+      (stats.vibeScore * 20) +
+      (stats.activeUsers / 50) +
+      (stats.topRatedVenues / 2) +
+      (stats.newReports24h / 10) -
+      (stats.alerts * 10)
+    );
+    return Math.min(100, Math.round(score));
+  };
 
   return (
-    <Shell>
-      <div className="p-4 md:p-6 space-y-6">
-        {/* Header with City Selector */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">Live Intelligence Dashboard</h1>
-            <p className="text-muted-foreground mt-1">
-              {isLoading ? "Loading..." : "Real-time data from verified field reports"}
+    <div className="min-h-screen bg-black">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-b from-zinc-900 to-black border-b border-zinc-800">
+        <div className="container mx-auto px-4 py-12">
+          <div className="text-center max-w-4xl mx-auto">
+            <Badge className="mb-4 bg-yellow-500/20 text-yellow-500 border-yellow-500/50">
+              <Sparkles className="h-3 w-3 mr-1" />
+              Live Intelligence Network
+            </Badge>
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              MongerMaps
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8">
+              Real-time intelligence for Southeast Asia's hottest destinations.
+              <br />
+              <span className="text-yellow-500">Find the gems. Avoid the rip-offs.</span>
             </p>
-          </div>
-          
-          {/* City Selector */}
-          <div className="flex gap-2">
-            {cities.map((city) => (
-              <Button
-                key={city.value}
-                variant={selectedCity === city.value ? "default" : "outline"}
-                onClick={() => setSelectedCity(city.value)}
-                className="min-w-[100px]"
-              >
-                {city.label}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Scam Alerts - Always visible FREE to build trust */}
-        {metrics?.activeAlerts > 0 && (
-          <Card className="border-red-500/50 bg-red-500/10">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-500">
-                <AlertTriangle className="h-4 w-4" />
-                SCAM ALERT: {selectedCity.charAt(0).toUpperCase() + selectedCity.slice(1)}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm">
-                Multiple reports of bill padding in last 24 hours.
-                {isPaid ? (
-                  <Button variant="link" className="text-red-500 p-0 h-auto ml-1">
-                    View Details
-                  </Button>
-                ) : (
-                  <Button 
-                    variant="link" 
-                    className="text-red-500 p-0 h-auto ml-1"
-                    onClick={() => handleUnlockFeature("scam alert details")}
-                  >
-                    Unlock Details
-                  </Button>
-                )}
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* KPI Cards - All visible but with strategic locking */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {kpiData.map((kpi, index) => (
-            <Card 
-              key={index} 
-              className={cn(
-                "relative overflow-hidden transition-all",
-                (kpi.locked || kpi.detailsLocked) && "cursor-pointer hover:shadow-lg"
-              )}
-              onClick={() => (kpi.locked || kpi.detailsLocked) && handleUnlockFeature("detailed metrics")}
-            >
-              {kpi.locked && (
-                <div className="absolute inset-0 bg-black/50 backdrop-blur-sm z-10 flex items-center justify-center">
-                  <Lock className="h-6 w-6 text-yellow-500" />
-                </div>
-              )}
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center space-x-2">
-                  <div
-                    className={cn(
-                      "text-2xl font-bold",
-                      kpi.positive === true && "text-green-500",
-                      kpi.positive === false && "text-red-500",
-                      kpi.positive === null && "text-foreground"
-                    )}
-                  >
-                    {kpi.value}
-                  </div>
-                  {kpi.positive === true && <ArrowUp className="h-5 w-5 text-green-500" />}
-                  {kpi.positive === false && <ArrowDown className="h-5 w-5 text-red-500" />}
-                </div>
-                <p
-                  className={cn(
-                    "text-xs mt-1",
-                    kpi.positive === true && "text-green-500",
-                    kpi.positive === false && "text-red-500",
-                    kpi.positive === null && "text-muted-foreground",
-                    kpi.detailsLocked && "blur-sm"
-                  )}
-                >
-                  {kpi.subtext}
-                </p>
-                {kpi.touristPrice && (
-                  <p className={cn("text-xs mt-1 text-red-500", !isPaid && "blur-sm")}>
-                    Tourist Price: {isPaid ? kpi.touristPrice : "???"}
-                  </p>
-                )}
-                {kpi.analysisText && <p className="text-xs mt-1 text-muted-foreground">{kpi.analysisText}</p>}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Top 3 Tonight - Headers visible, venues blurred */}
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-          <div className="xl:order-1 order-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Target className="h-4 w-4" />
-                  Top 3 Tonight
-                  {!isPaid && (
-                    <Badge variant="secondary" className="ml-auto">
-                      <Lock className="h-3 w-3" />
-                    </Badge>
-                  )}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {topVenues?.map((venue, index) => (
-                  <div 
-                    key={index} 
-                    className={cn(
-                      "flex justify-between items-center group cursor-pointer",
-                      !isPaid && "hover:scale-105 transition-transform"
-                    )}
-                    onClick={() => !isPaid && handleUnlockFeature("top venues tonight")}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <span className={cn("text-sm", !isPaid && "blur-sm select-none")}>
-                        {isPaid ? venue.name : "Hidden Venue"}
-                      </span>
-                      <Badge
-                        variant={venue.score > 8.5 ? "default" : venue.score > 7 ? "secondary" : "destructive"}
-                        className={cn(
-                          venue.score > 8.5 ? "bg-green-500" : "",
-                          !isPaid && "opacity-50"
-                        )}
-                      >
-                        {venue.score.toFixed(1)}
-                      </Badge>
-                    </div>
-                    {isPaid && (
-                      <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0">
-                        <Eye className="h-3 w-3" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-                {!isPaid && (
-                  <Button 
-                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold mt-2"
-                    onClick={() => handleUnlockFeature("top venues tonight")}
-                  >
-                    <Lock className="h-4 w-4 mr-2" />
-                    Unlock Top Venues
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Main Intel Feed - Count visible, content locked */}
-          <div className="xl:col-span-2 xl:order-2 order-1">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  Live Intel Feed
-                  <Badge variant="default" className="ml-2">
-                    {intelFeed?.data?.length || 0} New
-                  </Badge>
-                  {!isPaid && (
-                    <Badge variant="secondary" className="ml-auto">
-                      <Lock className="h-3 w-3 mr-1" />
-                      Limited View
-                    </Badge>
-                  )}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Input 
-                    placeholder="Filter by venue..." 
-                    className="max-w-sm"
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                    disabled={!isPaid}
-                  />
-                  {!isPaid && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleUnlockFeature("full search & filters")}
-                    >
-                      <Eye className="h-4 w-4 mr-2" />
-                      Unlock Filters
-                    </Button>
-                  )}
-                </div>
-                <div className="overflow-x-auto">
-                  {intelFeed && (
-                    <div className={cn(!isPaid && "relative")}>
-                      {!isPaid && (
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-10 flex items-end justify-center pb-4">
-                          <Button
-                            onClick={() => handleUnlockFeature("all field reports")}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold"
-                          >
-                            <Lock className="h-4 w-4 mr-2" />
-                            View All {intelFeed.data.length}+ Reports
-                          </Button>
-                        </div>
-                      )}
-                      <DataTable 
-                        columns={columns} 
-                        data={isPaid ? intelFeed.data : intelFeed.data.slice(0, 3)} 
-                      />
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Sidebar - Game Plan & Alerts */}
-          <div className="space-y-4 xl:order-3 order-3">
-            <Card className={cn(!isPaid && "relative overflow-hidden")}>
-              {!isPaid && (
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 flex items-end p-4">
-                  <Button 
-                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-sm"
-                    onClick={() => handleUnlockFeature("personalized game plans")}
-                  >
-                    <Lock className="h-4 w-4 mr-2" />
-                    Unlock Game Plan
-                  </Button>
-                </div>
-              )}
-              <CardHeader>
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Target className="h-4 w-4" />
-                  Tonight's Game Plan
-                </CardTitle>
-              </CardHeader>
-              <CardContent className={cn("space-y-3", !isPaid && "blur-sm")}>
-                <p className="text-xs text-muted-foreground">
-                  Personalized recommendations based on your preferences
-                </p>
-                {isPaid && topVenues?.slice(0, 3).map((venue, index) => (
-                  <div key={index} className="text-sm">
-                    <span className="font-medium">{venue.name}</span>
-                    <span className="text-muted-foreground ml-2">- Peak time 10pm</span>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Fair Price Guide - Teaser */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Fair Price Guide</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>ST (Short Time)</span>
-                  <span className={cn("font-medium", !isPaid && "blur-sm")}>
-                    {isPaid ? `${metrics?.fairPrice || "N/A"} THB` : "??? THB"}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>LT (Long Time)</span>
-                  <span className={cn("font-medium", !isPaid && "blur-sm")}>
-                    {isPaid ? `${Math.round((metrics?.fairPrice || 1500) * 2)} THB` : "??? THB"}
-                  </span>
-                </div>
-                {!isPaid && (
-                  <Button
-                    size="sm"
-                    className="w-full mt-2"
-                    variant="outline"
-                    onClick={() => handleUnlockFeature("fair price details")}
-                  >
-                    Get Full Price Sheet
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
+            
+            {/* Live Stats Bar */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-500">2,847</div>
+                <div className="text-xs text-muted-foreground">Active Members</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">842</div>
+                <div className="text-xs text-muted-foreground">Live Reports Today</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-500">1,247</div>
+                <div className="text-xs text-muted-foreground">Verified Venues</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-500">12</div>
+                <div className="text-xs text-muted-foreground">Active Scam Alerts</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      
+
+      {/* Cities Grid */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-bold">Cities by Monger Rank™</h2>
+          <Badge variant="outline" className="text-sm">
+            <Globe className="h-3 w-3 mr-1" />
+            Updated Live
+          </Badge>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {cities.map((city) => {
+            const mongerScore = getMongerScore(city.stats);
+            
+            return (
+              <Card 
+                key={city.slug}
+                className={cn(
+                  "relative overflow-hidden transition-all hover:shadow-xl",
+                  city.comingSoon && "opacity-75",
+                  city.trending && "ring-2 ring-yellow-500/50"
+                )}
+              >
+                {/* Monger Rank Badge */}
+                <div className="absolute top-4 right-4 z-10">
+                  <Badge 
+                    className={cn(
+                      "text-lg font-bold px-3 py-1",
+                      city.mongerRank === 1 && "bg-yellow-500 text-black",
+                      city.mongerRank === 2 && "bg-gray-400 text-black",
+                      city.mongerRank === 3 && "bg-orange-600"
+                    )}
+                  >
+                    #{city.mongerRank}
+                  </Badge>
+                </div>
+
+                {city.trending && (
+                  <div className="absolute top-4 left-4 z-10">
+                    <Badge className="bg-red-500 text-white">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      HOT
+                    </Badge>
+                  </div>
+                )}
+
+                <CardHeader>
+                  <CardTitle className="text-2xl flex items-center gap-2">
+                    <span className="text-3xl">{city.flag}</span>
+                    {city.name}
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">{city.country}</p>
+                  <p className="text-sm mt-2">{city.description}</p>
+                  
+                  {/* Badges */}
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {city.badges.map((badge) => (
+                      <Badge key={badge} variant="secondary" className="text-xs">
+                        {badge}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  {/* Monger Score */}
+                  <div className="flex items-center justify-between p-3 bg-zinc-900 rounded-lg">
+                    <span className="text-sm font-medium">Monger Score™</span>
+                    <div className="flex items-center gap-2">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={cn(
+                              "h-4 w-4",
+                              i < Math.floor(mongerScore / 20)
+                                ? "text-yellow-500 fill-yellow-500"
+                                : "text-zinc-700"
+                            )}
+                          />
+                        ))}
+                      </div>
+                      <span className="font-bold">{mongerScore}</span>
+                    </div>
+                  </div>
+
+                  {/* Quick Stats Grid */}
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <span>{city.stats.venues} venues</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <span>{city.stats.activeUsers.toLocaleString()} active</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                      <span>Vibe: {city.stats.vibeScore}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className={cn(
+                        "h-4 w-4",
+                        city.stats.alerts > 0 ? "text-red-500" : "text-green-500"
+                      )} />
+                      <span className={cn(
+                        city.stats.alerts > 0 ? "text-red-500" : "text-green-500"
+                      )}>
+                        {city.stats.alerts} alerts
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Live Activity */}
+                  <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-green-500 font-medium">Live Activity</span>
+                      <Badge variant="outline" className="text-xs border-green-500/50 text-green-500">
+                        <Zap className="h-3 w-3 mr-1" />
+                        {city.stats.newReports24h} new
+                      </Badge>
+                    </div>
+                    {isPaid ? (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Fair Price ST: {city.stats.fairPriceST} {city.stats.currency}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground mt-1 blur-sm select-none">
+                        Fair Price ST: ??? {city.stats.currency}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* CTA Button */}
+                  {city.comingSoon ? (
+                    <Button className="w-full" variant="outline" disabled>
+                      Coming Soon
+                    </Button>
+                  ) : (
+                    <Link href={`/city/${city.slug}`} className="block">
+                      <Button className="w-full group">
+                        Enter {city.name}
+                        <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Bottom CTAs */}
+        <div className="grid md:grid-cols-2 gap-6 mt-12">
+          {/* Make Money Mongering CTA */}
+          <Card className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-yellow-500" />
+                Make Money Mongering
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                Turn your mongering adventures into recurring income. 
+                Learn how veterans are earning $5k+/month through field reports and referrals.
+              </p>
+              <Link href="/make-money">
+                <Button variant="outline" className="w-full border-yellow-500/50 hover:bg-yellow-500/10">
+                  Learn More
+                  <Trophy className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          {/* Premium Upgrade CTA */}
+          <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-purple-500" />
+                Unlock Full Intelligence
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                Get real-time prices, venue heat maps, scam alerts, and access to our veteran community.
+                Stop gambling, start winning.
+              </p>
+              {isPaid ? (
+                <Badge className="w-full justify-center py-2 bg-green-500/20 text-green-500 border-green-500/50">
+                  You have full access
+                </Badge>
+              ) : (
+                <Button 
+                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                  onClick={() => handleUnlockFeature("full platform access")}
+                >
+                  <Lock className="h-4 w-4 mr-2" />
+                  Get Premium Access
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Trust Indicators */}
+        <div className="text-center mt-12 pb-8">
+          <p className="text-sm text-muted-foreground">
+            Trusted by 2,847+ savvy mongers • 
+            <span className="text-yellow-500"> 50,000+ verified reports</span> • 
+            Veteran-owned & operated
+          </p>
+        </div>
+      </div>
+
       <PaywallModal
         isOpen={showPaywall}
         onClose={() => setShowPaywall(false)}
         feature={paywallFeature}
       />
-    </Shell>
+    </div>
   );
 }

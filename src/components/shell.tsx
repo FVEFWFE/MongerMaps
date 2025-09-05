@@ -4,7 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Bird, LayoutDashboard, MapPin, Database, Globe, User, Search, Copy, Menu, X } from "lucide-react"
+import { Bird, LayoutDashboard, MapPin, Database, Globe, User, Search, Copy, Menu, X, DollarSign } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -20,10 +20,12 @@ import {
 import { cn } from "@/lib/utils"
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Cities", href: "/cities", icon: MapPin },
+  { name: "Cities", href: "/", icon: Globe },
+  { name: "Pattaya", href: "/city/pattaya", icon: MapPin },
+  { name: "Bangkok", href: "/city/bangkok", icon: MapPin },
+  { name: "Angeles City", href: "/city/angeles", icon: MapPin },
   { name: "Intel Database", href: "/intel-database", icon: Database },
-  { name: "Global Rankings", href: "/global-rankings", icon: Globe },
+  { name: "Make Money", href: "/make-money", icon: DollarSign },
   { name: "My Profile", href: "/profile", icon: User },
 ]
 
