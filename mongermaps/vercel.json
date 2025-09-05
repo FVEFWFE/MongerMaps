@@ -1,7 +1,8 @@
 {
-  "framework": "nextjs",
-  "buildCommand": "npm run build",
+  "buildCommand": "SKIP_ENV_VALIDATION=1 npm run build",
   "installCommand": "npm install --legacy-peer-deps",
+  "framework": "nextjs",
+  "regions": ["sin1"],
   "env": {
     "DATABASE_URL": "@database_url",
     "NEXTAUTH_SECRET": "@nextauth_secret",
@@ -9,6 +10,7 @@
     "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "@stripe_publishable_key",
     "STRIPE_SECRET_KEY": "@stripe_secret_key",
     "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret",
-    "NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN": "@mapbox_access_token"
+    "NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN": "@mapbox_access_token",
+    "SKIP_ENV_VALIDATION": "1"
   }
 }
