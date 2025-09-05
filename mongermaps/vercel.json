@@ -1,9 +1,8 @@
 {
-  "framework": "nextjs",
-  "buildCommand": "npm run build || echo 'Build completed with warnings'",
-  "outputDirectory": ".next",
-  "installCommand": "npm install --legacy-peer-deps",
-  "devCommand": "npm run dev",
+  "buildCommand": "cd mongermaps && npm install --legacy-peer-deps && npm run build",
+  "outputDirectory": "mongermaps/.next",
+  "installCommand": "echo 'Skipping install'",
+  "framework": null,
   "env": {
     "DATABASE_URL": "@database_url",
     "NEXTAUTH_SECRET": "@nextauth_secret", 
@@ -14,16 +13,5 @@
     "NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN": "@mapbox_access_token",
     "SKIP_ENV_VALIDATION": "1",
     "NODE_ENV": "production"
-  },
-  "functions": {
-    "src/app/**/*.{js,ts}": {
-      "maxDuration": 30
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/"
-    }
-  ]
+  }
 }
