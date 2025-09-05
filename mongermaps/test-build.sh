@@ -1,0 +1,18 @@
+#!/bin/bash
+echo "=== Testing Next.js Build ==="
+echo "Current directory: $(pwd)"
+echo "Node version: $(node --version)"
+echo "NPM version: $(npm --version)"
+echo ""
+echo "=== Checking for Next.js files ==="
+echo "Pages directory:"
+ls -la pages/ 2>/dev/null || echo "No pages directory"
+echo ""
+echo "App directory:"
+ls -la app/ 2>/dev/null || echo "No app directory"
+echo ""
+echo "Src/app directory:"  
+ls -la src/app/ 2>/dev/null || echo "No src/app directory"
+echo ""
+echo "=== Running build ==="
+npm run build
