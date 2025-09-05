@@ -30,16 +30,21 @@ async function seedVenues() {
   console.log("Seeding venues...");
   
   for (const venue of pattayaVenues) {
-    await prisma.venue.upsert({
-      where: { name: venue.name },
-      update: {},
-      create: {
-        ...venue,
-        avgGfeScore: Math.random() * 4 + 6, // Random score between 6-10
-        avgPriceST: Math.round((Math.random() * 2000 + 1500) / 100) * 100, // 1500-3500 THB
-        avgPriceLT: Math.round((Math.random() * 3000 + 3000) / 100) * 100, // 3000-6000 THB
-      },
+    // Check if venue already exists
+    const existingVenue = await prisma.venue.findFirst({
+      where: { name: venue.name }
     });
+    
+    if (!existingVenue) {
+      await prisma.venue.create({
+        data: {
+          ...venue,
+          avgGfeScore: Math.random() * 4 + 6, // Random score between 6-10
+          avgPriceST: Math.round((Math.random() * 2000 + 1500) / 100) * 100, // 1500-3500 THB
+          avgPriceLT: Math.round((Math.random() * 3000 + 3000) / 100) * 100, // 3000-6000 THB
+        },
+      });
+    }
   }
   
   console.log(`Seeded ${pattayaVenues.length} venues`);
