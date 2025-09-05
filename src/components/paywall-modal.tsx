@@ -6,14 +6,17 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Separator } from "~/components/ui/separator";
-import { CheckCircle, Lock } from "lucide-react";
+import { Label } from "~/components/ui/label";
+import { Badge } from "~/components/ui/badge";
+import { Lock, Shield, TrendingUp, AlertTriangle, FileText, CheckCircle } from "lucide-react";
 import { api } from "~/trpc/react";
+import { toast } from "~/components/ui/use-toast";
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -25,149 +28,143 @@ export function PaywallModal({ isOpen, onClose, feature }: PaywallModalProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
-  const leadMutation = api.lead.create.useMutation({
+
+  const captureEmailMutation = api.lead.capture.useMutation({
     onSuccess: () => {
-      // Redirect to download page after email capture
-      router.push("/download");
+      toast({
+        title: "Success!",
+        description: "Check your email for the Fair Price Sheet PDF",
+      });
+      // Redirect to thank you page
+      router.push("/thank-you");
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
-  const handleEmailCapture = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    
+
     setIsLoading(true);
     try {
-      await leadMutation.mutateAsync({ email });
-    } catch (error) {
-      console.error("Error capturing email:", error);
+      await captureEmailMutation.mutateAsync({ email });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCheckout = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/stripe/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId: "annual" }),
-      });
-      
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error("Error starting checkout:", error);
-    } finally {
-      setIsLoading(false);
+  const benefits = [
+    {
+      icon: <Shield className="h-5 w-5" />,
+      title: "Scam Protection",
+      description: "Real-time alerts save you thousands"
+    },
+    {
+      icon: <TrendingUp className="h-5 w-5" />,
+      title: "Live Intelligence",
+      description: "184 new reports processed today"
+    },
+    {
+      icon: <AlertTriangle className="h-5 w-5" />,
+      title: "Fair Pricing",
+      description: "Never overpay again"
     }
-  };
+  ];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] bg-gray-900 border-gray-800">
+      <DialogContent className="sm:max-w-[525px] bg-black border-zinc-800">
         <DialogHeader>
-          <div className="flex items-center justify-center mb-4">
-            <Lock className="h-12 w-12 text-yellow-500" />
+          <div className="flex items-center gap-2 mb-2">
+            <Lock className="h-5 w-5 text-yellow-500" />
+            <Badge className="bg-yellow-500/20 text-yellow-500 border-yellow-500/50">
+              Premium Feature
+            </Badge>
           </div>
-          <DialogTitle className="text-2xl text-center">
-            Get Instant Intelligence Access
+          <DialogTitle className="text-2xl">
+            Get Instant Access to {feature || "Full Intelligence"}
           </DialogTitle>
-          <DialogDescription className="text-center text-gray-400 mt-2">
-            {feature ? `Unlock ${feature} and all premium features` : "Join 2,000+ members getting real-time intelligence"}
+          <DialogDescription className="text-base mt-2">
+            Join 2,847+ members who never get scammed or overpay in Southeast Asia
           </DialogDescription>
         </DialogHeader>
-        
-        <div className="space-y-6 mt-6">
-          {/* Free lead magnet offer */}
-          <div className="bg-gray-800 rounded-lg p-4">
-            <h3 className="font-semibold mb-2">Get Started Free</h3>
-            <p className="text-sm text-gray-400 mb-3">
-              Download our Pattaya Fair Price Sheet and get insider tips
-            </p>
-            <form onSubmit={handleEmailCapture} className="space-y-3">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-gray-700 border-gray-600"
-                required
-              />
-              <Button 
-                type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-700"
-                disabled={isLoading}
-              >
-                Get Free PDF
-              </Button>
-            </form>
-          </div>
-          
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator className="w-full bg-gray-700" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-gray-900 px-2 text-gray-400">Or</span>
-            </div>
-          </div>
-          
-          {/* Paid subscription offer */}
-          <div className="space-y-4">
-            <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black rounded-lg p-4">
-              <div className="flex justify-between items-start mb-2">
+
+        <div className="space-y-4 my-4">
+          {/* Benefits */}
+          <div className="space-y-3">
+            {benefits.map((benefit, index) => (
+              <div key={index} className="flex gap-3">
+                <div className="text-green-500 mt-0.5">{benefit.icon}</div>
                 <div>
-                  <h3 className="font-bold text-lg">Annual Access</h3>
-                  <p className="text-sm opacity-90">Full platform access</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold">$99</div>
-                  <div className="text-xs opacity-90">per year</div>
+                  <h4 className="font-semibold">{benefit.title}</h4>
+                  <p className="text-sm text-muted-foreground">{benefit.description}</p>
                 </div>
               </div>
-            </div>
-            
-            <ul className="space-y-2 text-sm">
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <span>Real-time venue intelligence & vibe scores</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <span>Live pricing data to avoid tourist prices</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <span>Scam alerts & safety warnings</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <span>Access to 200,000+ field reports</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <span>Private member chat & insider tips</span>
-              </li>
-            </ul>
-            
-            <Button 
-              onClick={handleCheckout}
-              className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-lg py-6"
-              disabled={isLoading}
-            >
-              Unlock Full Access - $99/year
-            </Button>
-            
-            <p className="text-xs text-center text-gray-400">
-              30-day money-back guarantee • Cancel anytime
-            </p>
+            ))}
           </div>
+
+          {/* Social Proof */}
+          <div className="border border-zinc-800 rounded-lg p-4 bg-zinc-900/50">
+            <p className="text-sm italic">
+              "Saved me 3,000 THB on my first night. The scam alert for [REDACTED] was spot on."
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">- Veteran_77, Member since Jan 2024</p>
+          </div>
+
+          {/* Email Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Enter your email for instant access:</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="bg-zinc-900 border-zinc-800"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <Button
+                type="submit"
+                className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold h-12 text-base"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  "Processing..."
+                ) : (
+                  <>
+                    <FileText className="h-5 w-5 mr-2" />
+                    Get Free Fair Price Sheet PDF
+                  </>
+                )}
+              </Button>
+
+              <div className="flex items-start gap-2 text-xs text-muted-foreground">
+                <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                <span>
+                  Instant download • No spam • Unsubscribe anytime • 
+                  Includes "5 Venues Overcharging You" bonus report
+                </span>
+              </div>
+            </div>
+          </form>
         </div>
+
+        <DialogFooter className="sm:justify-center">
+          <p className="text-xs text-center text-muted-foreground">
+            By entering your email, you agree to receive MongerMaps intelligence updates.
+            Your privacy is protected by military-grade encryption.
+          </p>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

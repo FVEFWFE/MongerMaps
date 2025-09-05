@@ -20,11 +20,11 @@ import {
 import { cn } from "@/lib/utils"
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Interactive Map", href: "/map/pattaya", icon: MapPin },
+  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Cities", href: "/cities", icon: MapPin },
   { name: "Intel Database", href: "/intel-database", icon: Database },
   { name: "Global Rankings", href: "/global-rankings", icon: Globe },
-  { name: "My Dossier", href: "/profile", icon: User },
+  { name: "My Profile", href: "/profile", icon: User },
 ]
 
 export function Shell({ children }: { children: React.ReactNode }) {
