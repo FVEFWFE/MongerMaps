@@ -637,9 +637,11 @@ export default function HomePage() {
       
       {/* Shell wraps everything else */}
       <Shell>
-        <div className="flex gap-6">
-          {/* Main Content Area */}
-          <div className="flex-1 p-4 md:p-6">
+        <div className="flex w-full">
+          {/* Main Content Area with Right Sidebar */}
+          <div className="flex-1 flex gap-6">
+            {/* Content */}
+            <div className="flex-1 p-4 md:p-6">
           {/* Minimal Hero Section */}
           <div className="text-center mb-6">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
@@ -894,10 +896,9 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Right Sidebar */}
-        <div className="w-64 flex-shrink-0 hidden 2xl:block">
+          {/* Right Sidebar */}
+          <div className="w-64 flex-shrink-0 hidden 2xl:block p-4 md:p-6">
             {/* Trending Cities */}
             <Card>
               <CardHeader className="pb-3">
@@ -987,6 +988,7 @@ export default function HomePage() {
                 </Link>
               </CardContent>
             </Card>
+          </div>
           </div>
         </div>
       </Shell>
