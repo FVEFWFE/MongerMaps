@@ -81,7 +81,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     <DropdownMenuTrigger asChild>
                       <button 
                         onClick={handleLogoClick}
-                        className="relative h-10 w-10 flex-shrink-0 group cursor-zoom-in focus:outline-none focus:ring-0"
+                        className="relative h-10 w-10 flex-shrink-0 group cursor-zoom-in focus:outline-none focus:ring-0 focus:border-0 focus-visible:outline-none focus-visible:ring-0"
                         title="Click to open nav, double click to go home"
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center group-hover:opacity-90 transition-opacity">
@@ -191,7 +191,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             
             {/* Title Text - Not clickable */}
             <div className="flex flex-col">
-              <span className="text-lg font-bold text-foreground leading-tight">MongerMaps</span>
+              <span className="text-lg font-bold text-foreground leading-tight">MongerMaps.io</span>
               <span className="text-xs text-muted-foreground">Find the Gems. Avoid the Rip-offs.</span>
             </div>
           </div>

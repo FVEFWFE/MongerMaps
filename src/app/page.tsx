@@ -2678,6 +2678,7 @@ function HomePageContent() {
                             <div className="relative h-64 overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600">
                               <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="text-center text-white p-4">
+                                  <p className="text-xs italic opacity-90 mb-2">"Money is the world's greatest aphrodisiac"</p>
                                   <DollarSign className="h-12 w-12 mx-auto mb-3" />
                                   <h3 className="text-xl font-bold mb-2">Earn 40% Commission</h3>
                                   <p className="text-sm opacity-90">Refer friends, get paid</p>
@@ -2892,6 +2893,9 @@ function HomePageContent() {
                   Join MongerMaps Today
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
+                <p className="text-xs text-muted-foreground italic mt-4">
+                  "The Internet's most useful sex travel website."
+                </p>
               </div>
             </div>
                 </div>
