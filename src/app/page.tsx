@@ -45,6 +45,11 @@ const TargetCursor = dynamic(() => import("~/components/TargetCursor"), {
   ssr: false,
 });
 
+// Dynamically import BlurText to avoid SSR issues
+const BlurText = dynamic(() => import("~/components/BlurText"), {
+  ssr: false,
+});
+
 // Extended city data with Monger Rank factors
 const cities = [
   {
@@ -2569,6 +2574,33 @@ function HomePageContent() {
             <Filter className="h-4 w-4 mr-2" />
             Filters
           </Button>
+                </div>
+
+                {/* Animated Philosophical Hook and Social Proof */}
+                <div className="mb-6 text-center space-y-3">
+                  <BlurText
+                    text="Because men who've earned their freedom deserve to enjoy it without getting scammed."
+                    delay={100}
+                    animateBy="words"
+                    direction="top"
+                    className="text-sm text-muted-foreground italic"
+                  />
+                  <div className="flex items-center justify-center gap-2">
+                    <BlurText
+                      text="•"
+                      delay={1500}
+                      animateBy="letters"
+                      direction="top"
+                      className="text-primary"
+                    />
+                  </div>
+                  <BlurText
+                    text="2.6M+ Reports. No BS. Trusted by 12,000+ Vets."
+                    delay={150}
+                    animateBy="words"
+                    direction="bottom"
+                    className="text-xs font-semibold text-primary/80"
+                  />
                 </div>
 
                 <div className="flex items-center justify-end mb-6">
