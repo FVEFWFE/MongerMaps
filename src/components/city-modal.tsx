@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { X, Star, Wifi, DollarSign, Sun, Users, MapPin, TrendingUp, MessageSquare, Camera, Cloud, BarChart, Building, Briefcase, Navigation, Heart, ChevronRight, Check, Banknote, Info } from "lucide-react"
+import { X, Star, Wifi, DollarSign, Sun, Users, MapPin, TrendingUp, MessageSquare, Camera, Cloud, BarChart, Building, Briefcase, Navigation, Heart, ChevronRight, Check, Banknote, Info, FileText, User } from "lucide-react"
 import Image from "next/image"
 import { FlagIcon } from "./flag-icon"
 import { Badge } from "~/components/ui/badge"
@@ -60,6 +60,7 @@ interface CityModalProps {
 
 const tabs = [
   "Scores",
+  "Field Reports",
   "Venues",
   "Hotels",
   "Going Rates",
@@ -68,7 +69,6 @@ const tabs = [
   "Reviews",
   "Cost of Living",
   "People",
-  "Chat",
   "Photos",
   "Weather",
   "Trends",
@@ -361,6 +361,98 @@ export function CityModal({ city, isOpen, onClose, isPaid = false }: CityModalPr
                 <span className="text-xl font-bold text-primary">$1,500 - $3,200</span>
               </div>
             </div>
+          </div>
+        )
+
+      case "Field Reports":
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold">Latest Field Reports</h3>
+              <Button variant="outline" size="sm">
+                <FileText className="w-4 h-4 mr-2" />
+                Submit Report
+              </Button>
+            </div>
+            
+            <div className="space-y-4">
+              {/* Sample field reports */}
+              <div className="bg-background/50 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-medium">Trip Report: Soi 6 Adventures</div>
+                      <div className="text-sm text-muted-foreground">by MongerVet123 • 2 hours ago</div>
+                    </div>
+                  </div>
+                  <Badge variant="secondary">Verified</Badge>
+                </div>
+                <p className="text-sm">
+                  Just got back from a week in Pattaya. Soi 6 is still the best value for ST. 
+                  Prices range from 1000-1500 THB. The girls are friendly and most bars have 
+                  good music. Avoid the bars at the very end of the street - overpriced.
+                </p>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span>👍 42</span>
+                  <span>💬 8 comments</span>
+                </div>
+              </div>
+
+              <div className="bg-background/50 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-medium">Walking Street Update</div>
+                      <div className="text-sm text-muted-foreground">by BeachBum88 • 5 hours ago</div>
+                    </div>
+                  </div>
+                  <Badge variant="secondary">Verified</Badge>
+                </div>
+                <p className="text-sm">
+                  Prices have gone up 20% since last month. Barfines now 1000-1500 THB at most gogos. 
+                  Baccara still has the best lineup but expect to pay premium. Windmill is good value 
+                  for money. Stay away from the touts offering "ping pong shows" - total scam.
+                </p>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span>👍 28</span>
+                  <span>💬 15 comments</span>
+                </div>
+              </div>
+
+              <div className="bg-background/50 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-medium">New Venue Alert: Club Paradise</div>
+                      <div className="text-sm text-muted-foreground">by NightOwl555 • 1 day ago</div>
+                    </div>
+                  </div>
+                  <Badge>New</Badge>
+                </div>
+                <p className="text-sm">
+                  New gogo opened on LK Metro. Good lineup of 20+ girls, reasonable drink prices (150 THB). 
+                  Barfine is 800 THB. Girls are mostly from Isaan, friendly attitude. Worth checking out 
+                  if you're in the area. Happy hour 7-9pm with buy 1 get 1 free.
+                </p>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span>👍 67</span>
+                  <span>💬 23 comments</span>
+                </div>
+              </div>
+            </div>
+
+            <Button className="w-full" variant="outline">
+              View All Field Reports ({city.name})
+            </Button>
           </div>
         )
 

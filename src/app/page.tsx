@@ -634,16 +634,34 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            {/* Community Box */}
+            {/* Featured Mongermap Members */}
             <Card className="mt-4">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm">Community</CardTitle>
+                <CardTitle className="text-sm">Featured Mongermap Members</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-8 gap-1 mb-3">
-                  {Array.from({ length: 32 }).map((_, i) => (
-                    <div key={i} className="w-6 h-6 bg-muted rounded-full" />
-                  ))}
+                {/* YouTube Video Embeds */}
+                <div className="space-y-3 mb-3">
+                  <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+                    <iframe
+                      className="w-full h-full"
+                      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                      title="Featured Member Video 1"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                  <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+                    <iframe
+                      className="w-full h-full"
+                      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                      title="Featured Member Video 2"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
                 </div>
                 <p className="text-xs text-muted-foreground mb-3">2,847+ mongers worldwide</p>
                 {!isPaid && (
