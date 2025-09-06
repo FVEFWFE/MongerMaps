@@ -2321,10 +2321,7 @@ function HomePageContent() {
   const [paywallFeature, setPaywallFeature] = useState("");
   const [selectedCity, setSelectedCity] = useState<typeof cities[0] | null>(null);
   const [showCityModal, setShowCityModal] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({
-    temperature: ["warm"],
-    region: ["asia"],
-  });
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   
   const isPaid = session?.user?.isPaid;
   
@@ -2822,21 +2819,11 @@ function HomePageContent() {
                           </Button>
                         </div>
                       </div>
-                    </div>
-                  )}
                 </div>
+              )}
+            </div>
 
-                {/* Load More Button */}
-                <div className="text-center mt-8">
-            <Button
-              variant="outline"
-              size="sm"
-            >
-              Load more cities
-            </Button>
-                </div>
-
-                {/* Trust Section */}
+            {/* Trust Section */}
                 <div className="mt-12 pt-8 border-t">
             <div className="text-center space-y-6">
               {/* Forum Hell Section */}
