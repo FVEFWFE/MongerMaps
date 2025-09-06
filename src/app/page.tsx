@@ -643,29 +643,6 @@ export default function HomePage() {
             <div className="flex-1 flex gap-6">
               {/* Content */}
               <div className="flex-1 p-4 md:p-6">
-                {/* Minimal Hero Section */}
-                <div className="text-center mb-6">
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              Stop paying tourist prices. Start winning.
-            </h1>
-            <div className="flex items-center justify-center gap-3">
-              <Button 
-                size="sm"
-                className="font-semibold"
-                onClick={() => {
-                  if (!isPaid) {
-                    setShowPaywall(true);
-                    setPaywallFeature("full access");
-                  }
-                }}
-              >
-                Get Instant Access
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <span className="text-sm text-muted-foreground">or keep browsing ↓</span>
-            </div>
-                </div>
-
                 {/* Mobile Filter Button */}
                 <div className="lg:hidden mb-4">
             <Button 
@@ -678,11 +655,7 @@ export default function HomePage() {
           </Button>
                 </div>
 
-                <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold">Explore Cities</h2>
-              <p className="text-muted-foreground">Filter by what matters to you</p>
-            </div>
+                <div className="flex items-center justify-end mb-6">
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="sm">
                 <Grid3X3 className="h-4 w-4" />

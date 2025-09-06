@@ -186,12 +186,19 @@ export function Shell({ children }: { children: React.ReactNode }) {
             variant="outline"
             size="sm"
             onClick={() => setSearchOpen(true)}
-            className="hidden md:flex items-center gap-2 text-muted-foreground mr-8"
+            className="hidden md:flex items-center gap-2 text-muted-foreground"
           >
             <Search className="h-4 w-4" />
             <span className="hidden lg:inline">Search cities, venues with hot girls, 2.6M+ field reports...</span>
             <span className="lg:hidden">Search</span>
           </Button>
+
+          {/* Tagline */}
+          <div className="hidden xl:flex items-center mx-4 text-xs text-muted-foreground max-w-md">
+            <span className="italic">
+              Stop gambling on outdated forums. Our live, member-vetted map shows you where the real stunners are right now, with real-time prices and performance ratings.
+            </span>
+          </div>
 
           {/* Navigation Links - pushed further right */}
           <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center">
