@@ -213,8 +213,8 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
           layout === "half" && "flex-1",
           layout === "pair" && "flex-1",
           isActive
-            ? "bg-primary hover:bg-primary/90 text-primary-foreground cursor-remove"
-            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground cursor-add",
+            ? "bg-primary hover:bg-primary/90 text-primary-foreground "
+            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground ",
           "transition-colors"
         )}
       >
