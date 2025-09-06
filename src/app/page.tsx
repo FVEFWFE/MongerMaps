@@ -669,17 +669,68 @@ export default function HomePage() {
 
             {/* Responsive Grid: 6 cols on 4K, 5 on 2K, 4 on XL, 3 on LG, 2 on MD, 1 on mobile */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[2560px]:grid-cols-6 gap-4">
-              {filteredCities.map((city) => (
-                <CityCard
-                  key={city.slug}
-                  {...city}
-                  isPaid={isPaid}
-                  onClick={() => {
-                    setSelectedCity(city);
-                    setShowCityModal(true);
-                  }}
-                />
-              ))}
+              {filteredCities.flatMap((city, index) => {
+                const items = [
+                  <CityCard
+                    key={city.slug}
+                    {...city}
+                    isPaid={isPaid}
+                    onClick={() => {
+                      setSelectedCity(city);
+                      setShowCityModal(true);
+                    }}
+                  />
+                ];
+                
+                // Insert affiliate card after 6th city
+                if (index === 5) {
+                  items.push(
+                    <Link href="/affiliate" key="affiliate-card">
+                      <Card className="relative overflow-hidden transition-all cursor-pointer group hover:shadow-xl hover:scale-[1.02] h-full">
+                        <div className="relative h-64 overflow-hidden">
+                          {/* Placeholder for affiliate.png */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
+                            <div className="text-center text-white p-4">
+                              <DollarSign className="h-12 w-12 mx-auto mb-3" />
+                              <h3 className="text-xl font-bold mb-2">Earn Money</h3>
+                              <p className="text-sm opacity-90">Join our affiliate program</p>
+                              <p className="text-xs mt-2 opacity-75">Up to 50% commission</p>
+                            </div>
+                          </div>
+                          {/* Replace above div with this when you have the image:
+                          <Image
+                            src="/affiliate.png"
+                            alt="Join our affiliate program"
+                            fill
+                            className="object-cover"
+                          />
+                          */}
+                          
+                          {/* Hover overlay */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                          
+                          {/* CTA Badge */}
+                          <div className="absolute top-2 right-2">
+                            <Badge className="bg-green-500 text-white">
+                              <Sparkles className="h-3 w-3 mr-1" />
+                              50% Commission
+                            </Badge>
+                          </div>
+                          
+                          {/* Bottom text */}
+                          <div className="absolute bottom-2 left-2 right-2">
+                            <Badge className="bg-black/70 text-white w-full justify-center">
+                              Click to Learn More →
+                            </Badge>
+                          </div>
+                        </div>
+                      </Card>
+                    </Link>
+                  );
+                }
+                
+                return items;
+              })}
             </div>
 
           {/* Load More Button */}
