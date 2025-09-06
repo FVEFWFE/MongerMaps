@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { Shell } from "~/components/shell";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
@@ -422,8 +423,9 @@ const cities = [
   }
 ];
 
-export default function HomePage() {
+function HomePageContent() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
   const [showPaywall, setShowPaywall] = useState(false);
   const [paywallFeature, setPaywallFeature] = useState("");
   const [selectedCity, setSelectedCity] = useState<typeof cities[0] | null>(null);
@@ -434,7 +436,18 @@ export default function HomePage() {
   });
   
   const isPaid = session?.user?.isPaid;
-
+  
+  // Clear filters when URL has clear=true
+  useEffect(() => {
+    if (searchParams.get('clear') === 'true') {
+      setActiveFilters({});
+      // Remove the clear param from URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete('clear');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [searchParams]);
+  
   const handleUnlockFeature = (feature: string) => {
     setPaywallFeature(feature);
     setShowPaywall(true);
@@ -1029,5 +1042,13 @@ export default function HomePage() {
         currentCity={selectedCity?.slug || "all"}
       />
     </>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomePageContent />
+    </Suspense>
   );
 }

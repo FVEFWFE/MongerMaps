@@ -36,7 +36,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
     // You could add a toast notification here
   }
 
-  const handleLogoClick = () => {
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
     clickCountRef.current += 1
     
     if (clickCountRef.current === 1) {
@@ -46,11 +49,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
         clickCountRef.current = 0
       }, 300)
     } else if (clickCountRef.current === 2) {
-      // Double click - go home without filters
+      // Double click - go home and clear all filters
       if (clickTimeoutRef.current) {
         clearTimeout(clickTimeoutRef.current)
       }
-      router.push('/')
+      router.push('/?clear=true')
       clickCountRef.current = 0
     }
   }
@@ -62,27 +65,27 @@ export function Shell({ children }: { children: React.ReactNode }) {
         {/* Top Header - Only above main content, not filters */}
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="flex h-16 items-center px-4">
-          {/* Square Logo with Dropdown */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <DropdownMenu open={logoDropdownOpen} onOpenChange={setLogoDropdownOpen}>
-                  <DropdownMenuTrigger asChild>
-                    <button 
-                      onClick={handleLogoClick}
-                      className="flex items-center space-x-3 mr-4 hover:opacity-80 transition-opacity cursor-pointer"
-                    >
-                      <div className="relative h-10 w-10 flex-shrink-0">
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center">
+          {/* Logo and Title */}
+          <div className="flex items-center space-x-3 mr-4">
+            {/* Square Logo with Dropdown */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenu open={logoDropdownOpen} onOpenChange={setLogoDropdownOpen}>
+                    <DropdownMenuTrigger asChild>
+                      <button 
+                        onClick={handleLogoClick}
+                        className="relative h-10 w-10 flex-shrink-0 group cursor-zoom-in focus:outline-none focus:ring-0"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center group-hover:opacity-90 transition-opacity">
                           <Bird className="h-6 w-6 text-white" />
                         </div>
-                      </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-bold text-foreground leading-tight">MongerMaps</span>
-              <span className="text-xs text-muted-foreground">Find the Gems. Avoid the Rip-offs.</span>
-            </div>
-                    </button>
-                  </DropdownMenuTrigger>
+                        {/* Dropdown arrow indicator */}
+                        <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5">
+                          <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                        </div>
+                      </button>
+                    </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-64">
                     {/* General */}
                     <DropdownMenuLabel className="text-xs text-muted-foreground">General</DropdownMenuLabel>
@@ -171,13 +174,20 @@ export function Shell({ children }: { children: React.ReactNode }) {
                       <span>TOS & Privacy policy</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
-                </DropdownMenu>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Click to open nav, double click to go home</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+                  </DropdownMenu>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Click to open nav, double click to go home</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            {/* Title Text - Not clickable */}
+            <div className="flex flex-col">
+              <span className="text-lg font-bold text-foreground leading-tight">MongerMaps</span>
+              <span className="text-xs text-muted-foreground">Find the Gems. Avoid the Rip-offs.</span>
+            </div>
+          </div>
 
           {/* Search right after logo */}
           <Button
