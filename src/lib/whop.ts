@@ -1,10 +1,28 @@
-import { Whop } from '@whop-sdk/core';
 import { env } from '~/env';
 
-// Initialize Whop SDK
-export const whop = new Whop({
-  apiKey: env.WHOP_API_KEY || '',
-});
+// Whop API client (simplified for now to avoid Node.js dependencies in browser)
+export const whop = {
+  users: {
+    getUser: async (userId: string) => {
+      // Implement API call to Whop
+      throw new Error('Whop SDK integration needs server-side implementation');
+    },
+    getByEmail: async (email: string) => {
+      // Implement API call to Whop
+      throw new Error('Whop SDK integration needs server-side implementation');
+    },
+    getUsers: async () => {
+      // Implement API call to Whop
+      throw new Error('Whop SDK integration needs server-side implementation');
+    },
+  },
+  payments: {
+    chargeUser: async (options: any) => {
+      // Implement API call to Whop
+      throw new Error('Whop SDK integration needs server-side implementation');
+    },
+  },
+};
 
 // Whop configuration
 export const WHOP_CONFIG = {

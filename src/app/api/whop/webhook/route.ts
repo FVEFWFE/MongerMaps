@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHmac } from 'crypto';
 import { db } from '~/server/db';
-import { users } from '~/server/db/schema';
-import { eq } from 'drizzle-orm';
 
 // Webhook event types from Whop
 interface WhopWebhookEvent {
@@ -123,24 +121,21 @@ async function handlePaymentSucceeded(event: WhopWebhookEvent) {
     let user = null;
     
     if (email) {
-      user = await db.select().from(users).where(eq(users.email, email)).get();
+      user = await db.user.findUnique({ where: { email } });
     }
     
     if (!user && username) {
-      user = await db.select().from(users).where(eq(users.name, username)).get();
+      user = await db.user.findUnique({ where: { name: username } });
     }
 
     if (user) {
       // Update user subscription status
-      await db.update(users)
-        .set({
-          // Add subscription fields to your schema as needed
-          // subscription_status: 'active',
-          // whop_user_id: user_id,
-          // subscription_plan: product_id,
+      await db.user.update({
+        where: { id: user.id },
+        data: {
           updatedAt: new Date(),
-        })
-        .where(eq(users.id, user.id));
+        },
+      });
       
       console.log(`User ${user.email} subscription activated via Whop payment`);
     } else {
@@ -166,15 +161,14 @@ async function handleMembershipValid(event: WhopWebhookEvent) {
   try {
     // Similar to payment succeeded - activate membership
     if (email) {
-      const user = await db.select().from(users).where(eq(users.email, email)).get();
+      const user = await db.user.findUnique({ where: { email } });
       if (user) {
-        await db.update(users)
-          .set({
-            // subscription_status: 'active',
-            // whop_user_id: user_id,
+        await db.user.update({
+          where: { id: user.id },
+          data: {
             updatedAt: new Date(),
-          })
-          .where(eq(users.id, user.id));
+          },
+        });
       }
     }
     
@@ -190,14 +184,14 @@ async function handleMembershipInvalid(event: WhopWebhookEvent) {
   try {
     // Deactivate membership
     if (email) {
-      const user = await db.select().from(users).where(eq(users.email, email)).get();
+      const user = await db.user.findUnique({ where: { email } });
       if (user) {
-        await db.update(users)
-          .set({
-            // subscription_status: 'inactive',
+        await db.user.update({
+          where: { id: user.id },
+          data: {
             updatedAt: new Date(),
-          })
-          .where(eq(users.id, user.id));
+          },
+        });
       }
     }
     
@@ -235,14 +229,14 @@ async function handleRefund(event: WhopWebhookEvent) {
   // Handle refund - deactivate subscription, update user status
   try {
     if (email) {
-      const user = await db.select().from(users).where(eq(users.email, email)).get();
+      const user = await db.user.findUnique({ where: { email } });
       if (user) {
-        await db.update(users)
-          .set({
-            // subscription_status: 'refunded',
+        await db.user.update({
+          where: { id: user.id },
+          data: {
             updatedAt: new Date(),
-          })
-          .where(eq(users.id, user.id));
+          },
+        });
       }
     }
   } catch (error) {

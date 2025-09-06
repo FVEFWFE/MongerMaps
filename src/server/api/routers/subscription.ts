@@ -1,16 +1,14 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { whop } from "~/lib/whop";
-import { eq } from "drizzle-orm";
-import { subscriptions } from "~/server/db/schema";
 
 export const subscriptionRouter = createTRPCRouter({
   current: protectedProcedure
     .query(async ({ ctx }) => {
       // Get current user's subscription from database
-      const subscription = await ctx.db.query.subscriptions.findFirst({
-        where: eq(subscriptions.userId, ctx.session.user.id),
-        orderBy: (subscriptions, { desc }) => [desc(subscriptions.createdAt)],
+      const subscription = await ctx.db.subscription.findFirst({
+        where: { userId: ctx.session.user.id },
+        orderBy: { createdAt: 'desc' },
       });
 
       return subscription;
@@ -118,33 +116,30 @@ export const subscriptionRouter = createTRPCRouter({
         }
 
         // Create or update local subscription record
-        const existingSubscription = await ctx.db.query.subscriptions.findFirst({
-          where: eq(subscriptions.userId, ctx.session.user.id),
+        const existingSubscription = await ctx.db.subscription.findFirst({
+          where: { userId: ctx.session.user.id },
         });
 
         if (existingSubscription) {
           // Update existing subscription
-          await ctx.db.update(subscriptions)
-            .set({
-              type: "WHOP_MEMBERSHIP",
+          await ctx.db.subscription.update({
+            where: { id: existingSubscription.id },
+            data: {
+              type: "ANNUAL", // Using existing enum values
               status: "ACTIVE",
-              whopUserId: input.whopUserId,
-              whopMembershipId: input.membershipId,
-              whopProductId: input.productId,
               updatedAt: new Date(),
-            })
-            .where(eq(subscriptions.id, existingSubscription.id));
+            },
+          });
         } else {
           // Create new subscription
-          await ctx.db.insert(subscriptions).values({
-            userId: ctx.session.user.id,
-            type: "WHOP_MEMBERSHIP",
-            status: "ACTIVE",
-            whopUserId: input.whopUserId,
-            whopMembershipId: input.membershipId,
-            whopProductId: input.productId,
-            startDate: new Date(membership.created_at),
-            amount: 0, // Amount not tracked for Whop memberships
+          await ctx.db.subscription.create({
+            data: {
+              userId: ctx.session.user.id,
+              type: "ANNUAL", // Using existing enum values
+              status: "ACTIVE",
+              startDate: new Date(membership.created_at),
+              amount: 0, // Amount not tracked for Whop memberships
+            },
           });
         }
 
@@ -159,9 +154,9 @@ export const subscriptionRouter = createTRPCRouter({
   getStatus: protectedProcedure
     .query(async ({ ctx }) => {
       // Check both local database and Whop
-      const localSubscription = await ctx.db.query.subscriptions.findFirst({
-        where: eq(subscriptions.userId, ctx.session.user.id),
-        orderBy: (subscriptions, { desc }) => [desc(subscriptions.createdAt)],
+      const localSubscription = await ctx.db.subscription.findFirst({
+        where: { userId: ctx.session.user.id },
+        orderBy: { createdAt: 'desc' },
       });
 
       // Also check Whop membership

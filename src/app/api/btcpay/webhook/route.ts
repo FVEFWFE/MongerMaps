@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyBTCPayWebhook, getBTCPayInvoice, isInvoicePaid } from '~/lib/btcpay';
 import { db } from '~/server/db';
-import { users, subscriptions } from '~/server/db/schema';
-import { eq } from 'drizzle-orm';
 
 interface BTCPayWebhookEvent {
   deliveryId: string;
@@ -111,7 +109,9 @@ async function handlePaymentSuccess(event: BTCPayWebhookEvent) {
     });
 
     // Find user in database
-    const user = await db.select().from(users).where(eq(users.id, userId)).get();
+    const user = await db.user.findUnique({
+      where: { id: userId }
+    });
     
     if (!user) {
       console.error(`User not found: ${userId}`);
@@ -119,10 +119,9 @@ async function handlePaymentSuccess(event: BTCPayWebhookEvent) {
     }
 
     // Check if subscription already exists for this invoice
-    const existingSubscription = await db.select()
-      .from(subscriptions)
-      .where(eq(subscriptions.btcpayInvoiceId, event.invoiceId))
-      .get();
+    const existingSubscription = await db.subscription.findFirst({
+      where: { btcPayInvoiceId: event.invoiceId }
+    });
 
     if (existingSubscription) {
       console.log(`Subscription already exists for invoice ${event.invoiceId}`);
@@ -132,24 +131,17 @@ async function handlePaymentSuccess(event: BTCPayWebhookEvent) {
     // Create subscription record
     const subscriptionData = {
       userId: userId,
-      type: 'BITCOIN_MEMBERSHIP',
+      type: 'ANNUAL' as const, // Using existing enum values
       status: 'ACTIVE' as const,
       startDate: new Date(),
       endDate: null, // Lifetime access
-      btcpayInvoiceId: event.invoiceId,
-      btcpayStoreId: event.storeId,
-      amount: parseFloat(invoice.amount) * 100, // Convert to cents
-      currency: invoice.currency,
-      membershipLevel: membershipType,
-      paymentMethod: 'BITCOIN',
-      metadata: {
-        btcpay_invoice_id: event.invoiceId,
-        membership_type: membershipType,
-        payment_settled_at: new Date().toISOString(),
-      },
+      btcPayInvoiceId: event.invoiceId,
+      amount: Math.round(parseFloat(invoice.amount) * 100), // Convert to cents
     };
 
-    await db.insert(subscriptions).values(subscriptionData);
+    await db.subscription.create({
+      data: subscriptionData
+    });
 
     console.log(`Bitcoin subscription created for user ${userId}:`, {
       invoiceId: event.invoiceId,
