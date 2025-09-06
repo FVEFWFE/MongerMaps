@@ -5,7 +5,7 @@ import { useState, useRef } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
-import { Bird, Database, Globe, User, Search, Copy, DollarSign, ChevronDown, Gift, MapPin, MessageCircle, Users, Calendar, HelpCircle, Bug, Shield, Image, Moon, Heart, Shuffle, TrendingUp, Home } from "lucide-react"
+import { Bird, Database, Globe, User, Search, Copy, DollarSign, ChevronDown, Gift, MapPin, MessageCircle, Users, Calendar, HelpCircle, Bug, Shield, Image, Moon, Sun, Heart, Shuffle, TrendingUp, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -20,8 +20,10 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
+import { useTheme } from "next-themes"
 
 import CountUp from "./CountUp";
+import { ThemeToggle } from "./theme-toggle";
 
 // Dynamically import DecryptedText to avoid SSR issues
 const DecryptedText = dynamic(() => import("./DecryptedText"), {
@@ -57,10 +59,15 @@ export function Shell({
   const [referralCode] = useState("MONGER123") // Demo referral code
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const clickCountRef = useRef(0)
+  const { theme, setTheme } = useTheme()
 
   const handleCopyReferral = () => {
     navigator.clipboard.writeText(`https://mongermaps.com/ref/${referralCode}`)
     // You could add a toast notification here
+  }
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark')
   }
 
   const handleLogoClick = (e: React.MouseEvent) => {
@@ -108,11 +115,15 @@ export function Shell({
                     <DropdownMenuTrigger asChild>
                       <button 
                         onClick={handleLogoClick}
-                        className="relative h-10 w-10 flex-shrink-0 group cursor-zoom-in cursor-magnetic focus:outline-none focus:ring-0 focus:border-0 focus-visible:outline-none focus-visible:ring-0"
+                        className="relative h-12 w-12 flex-shrink-0 group cursor-zoom-in cursor-magnetic focus:outline-none focus:ring-0 focus:border-0 focus-visible:outline-none focus-visible:ring-0"
                         title="Click to open nav, double click to go home"
                       >
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center group-hover:opacity-90 transition-opacity">
-                          <Bird className="h-6 w-6 text-white" />
+                        <div className="absolute inset-0 rounded-lg overflow-hidden group-hover:opacity-90 transition-opacity">
+                          <img 
+                            src="/logo.png" 
+                            alt="MongerMaps Logo"
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                         {/* Dropdown arrow indicator */}
                         <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5">
@@ -137,9 +148,9 @@ export function Shell({
                           <Moon className="mr-2 h-4 w-4" />
                           <span>Cursor effect: {cursorEnabled ? 'On' : 'Off'}</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Moon className="mr-2 h-4 w-4" />
-                          <span>Dark mode</span>
+                        <DropdownMenuItem onClick={toggleTheme}>
+                          {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+                          <span>Dark mode: {theme === 'dark' ? 'On' : 'Off'}</span>
                         </DropdownMenuItem>
                     <DropdownMenuItem>
                       <Heart className="mr-2 h-4 w-4" />
@@ -279,6 +290,8 @@ export function Shell({
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4 ml-auto">
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* User Menu */}
             <DropdownMenu>

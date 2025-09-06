@@ -2695,8 +2695,18 @@ function HomePageContent() {
                         // 5. Affiliate Program
                         <Link href="/affiliate" key="affiliate-program">
                           <Card className="relative overflow-hidden transition-all cursor-pointer cursor-target group hover:shadow-xl hover:scale-[1.02] h-full">
-                            <div className="relative h-64 overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600">
-                              <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="relative h-64 overflow-hidden">
+                              {/* Background Image */}
+                              <div className="absolute inset-0">
+                                <img 
+                                  src="/affiliate.png" 
+                                  alt="MongerMaps Affiliate Program"
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black/40" />
+                              </div>
+                              {/* Content Overlay */}
+                              <div className="relative z-10 flex items-center justify-center h-full">
                                 <div className="text-center text-white p-4">
                                   <p className="text-xs italic opacity-90 mb-2">"Money is the world's greatest aphrodisiac"</p>
                                   <DollarSign className="h-12 w-12 mx-auto mb-3" />
@@ -2705,13 +2715,13 @@ function HomePageContent() {
                                   <p className="text-xs mt-2 opacity-75">$127 avg per referral</p>
                                 </div>
                               </div>
-                              <div className="absolute top-2 right-2">
+                              <div className="absolute top-2 right-2 z-20">
                                 <Badge className="bg-yellow-500 text-black">
                                   <Sparkles className="h-3 w-3 mr-1" />
                                   Hot
                                 </Badge>
                               </div>
-                              <div className="absolute bottom-2 left-2 right-2">
+                              <div className="absolute bottom-2 left-2 right-2 z-20">
                                 <Badge className="bg-black/70 text-white w-full justify-center">
                                   Start Earning →
                                 </Badge>
