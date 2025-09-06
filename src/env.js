@@ -22,8 +22,6 @@ export const env = createEnv({
       // VERCEL_URL doesn't include `https` so it cant be validated as a URL
       process.env.VERCEL ? z.string() : z.string().url()
     ),
-    STRIPE_SECRET_KEY: z.string().optional(),
-    STRIPE_WEBHOOK_SECRET: z.string().optional(),
     BTCPAY_SERVER_URL: z.string().url().optional(),
     BTCPAY_STORE_ID: z.string().optional(),
     BTCPAY_API_KEY: z.string().optional(),
@@ -33,6 +31,10 @@ export const env = createEnv({
     EMAIL_SERVER_PASSWORD: z.string().optional(),
     EMAIL_FROM: z.string().email().optional(),
     APIFY_TOKEN: z.string().optional(),
+    WHOP_API_KEY: z.string().optional(),
+    BTCPAY_SERVER_URL: z.string().url().optional(),
+    BTCPAY_STORE_ID: z.string().optional(),
+    BTCPAY_API_KEY: z.string().optional(),
   },
 
   /**
@@ -42,7 +44,11 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: z.string().optional(),
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
+    NEXT_PUBLIC_POSTHOG_HOST: z.string().url().optional(),
+    NEXT_PUBLIC_WHOP_APP_ID: z.string().optional(),
+    NEXT_PUBLIC_WHOP_AGENT_USER_ID: z.string().optional(),
+    NEXT_PUBLIC_WHOP_COMPANY_ID: z.string().optional(),
   },
 
   /**
@@ -55,9 +61,6 @@ export const env = createEnv({
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     BTCPAY_SERVER_URL: process.env.BTCPAY_SERVER_URL,
     BTCPAY_STORE_ID: process.env.BTCPAY_STORE_ID,
     BTCPAY_API_KEY: process.env.BTCPAY_API_KEY,
@@ -67,6 +70,15 @@ export const env = createEnv({
     EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
     EMAIL_FROM: process.env.EMAIL_FROM,
     APIFY_TOKEN: process.env.APIFY_TOKEN,
+    WHOP_API_KEY: process.env.WHOP_API_KEY,
+    BTCPAY_SERVER_URL: process.env.BTCPAY_SERVER_URL,
+    BTCPAY_STORE_ID: process.env.BTCPAY_STORE_ID,
+    BTCPAY_API_KEY: process.env.BTCPAY_API_KEY,
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    NEXT_PUBLIC_WHOP_APP_ID: process.env.NEXT_PUBLIC_WHOP_APP_ID,
+    NEXT_PUBLIC_WHOP_AGENT_USER_ID: process.env.NEXT_PUBLIC_WHOP_AGENT_USER_ID,
+    NEXT_PUBLIC_WHOP_COMPANY_ID: process.env.NEXT_PUBLIC_WHOP_COMPANY_ID,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

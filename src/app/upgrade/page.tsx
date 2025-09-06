@@ -20,34 +20,36 @@ import {
   AlertCircle
 } from "lucide-react";
 import { useState } from "react";
+import { usePostHog } from 'posthog-js/react';
+import { WhopPaymentButton } from '~/components/whop-payment-button';
+import { BitcoinPaymentButton } from '~/components/bitcoin-payment-button';
+import { WHOP_PRODUCTS, WHOP_PRICING } from '~/lib/whop';
+import { BITCOIN_PRICING } from '~/lib/btcpay';
+import { useWhopAuth } from '~/hooks/useWhopAuth';
 
 export default function UpgradePage() {
   const { data: session } = useSession();
   const router = useRouter();
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const { data: currentSubscription } = api.subscription.current.useQuery();
-  
-  const createBtcInvoice = api.subscription.createAnnualCheckout.useMutation({
-    onSuccess: (data) => {
-      if (data.btcPayUrl) {
-        window.location.href = data.btcPayUrl;
-      }
-    },
-    onError: () => {
-      setIsProcessing(false);
-      // TODO: Show error toast
-    },
-  });
+  const posthog = usePostHog();
+  const { hasValidMembership, memberships, loading: whopLoading } = useWhopAuth();
 
   if (!session) {
     router.push("/auth/signin?redirect=/upgrade");
     return null;
   }
 
-  const handleBitcoinPayment = () => {
-    setIsProcessing(true);
-    createBtcInvoice.mutate();
+  const handlePaymentSuccess = (data: any) => {
+    posthog?.capture('whop_payment_success', {
+      user_id: session?.user?.id,
+      payment_id: data.paymentId,
+    });
+    // Redirect to success page or dashboard
+    router.push('/welcome?upgraded=true');
+  };
+
+  const handlePaymentError = (error: any) => {
+    console.error('Payment error:', error);
+    // Could show toast notification here
   };
 
   const features = [
@@ -110,26 +112,123 @@ export default function UpgradePage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Payment Method */}
-            <div className="bg-gray-800 rounded-lg p-6 text-center">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Bitcoin className="h-6 w-6 text-orange-500" />
-                <span className="text-xl font-bold text-white">Bitcoin Only</span>
+            {/* Payment Methods */}
+            {whopLoading ? (
+              <div className="bg-gray-800 rounded-lg p-6 text-center">
+                <p className="text-gray-400">Loading membership status...</p>
               </div>
-              <p className="text-gray-400 mb-4">
-                Maximum privacy. No credit card trail. No questions asked.
-              </p>
-              <Button
-                onClick={handleBitcoinPayment}
-                disabled={isProcessing || currentSubscription?.type === "ANNUAL"}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3"
-              >
-                {isProcessing ? "Creating Invoice..." : "Pay with Bitcoin"}
-              </Button>
-              <p className="text-xs text-gray-500 mt-2">
-                Powered by BTCPay Server • Zero logs • Zero tracking
-              </p>
-            </div>
+            ) : hasValidMembership ? (
+              <div className="bg-green-800/20 border border-green-700 rounded-lg p-6 text-center">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <Check className="h-6 w-6 text-green-500" />
+                  <span className="text-xl font-bold text-green-400">Active Member</span>
+                </div>
+                <p className="text-gray-300">
+                  You already have an active membership to MongerMaps.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Annual Membership */}
+                <div className="bg-gray-800 rounded-lg p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold text-white">{WHOP_PRICING.ANNUAL_MEMBERSHIP.name}</h3>
+                      <p className="text-gray-400">{WHOP_PRICING.ANNUAL_MEMBERSHIP.description}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-3xl font-bold text-white">{WHOP_PRICING.ANNUAL_MEMBERSHIP.price}</div>
+                      <div className="text-sm text-gray-400">lifetime</div>
+                    </div>
+                  </div>
+                  
+                  {/* Payment Options */}
+                  <div className="space-y-3">
+                    <WhopPaymentButton
+                      productId={WHOP_PRODUCTS.ANNUAL_MEMBERSHIP}
+                      productName={WHOP_PRICING.ANNUAL_MEMBERSHIP.name}
+                      price={WHOP_PRICING.ANNUAL_MEMBERSHIP.price}
+                      onSuccess={handlePaymentSuccess}
+                      onError={handlePaymentError}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3"
+                    >
+                      Pay with Card/PayPal
+                    </WhopPaymentButton>
+                    
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1 h-px bg-gray-600"></div>
+                      <span className="text-sm text-gray-400">or</span>
+                      <div className="flex-1 h-px bg-gray-600"></div>
+                    </div>
+                    
+                    <BitcoinPaymentButton
+                      membershipType="ANNUAL_MEMBERSHIP"
+                      productName={BITCOIN_PRICING.ANNUAL_MEMBERSHIP.name}
+                      price={`$${BITCOIN_PRICING.ANNUAL_MEMBERSHIP.amount}`}
+                      onSuccess={handlePaymentSuccess}
+                      onError={handlePaymentError}
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3"
+                    >
+                      Pay with Bitcoin
+                    </BitcoinPaymentButton>
+                  </div>
+                </div>
+
+                {/* Lite Membership */}
+                <div className="bg-gray-800 rounded-lg p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold text-white">{WHOP_PRICING.LITE_MEMBERSHIP.name}</h3>
+                      <p className="text-gray-400">{WHOP_PRICING.LITE_MEMBERSHIP.description}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-3xl font-bold text-white">{WHOP_PRICING.LITE_MEMBERSHIP.price}</div>
+                      <div className="text-sm text-gray-400">lifetime</div>
+                    </div>
+                  </div>
+                  
+                  {/* Payment Options */}
+                  <div className="space-y-3">
+                    <WhopPaymentButton
+                      productId={WHOP_PRODUCTS.LITE_MEMBERSHIP}
+                      productName={WHOP_PRICING.LITE_MEMBERSHIP.name}
+                      price={WHOP_PRICING.LITE_MEMBERSHIP.price}
+                      onSuccess={handlePaymentSuccess}
+                      onError={handlePaymentError}
+                      className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3"
+                    >
+                      Pay with Card/PayPal
+                    </WhopPaymentButton>
+                    
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1 h-px bg-gray-600"></div>
+                      <span className="text-sm text-gray-400">or</span>
+                      <div className="flex-1 h-px bg-gray-600"></div>
+                    </div>
+                    
+                    <BitcoinPaymentButton
+                      membershipType="LITE_MEMBERSHIP"
+                      productName={BITCOIN_PRICING.LITE_MEMBERSHIP.name}
+                      price={`$${BITCOIN_PRICING.LITE_MEMBERSHIP.amount}`}
+                      onSuccess={handlePaymentSuccess}
+                      onError={handlePaymentError}
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3"
+                    >
+                      Pay with Bitcoin
+                    </BitcoinPaymentButton>
+                  </div>
+                </div>
+
+                <div className="text-center space-y-2">
+                  <p className="text-xs text-gray-500">
+                    Card/PayPal: Powered by Whop • Instant access
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Bitcoin: Powered by BTCPay Server • Maximum privacy • No tracking
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Features List */}
             <div className="space-y-3">

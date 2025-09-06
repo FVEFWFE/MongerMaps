@@ -9,11 +9,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { AlertCircle } from "lucide-react";
+import { usePostHog } from 'posthog-js/react';
 
 export default function SignInPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/dashboard";
+  const posthog = usePostHog();
   
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +26,11 @@ export default function SignInPage() {
     e.preventDefault();
     setError("");
     setIsLoading(true);
+    
+    posthog?.capture('login_attempt', {
+      redirect_path: redirect,
+      username: username
+    });
 
     try {
       const result = await signIn("credentials", {
@@ -34,11 +41,23 @@ export default function SignInPage() {
 
       if (result?.error) {
         setError("Invalid username or password");
+        posthog?.capture('login_failed', {
+          username: username,
+          error: 'invalid_credentials'
+        });
       } else {
+        posthog?.capture('login_success', {
+          username: username,
+          redirect_path: redirect
+        });
         router.push(redirect);
       }
     } catch (error) {
       setError("An error occurred. Please try again.");
+      posthog?.capture('login_failed', {
+        username: username,
+        error: 'api_error'
+      });
     } finally {
       setIsLoading(false);
     }
