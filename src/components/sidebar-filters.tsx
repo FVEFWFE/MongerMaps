@@ -96,6 +96,50 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
       ],
     },
     {
+      title: "Women",
+      layout: "half",
+      options: [
+        { id: "attractive", label: "😍 Very attractive", value: "attractive", type: "multi" },
+        { id: "easy-find", label: "🔍 Easy to find hot", value: "easy-find", type: "multi" },
+        { id: "low-tattoos", label: "🚫 Low tattoos", value: "low-tattoos", type: "multi" },
+        { id: "high-tattoos", label: "🎨 Many tattoos", value: "high-tattoos", type: "multi" },
+        { id: "friendly", label: "😊 Friendly personality", value: "friendly", type: "multi" },
+        { id: "professional", label: "💼 Professional", value: "professional", type: "multi" },
+      ],
+    },
+    {
+      title: "Culture",
+      layout: "half",
+      options: [
+        { id: "conservative", label: "🏛️ Conservative", value: "conservative", type: "multi" },
+        { id: "liberal", label: "🗽 Liberal", value: "liberal", type: "multi" },
+        { id: "traditional", label: "🎎 Traditional", value: "traditional", type: "multi" },
+        { id: "modern", label: "🏙️ Modern", value: "modern", type: "multi" },
+      ],
+    },
+    {
+      title: "Infrastructure",
+      layout: "half",
+      options: [
+        { id: "fast-internet", label: "🚀 50+ Mbps", value: "fast-internet", type: "multi" },
+        { id: "ultra-internet", label: "⚡ 100+ Mbps", value: "ultra-internet", type: "multi" },
+        { id: "luxury-hotels", label: "🏨 5-star hotels", value: "luxury-hotels", type: "multi" },
+        { id: "good-hotels", label: "🏢 Good hotels", value: "good-hotels", type: "multi" },
+        { id: "beautiful-env", label: "🌺 Beautiful environment", value: "beautiful-env", type: "multi" },
+        { id: "urban", label: "🌆 Urban setting", value: "urban", type: "multi" },
+      ],
+    },
+    {
+      title: "Timezone",
+      layout: "half",
+      options: [
+        { id: "tz-us-east", label: "🕐 US East (±3h)", value: "tz-us-east", type: "multi" },
+        { id: "tz-us-west", label: "🕑 US West (±3h)", value: "tz-us-west", type: "multi" },
+        { id: "tz-europe", label: "🕒 Europe (±3h)", value: "tz-europe", type: "multi" },
+        { id: "tz-asia", label: "🕓 Asia (±3h)", value: "tz-asia", type: "multi" },
+      ],
+    },
+    {
       title: "Vibe",
       layout: "pair",
       options: [
@@ -191,6 +235,42 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
               <div className="grid grid-cols-2 gap-1">
                 {category.options.map((option) =>
                   renderFilterButton(option, "features", category.layout)
+                )}
+              </div>
+            )}
+
+            {/* Women filters - Half width grid */}
+            {category.title === "Women" && (
+              <div className="grid grid-cols-2 gap-1">
+                {category.options.map((option) =>
+                  renderFilterButton(option, "women", category.layout)
+                )}
+              </div>
+            )}
+
+            {/* Culture filters - Half width grid */}
+            {category.title === "Culture" && (
+              <div className="grid grid-cols-2 gap-1">
+                {category.options.map((option) =>
+                  renderFilterButton(option, "culture", category.layout)
+                )}
+              </div>
+            )}
+
+            {/* Infrastructure filters - Half width grid */}
+            {category.title === "Infrastructure" && (
+              <div className="grid grid-cols-2 gap-1">
+                {category.options.map((option) =>
+                  renderFilterButton(option, "infrastructure", category.layout)
+                )}
+              </div>
+            )}
+
+            {/* Timezone filters - Half width grid */}
+            {category.title === "Timezone" && (
+              <div className="grid grid-cols-2 gap-1">
+                {category.options.map((option) =>
+                  renderFilterButton(option, "timezone", category.layout)
                 )}
               </div>
             )}

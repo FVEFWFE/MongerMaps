@@ -59,7 +59,23 @@ const cities = [
     image: "/bangkok-skyline-with-temples.jpg",
     region: "asia",
     temperature: "warm",
-    cost: "cheap"
+    cost: "cheap",
+    // New filter attributes
+    women: {
+      attractiveness: "high",
+      easyToFind: true,
+      tattooPrevalence: "low",
+      personality: "friendly"
+    },
+    culture: "liberal",
+    infrastructure: {
+      hotelQuality: "good",
+      internetCategory: "fast-internet",
+      environment: "urban"
+    },
+    timezone: "tz-asia",
+    safety: "safe",
+    features: ["nightlife", "24hr", "value", "beach", "legal"]
   },
   {
     slug: "bangkok",
@@ -86,7 +102,22 @@ const cities = [
     image: "/bangkok-skyline-with-temples.jpg",
     region: "asia",
     temperature: "warm",
-    cost: "cheap"
+    cost: "cheap",
+    women: {
+      attractiveness: "high",
+      easyToFind: true,
+      tattooPrevalence: "low",
+      personality: "friendly"
+    },
+    culture: "liberal",
+    infrastructure: {
+      hotelQuality: "luxury",
+      internetCategory: "ultra-internet",
+      environment: "urban"
+    },
+    timezone: "tz-asia",
+    safety: "safe",
+    features: ["nightlife", "24hr", "value", "legal", "english"]
   },
   {
     slug: "angeles",
@@ -113,7 +144,22 @@ const cities = [
     image: "/placeholder.jpg",
     region: "asia",
     temperature: "warm",
-    cost: "cheap"
+    cost: "cheap",
+    women: {
+      attractiveness: "high",
+      easyToFind: true,
+      tattooPrevalence: "low",
+      personality: "friendly"
+    },
+    culture: "traditional",
+    infrastructure: {
+      hotelQuality: "good",
+      internetCategory: "fast-internet",
+      environment: "urban"
+    },
+    timezone: "tz-asia",
+    safety: "safe",
+    features: ["nightlife", "walkable", "value", "legal", "english"]
   },
   {
     slug: "manila",
@@ -140,7 +186,22 @@ const cities = [
     image: "/placeholder.jpg",
     region: "asia",
     temperature: "warm",
-    cost: "mid"
+    cost: "mid",
+    women: {
+      attractiveness: "high",
+      easyToFind: true,
+      tattooPrevalence: "moderate",
+      personality: "professional"
+    },
+    culture: "modern",
+    infrastructure: {
+      hotelQuality: "good",
+      internetCategory: "fast-internet",
+      environment: "urban"
+    },
+    timezone: "tz-asia",
+    safety: "moderate",
+    features: ["nightlife", "value", "english"]
   },
   {
     slug: "jakarta",
@@ -167,7 +228,22 @@ const cities = [
     image: "/placeholder.jpg",
     region: "asia",
     temperature: "warm",
-    cost: "cheap"
+    cost: "cheap",
+    women: {
+      attractiveness: "moderate",
+      easyToFind: false,
+      tattooPrevalence: "low",
+      personality: "traditional"
+    },
+    culture: "conservative",
+    infrastructure: {
+      hotelQuality: "good",
+      internetCategory: "fast-internet",
+      environment: "urban"
+    },
+    timezone: "tz-asia",
+    safety: "moderate",
+    features: ["value"]
   },
   {
     slug: "phnom-penh",
@@ -194,7 +270,22 @@ const cities = [
     image: "/placeholder.jpg",
     region: "asia",
     temperature: "warm",
-    cost: "cheap"
+    cost: "cheap",
+    women: {
+      attractiveness: "high",
+      easyToFind: true,
+      tattooPrevalence: "moderate",
+      personality: "friendly"
+    },
+    culture: "liberal",
+    infrastructure: {
+      hotelQuality: "moderate",
+      internetCategory: "moderate",
+      environment: "urban"
+    },
+    timezone: "tz-asia",
+    safety: "moderate",
+    features: ["nightlife", "value", "cannabis"]
   },
   // Additional cities to fill the grid
   {
@@ -222,7 +313,22 @@ const cities = [
     image: "/dubai-skyline-burj-khalifa.png",
     region: "middle-east",
     temperature: "warm",
-    cost: "expensive"
+    cost: "expensive",
+    women: {
+      attractiveness: "high",
+      easyToFind: false,
+      tattooPrevalence: "low",
+      personality: "professional"
+    },
+    culture: "conservative",
+    infrastructure: {
+      hotelQuality: "luxury",
+      internetCategory: "ultra-internet",
+      environment: "urban"
+    },
+    timezone: "tz-europe",
+    safety: "safe",
+    features: ["luxury-hotels"]
   },
   {
     slug: "lisbon",
@@ -249,7 +355,22 @@ const cities = [
     image: "/lisbon-colorful-buildings-and-trams.jpg",
     region: "europe",
     temperature: "mild",
-    cost: "mid"
+    cost: "mid",
+    women: {
+      attractiveness: "high",
+      easyToFind: false,
+      tattooPrevalence: "moderate",
+      personality: "friendly"
+    },
+    culture: "liberal",
+    infrastructure: {
+      hotelQuality: "good",
+      internetCategory: "ultra-internet",
+      environment: "beautiful"
+    },
+    timezone: "tz-europe",
+    safety: "safe",
+    features: ["beach", "safe", "beautiful-env"]
   },
   {
     slug: "berlin",
@@ -276,7 +397,22 @@ const cities = [
     image: "/berlin-brandenburg-gate-and-modern-architecture.jpg",
     region: "europe",
     temperature: "mild",
-    cost: "mid"
+    cost: "mid",
+    women: {
+      attractiveness: "high",
+      easyToFind: true,
+      tattooPrevalence: "high",
+      personality: "professional"
+    },
+    culture: "liberal",
+    infrastructure: {
+      hotelQuality: "good",
+      internetCategory: "ultra-internet",
+      environment: "urban"
+    },
+    timezone: "tz-europe",
+    safety: "safe",
+    features: ["nightlife", "lgbtq", "cannabis", "24hr"]
   }
 ];
 
@@ -317,9 +453,80 @@ export default function HomePage() {
 
       // Cost filter
       if (activeFilters.cost?.length > 0) {
-        if (!activeFilters.cost.includes(city.cost)) {
-          return false;
+        // Map filter values to city cost values
+        const costMap = {
+          'budget': 'cheap',  // <$1K/mo maps to cheap
+          'cheap': 'cheap',   // <$2K/mo maps to cheap
+          'mid': 'mid'        // <$3K/mo maps to mid
+        };
+        
+        const matchesCost = activeFilters.cost.some(filterCost => {
+          const mappedCost = costMap[filterCost] || filterCost;
+          return city.cost === mappedCost || 
+                 (filterCost === 'budget' && city.cost === 'cheap') ||
+                 (filterCost === 'cheap' && ['cheap', 'mid'].includes(city.cost)) ||
+                 (filterCost === 'mid' && ['cheap', 'mid', 'expensive'].includes(city.cost));
+        });
+        
+        if (!matchesCost) return false;
+      }
+
+      // Essential filters
+      if (activeFilters.essential?.length > 0) {
+        for (const filter of activeFilters.essential) {
+          if (filter === "safe" && city.safety !== "safe") return false;
+          if (filter === "internet" && city.stats?.internetSpeed < 50) return false;
+          if (filter === "nightlife" && !city.features?.includes("nightlife")) return false;
+          if (filter === "24hr" && !city.features?.includes("24hr")) return false;
+          if (filter === "english" && !city.features?.includes("english")) return false;
+          if (filter === "walkable" && !city.features?.includes("walkable")) return false;
         }
+      }
+
+      // Features filters
+      if (activeFilters.features?.length > 0) {
+        for (const filter of activeFilters.features) {
+          if (!city.features?.includes(filter)) return false;
+        }
+      }
+
+      // Women filters
+      if (activeFilters.women?.length > 0) {
+        for (const filter of activeFilters.women) {
+          if (filter === "attractive" && city.women?.attractiveness !== "high") return false;
+          if (filter === "easy-find" && !city.women?.easyToFind) return false;
+          if (filter === "low-tattoos" && city.women?.tattooPrevalence !== "low") return false;
+          if (filter === "high-tattoos" && city.women?.tattooPrevalence !== "high") return false;
+          if (filter === "friendly" && city.women?.personality !== "friendly") return false;
+          if (filter === "professional" && city.women?.personality !== "professional") return false;
+        }
+      }
+
+      // Culture filters
+      if (activeFilters.culture?.length > 0) {
+        if (!activeFilters.culture.includes(city.culture)) return false;
+      }
+
+      // Infrastructure filters
+      if (activeFilters.infrastructure?.length > 0) {
+        for (const filter of activeFilters.infrastructure) {
+          if (filter === "fast-internet" && city.stats?.internetSpeed < 50) return false;
+          if (filter === "ultra-internet" && city.stats?.internetSpeed < 100) return false;
+          if (filter === "luxury-hotels" && city.infrastructure?.hotelQuality !== "luxury") return false;
+          if (filter === "good-hotels" && !["good", "luxury"].includes(city.infrastructure?.hotelQuality)) return false;
+          if (filter === "beautiful-env" && city.infrastructure?.environment !== "beautiful") return false;
+          if (filter === "urban" && city.infrastructure?.environment !== "urban") return false;
+        }
+      }
+
+      // Timezone filters
+      if (activeFilters.timezone?.length > 0) {
+        if (!activeFilters.timezone.includes(city.timezone)) return false;
+      }
+
+      // Vibe filters (single select)
+      if (activeFilters.vibe?.length > 0) {
+        // Add vibe logic if needed
       }
 
       return true;
