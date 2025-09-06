@@ -697,8 +697,10 @@ export default function HomePage() {
               Showing {filteredCities.length} of {cities.length} cities
                 </div>
 
-                {/* Responsive Grid: 6 cols on 4K, 5 on 2K, 4 on XL, 3 on LG, 2 on MD, 1 on mobile */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[2560px]:grid-cols-6 gap-4">
+                {/* Responsive Grid with Blur Paywall */}
+                <div className="relative">
+                  {/* Grid Container */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[2560px]:grid-cols-6 gap-4">
               {filteredCities.flatMap((city, index) => {
                 const items = [
                   <CityCard
@@ -813,6 +815,38 @@ export default function HomePage() {
                 
                 return items;
               })}
+                  </div>
+                  
+                  {/* Blur Overlay - Only shows when filters are active and user is not paid */}
+                  {Object.keys(activeFilters).length > 0 && !isPaid && (
+                    <div className="absolute inset-x-0 bottom-0 pointer-events-none" style={{ top: '48rem' }}>
+                      {/* Gradient blur effect */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/80 to-background backdrop-blur-[2px]" />
+                      
+                      {/* Message overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center p-6 bg-background/95 backdrop-blur-md rounded-lg border shadow-lg pointer-events-auto">
+                          <Sparkles className="h-8 w-8 mx-auto mb-3 text-primary" />
+                          <h3 className="text-lg font-semibold mb-2">
+                            To see all {filteredCities.length} results
+                          </h3>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            Join MongerMaps for unlimited access
+                          </p>
+                          <Button 
+                            onClick={() => {
+                              setShowPaywall(true);
+                              setPaywallFeature("filtered results");
+                            }}
+                            className="font-semibold"
+                          >
+                            Get Instant Access
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Load More Button */}
@@ -901,37 +935,8 @@ export default function HomePage() {
 
               {/* Right Sidebar */}
               <div className="w-64 flex-shrink-0 hidden 2xl:block p-4 md:p-6">
-            {/* Trending Cities */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm">Trending Now</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {filteredCities.slice(0, 4).map((city) => (
-                  <Link 
-                    key={city.slug}
-                    href={city.comingSoon ? "#" : `/city/${city.slug}`}
-                    className="flex items-center space-x-2 p-2 hover:bg-accent rounded-md transition-colors"
-                  >
-                    <div className="w-8 h-8 rounded overflow-hidden bg-muted flex items-center justify-center">
-                      <span className="text-lg">
-                        {city.flag}
-                      </span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">{city.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {isPaid ? `$${city.stats.fairPriceST}/mo` : "$???/mo"}
-                      </p>
-                    </div>
-                    <div className="text-xs text-muted-foreground">#{city.mongerRank}</div>
-                  </Link>
-                ))}
-              </CardContent>
-            </Card>
-
             {/* Featured Members */}
-            <Card className="mt-4">
+            <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm">Featured Members</CardTitle>
               </CardHeader>

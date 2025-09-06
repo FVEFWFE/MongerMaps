@@ -90,7 +90,7 @@ export function CityCard({
   return (
     <Card 
       className={cn(
-        "relative overflow-hidden transition-all cursor-pointer group",
+        "relative overflow-hidden transition-all cursor-zoom-in group",
         comingSoon && "opacity-75",
         "hover:shadow-xl hover:scale-[1.02]"
       )}

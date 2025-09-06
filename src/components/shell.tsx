@@ -21,7 +21,6 @@ import {
 import { cn } from "@/lib/utils"
 
 const navigation = [
-  { name: "Cities", href: "/", icon: Globe },
   { name: "Make Money Mongering", href: "/make-money", icon: DollarSign },
 ]
 
@@ -190,7 +189,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             className="hidden md:flex items-center gap-2 text-muted-foreground mr-8"
           >
             <Search className="h-4 w-4" />
-            <span className="hidden lg:inline">Find your next destination: Pattaya, Bangkok, Tijuana...</span>
+            <span className="hidden lg:inline">Search cities, venues with hot girls, 2.6M+ field reports...</span>
             <span className="lg:hidden">Search</span>
           </Button>
 
@@ -265,7 +264,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       {/* Search Dialog */}
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <CommandInput placeholder="Type a city, venue, or girl type (e.g., 'Bangkok', 'Soi Cowboy', 'GFE')..." />
+        <CommandInput placeholder="Search cities, venues with hot girls, 2.6M+ field reports..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Cities">

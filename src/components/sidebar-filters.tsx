@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { cn } from "~/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 
 interface FilterOption {
   id: string;
@@ -12,6 +13,7 @@ interface FilterOption {
   value: string;
   type: "single" | "multi";
   active?: boolean;
+  description?: string;
 }
 
 interface FilterCategory {
@@ -61,26 +63,26 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
       title: "Girl Quality & Availability",
       layout: "half",
       options: [
-        { id: "stunner-density", label: "😍 Stunner Density", value: "stunner-density", type: "multi" },
-        { id: "gfe-available", label: "💕 GFE Available", value: "gfe-available", type: "multi" },
-        { id: "age-18-25", label: "👱‍♀️ 18-25 Age Range", value: "age-18-25", type: "multi" },
-        { id: "age-25-35", label: "👩 25-35 Age Range", value: "age-25-35", type: "multi" },
-        { id: "english-girls", label: "🗣️ English Speaking", value: "english-girls", type: "multi" },
-        { id: "freelancer", label: "🚶‍♀️ Freelancer Scene", value: "freelancer", type: "multi" },
-        { id: "bar-girls", label: "🍺 Bar Girl Scene", value: "bar-girls", type: "multi" },
-        { id: "natural", label: "🌿 Natural Beauty", value: "natural", type: "multi" },
+        { id: "stunner-density", label: "😍 Stunner Density", value: "stunner-density", type: "multi", description: "High concentration of 9s and 10s" },
+        { id: "gfe-available", label: "💕 GFE Available", value: "gfe-available", type: "multi", description: "Girlfriend experience commonly offered" },
+        { id: "age-18-25", label: "👱‍♀️ 18-25 Age Range", value: "age-18-25", type: "multi", description: "Younger girls predominantly available" },
+        { id: "age-25-35", label: "👩 25-35 Age Range", value: "age-25-35", type: "multi", description: "More mature women available" },
+        { id: "english-girls", label: "🗣️ English Speaking", value: "english-girls", type: "multi", description: "Good English communication skills" },
+        { id: "freelancer", label: "🚶‍♀️ Freelancer Scene", value: "freelancer", type: "multi", description: "Independent girls at clubs/apps" },
+        { id: "bar-girls", label: "🍺 Bar Girl Scene", value: "bar-girls", type: "multi", description: "Traditional bar/gogo scene" },
+        { id: "natural", label: "🌿 Natural Beauty", value: "natural", type: "multi", description: "Minimal plastic surgery/enhancements" },
       ],
     },
     {
       title: "Value for Money",
       layout: "half",
       options: [
-        { id: "bang-buck", label: "💎 Best Bang/Buck", value: "bang-buck", type: "multi" },
-        { id: "transparent", label: "📋 Transparent Pricing", value: "transparent", type: "multi" },
-        { id: "barfine-cheap", label: "💵 Barfine <$20", value: "barfine-cheap", type: "multi" },
-        { id: "barfine-mid", label: "💸 Barfine $20-50", value: "barfine-mid", type: "multi" },
-        { id: "st-focus", label: "⏱️ ST Friendly", value: "st-focus", type: "multi" },
-        { id: "lt-friendly", label: "🌙 LT Accommodating", value: "lt-friendly", type: "multi" },
+        { id: "bang-buck", label: "💎 Best Bang/Buck", value: "bang-buck", type: "multi", description: "Exceptional value for quality" },
+        { id: "transparent", label: "📋 Transparent Pricing", value: "transparent", type: "multi", description: "No hidden fees or surprises" },
+        { id: "barfine-cheap", label: "💵 Barfine <$20", value: "barfine-cheap", type: "multi", description: "Low bar release fees" },
+        { id: "barfine-mid", label: "💸 Barfine $20-50", value: "barfine-mid", type: "multi", description: "Moderate bar release fees" },
+        { id: "st-focus", label: "⏱️ ST Friendly", value: "st-focus", type: "multi", description: "Short time culture established" },
+        { id: "lt-friendly", label: "🌙 LT Accommodating", value: "lt-friendly", type: "multi", description: "Girls open to overnight stays" },
         { id: "massage-cheap", label: "💆 Cheap Massages", value: "massage-cheap", type: "multi" },
         { id: "no-hidden", label: "✅ No Hidden Fees", value: "no-hidden", type: "multi" },
       ],
@@ -200,7 +202,7 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
   ) => {
     const isActive = activeFilters[category]?.includes(option.value);
     
-    return (
+    const button = (
       <Button
         key={option.id}
         variant="ghost"
@@ -211,28 +213,44 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
           layout === "half" && "flex-1",
           layout === "pair" && "flex-1",
           isActive
-            ? "bg-primary hover:bg-primary/90 text-primary-foreground"
-            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+            ? "bg-primary hover:bg-primary/90 text-primary-foreground cursor-remove"
+            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground cursor-add",
           "transition-colors"
         )}
       >
         {option.label}
       </Button>
     );
+
+    if (option.description) {
+      return (
+        <Tooltip key={option.id}>
+          <TooltipTrigger asChild>
+            {button}
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p className="text-xs">{option.description}</p>
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return button;
   };
 
   return (
-    <div className={cn(
-      "w-80 flex-shrink-0 overflow-y-auto",
-      // Custom scrollbar styles for dark UI
-      "[&::-webkit-scrollbar]:w-2",
-      "[&::-webkit-scrollbar-track]:bg-transparent",
-      "[&::-webkit-scrollbar-thumb]:bg-zinc-700",
-      "[&::-webkit-scrollbar-thumb]:rounded-full",
-      "[&::-webkit-scrollbar-thumb:hover]:bg-zinc-600",
-      "scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent",
-      className
-    )}>
+    <TooltipProvider>
+      <div className={cn(
+        "w-80 flex-shrink-0 overflow-y-auto",
+        // Custom scrollbar styles for dark UI
+        "[&::-webkit-scrollbar]:w-2",
+        "[&::-webkit-scrollbar-track]:bg-transparent",
+        "[&::-webkit-scrollbar-thumb]:bg-zinc-700",
+        "[&::-webkit-scrollbar-thumb]:rounded-full",
+        "[&::-webkit-scrollbar-thumb:hover]:bg-zinc-600",
+        "scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent",
+        className
+      )}>
       {/* Logo Section at Top (Optional - uncomment to use) */}
       {/*
       <div className="bg-card border-r border-b p-6">
@@ -323,5 +341,6 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
         </div>
       </div>
     </div>
+    </TooltipProvider>
   );
 }
