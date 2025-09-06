@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
 
-// Dynamically import BlurText to avoid SSR issues
-const BlurText = dynamic(() => import("~/components/BlurText"), {
+// Dynamically import DecryptedText to avoid SSR issues
+const DecryptedText = dynamic(() => import("./DecryptedText"), {
   ssr: false,
   loading: () => (
     <div className="flex items-center justify-center gap-8">
@@ -239,10 +239,18 @@ export function Shell({
 
           {/* Tagline */}
           <div className="hidden xl:flex flex-col mx-4 text-xs max-w-lg">
-            <span className="font-semibold text-foreground">Stop Wasting Your Travels on 'Starfish'.</span>
-            <span className="text-muted-foreground">
-              Live member-vetted map. Real stunners. Real-time prices. No outdated forums.
-            </span>
+            <DecryptedText 
+              text="Stop Wasting Your Travels on 'Starfish'." 
+              className="font-semibold text-foreground"
+              speed={30}
+              maxIterations={15}
+            />
+            <DecryptedText 
+              text="Live member-vetted map. Real stunners. Real-time prices. No outdated forums."
+              className="text-muted-foreground"
+              speed={40}
+              maxIterations={12}
+            />
           </div>
 
           {/* Navigation Links - hidden since empty */}
@@ -315,26 +323,27 @@ export function Shell({
           {/* Philosophical Hook & Social Proof Bar */}
           <div className="hidden lg:block px-6 py-3 bg-muted/20 border-b text-xs text-center">
             <div className="flex items-center justify-center gap-8">
-              <BlurText
+              <DecryptedText
                 text="Because men who've earned their freedom deserve to enjoy it without getting scammed."
-                delay={100}
-                animateBy="words"
-                direction="top"
                 className="text-muted-foreground italic"
+                speed={35}
+                maxIterations={18}
+                sequential={true}
+                revealDirection="center"
               />
-              <BlurText
+              <DecryptedText
                 text="•"
-                delay={1500}
-                animateBy="letters"
-                direction="top"
                 className="text-muted-foreground"
+                speed={50}
+                maxIterations={8}
               />
-              <BlurText
+              <DecryptedText
                 text="2.6M+ Reports. No BS. Trusted by 12,000+ Vets."
-                delay={150}
-                animateBy="words"
-                direction="bottom"
                 className="text-muted-foreground font-medium"
+                speed={45}
+                maxIterations={15}
+                sequential={true}
+                revealDirection="start"
               />
             </div>
           </div>
