@@ -105,8 +105,8 @@ export function CityCard({
           }
         }}
       >
-        {/* Image Container */}
-        <div className="relative h-48 overflow-hidden">
+        {/* Image Container - Changed to rectangular aspect ratio */}
+        <div className="relative h-64 overflow-hidden">
           {/* City Image */}
           <div className="absolute inset-0">
             {image ? (

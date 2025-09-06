@@ -129,9 +129,9 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
           layout === "half" && "flex-1",
           layout === "pair" && "flex-1",
           isActive
-            ? "bg-red-500 hover:bg-red-600 text-white border-red-500"
-            : "text-gray-300 hover:bg-gray-700 hover:text-white border-transparent hover:border-gray-600",
-          "border transition-colors"
+            ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+          "transition-colors"
         )}
       >
         {option.label}
@@ -140,26 +140,26 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
   };
 
   return (
-    <div className={cn("w-64 flex-shrink-0", className)}>
+    <div className={cn("w-80 flex-shrink-0", className)}>
       {/* Search and Filters Container */}
-      <div className="bg-gray-800 rounded border border-gray-700 p-4 mb-4">
+      <div className="bg-card rounded-lg border p-4 mb-4">
         {/* Search */}
         <div className="relative mb-3">
-          <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">
+          <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground">
             <SearchIcon className="h-4 w-4" />
           </div>
           <Input
             placeholder="Search cities..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8 h-8 text-sm bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+            className="pl-8 h-8 text-sm"
           />
         </div>
 
         {/* Filter Categories */}
         {filterCategories.map((category) => (
           <div key={category.title} className="mb-6 last:mb-0">
-            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               {category.title}
             </h4>
 
@@ -212,26 +212,26 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
       </div>
 
       {/* Stats Box */}
-      <div className="bg-gray-800 rounded border border-gray-700 p-4">
-        <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+      <div className="bg-card rounded-lg border p-4">
+        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
           Stats
         </h4>
         <div className="space-y-2 text-xs">
           <div className="flex justify-between">
-            <span className="text-gray-400">Cities</span>
-            <span className="font-medium text-white">12</span>
+            <span className="text-muted-foreground">Cities</span>
+            <span className="font-medium">12</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">Members</span>
-            <span className="font-medium text-white">2,847</span>
+            <span className="text-muted-foreground">Members</span>
+            <span className="font-medium">2,847</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">Reports Today</span>
-            <span className="font-medium text-white">842</span>
+            <span className="text-muted-foreground">Reports Today</span>
+            <span className="font-medium">842</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">Active Venues</span>
-            <span className="font-medium text-white">1,247</span>
+            <span className="text-muted-foreground">Active Venues</span>
+            <span className="font-medium">1,247</span>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { useSession } from "next-auth/react";
+import { Shell } from "~/components/shell";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -326,71 +327,22 @@ export default function HomePage() {
   }, [activeFilters]);
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      {/* Header */}
-      <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
-        <div className="max-w-full mx-auto px-4">
-          <div className="flex items-center justify-between h-12">
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center">
-                <div className="w-6 h-6 bg-red-500 rounded-sm flex items-center justify-center">
-                  <span className="text-white font-bold text-xs">M</span>
-                </div>
-                <span className="ml-2 text-lg font-semibold text-white">MongerMaps</span>
-              </div>
-              <nav className="hidden md:flex items-center space-x-4 text-sm">
-                <Link href="/" className="text-gray-300 hover:text-white">
-                  Cities
-                </Link>
-                <Link href="/global-rankings" className="text-gray-300 hover:text-white">
-                  Rankings
-                </Link>
-                <Link href="/make-money" className="text-gray-300 hover:text-white">
-                  Earn
-                </Link>
-                <Link href="/intel-database" className="text-gray-300 hover:text-white">
-                  Intel
-                </Link>
-              </nav>
-            </div>
-
-            <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="sm" className="text-xs text-gray-400 hover:text-white hover:bg-gray-800">
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm" className="text-xs text-gray-400 hover:text-white hover:bg-gray-800">
-                Sort: Overall <ChevronDown className="h-4 w-4 ml-1" />
-              </Button>
-              {!isPaid && (
-                <Button 
-                  size="sm" 
-                  className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1"
-                  onClick={() => handleUnlockFeature("premium access")}
-                >
-                  Upgrade
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <div className="max-w-full mx-auto px-4 py-4">
+    <Shell>
+      <div className="p-4 md:p-6">
         {/* Mobile Filter Button */}
         <div className="lg:hidden mb-4">
           <Button 
             variant="outline" 
             size="sm"
-            className="w-full text-sm border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+            className="w-full text-sm"
           >
             <SearchIcon className="h-4 w-4 mr-2" />
             Filters
           </Button>
         </div>
 
-        <div className="flex gap-4">
-          {/* Sidebar Filters */}
+        <div className="flex gap-6">
+          {/* Sidebar Filters - Now wider */}
           <SidebarFilters 
             onFilterChange={setActiveFilters}
             className="hidden lg:block"
@@ -398,12 +350,27 @@ export default function HomePage() {
 
           {/* Main Content Area */}
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="text-lg font-semibold text-white">Best cities for mongering worldwide</h1>
-              <div className="text-xs text-gray-400">Showing {filteredCities.length} of {cities.length} cities</div>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold">Cities</h1>
+                <p className="text-muted-foreground">Best cities for mongering worldwide</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm">
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="sm">
+                  Sort: Overall <ChevronDown className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            <div className="text-sm text-muted-foreground mb-4">
+              Showing {filteredCities.length} of {cities.length} cities
+            </div>
+
+            {/* Responsive Grid: 6 cols on 4K, 5 on 2K, 4 on XL, 3 on LG, 2 on MD, 1 on mobile */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[2560px]:grid-cols-6 gap-4">
               {filteredCities.map((city) => (
                 <CityCard
                   key={city.slug}
@@ -418,11 +385,10 @@ export default function HomePage() {
             </div>
 
             {/* Load More Button */}
-            <div className="text-center mt-6">
+            <div className="text-center mt-8">
               <Button
                 variant="outline"
                 size="sm"
-                className="text-sm bg-transparent border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
               >
                 Load more cities
               </Button>
@@ -430,69 +396,71 @@ export default function HomePage() {
           </div>
 
           {/* Right Sidebar */}
-          <div className="w-64 flex-shrink-0 hidden xl:block">
+          <div className="w-64 flex-shrink-0 hidden 2xl:block">
             {/* Trending Cities */}
-            <div className="bg-gray-900 rounded border border-gray-800 p-4 mb-4">
-              <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
-                Trending Now
-              </h4>
-              <div className="space-y-2">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">Trending Now</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
                 {filteredCities.slice(0, 4).map((city) => (
                   <Link 
                     key={city.slug}
                     href={city.comingSoon ? "#" : `/city/${city.slug}`}
-                    className="flex items-center space-x-2 p-1 hover:bg-gray-800 rounded cursor-pointer"
+                    className="flex items-center space-x-2 p-2 hover:bg-accent rounded-md transition-colors"
                   >
-                    <div className="w-8 h-8 rounded overflow-hidden bg-gray-700">
-                      <span className="text-lg flex items-center justify-center h-full">
+                    <div className="w-8 h-8 rounded overflow-hidden bg-muted flex items-center justify-center">
+                      <span className="text-lg">
                         {city.flag}
                       </span>
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-xs text-white">{city.name}</p>
-                      <p className="text-xs text-gray-400">
+                      <p className="font-medium text-sm">{city.name}</p>
+                      <p className="text-xs text-muted-foreground">
                         {isPaid ? `$${city.stats.fairPriceST}/mo` : "$???/mo"}
                       </p>
                     </div>
-                    <div className="text-xs text-gray-400">#{city.mongerRank}</div>
+                    <div className="text-xs text-muted-foreground">#{city.mongerRank}</div>
                   </Link>
                 ))}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
             {/* Community Box */}
-            <div className="bg-gray-900 rounded border border-gray-800 p-4 mb-4">
-              <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
-                Community
-              </h4>
-              <div className="grid grid-cols-8 gap-1 mb-3">
-                {Array.from({ length: 32 }).map((_, i) => (
-                  <div key={i} className="w-6 h-6 bg-gray-700 rounded-full" />
-                ))}
-              </div>
-              <p className="text-xs text-gray-400 mb-3">2,847+ mongers worldwide</p>
-              {!isPaid && (
-                <Button 
-                  size="sm" 
-                  className="w-full bg-red-500 hover:bg-red-600 text-xs"
-                  onClick={() => handleUnlockFeature("community access")}
-                >
-                  Join community
-                </Button>
-              )}
-            </div>
+            <Card className="mt-4">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">Community</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-8 gap-1 mb-3">
+                  {Array.from({ length: 32 }).map((_, i) => (
+                    <div key={i} className="w-6 h-6 bg-muted rounded-full" />
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mb-3">2,847+ mongers worldwide</p>
+                {!isPaid && (
+                  <Button 
+                    size="sm" 
+                    className="w-full"
+                    onClick={() => handleUnlockFeature("community access")}
+                  >
+                    Join community
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Quick Actions */}
-            <div className="bg-gray-900 rounded border border-gray-800 p-4">
-              <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
-                Quick Actions
-              </h4>
-              <div className="space-y-2">
+            <Card className="mt-4">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
                 <Link href="/make-money" className="block">
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="w-full text-xs justify-start border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+                    className="w-full justify-start"
                   >
                     <DollarSign className="h-3 w-3 mr-2" />
                     Make Money
@@ -502,14 +470,14 @@ export default function HomePage() {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="w-full text-xs justify-start border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+                    className="w-full justify-start"
                   >
                     <Target className="h-3 w-3 mr-2" />
                     Intel Database
                   </Button>
                 </Link>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
@@ -526,6 +494,6 @@ export default function HomePage() {
         city={selectedCity}
         isPaid={isPaid}
       />
-    </div>
+    </Shell>
   );
 }
