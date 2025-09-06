@@ -1,106 +1,181 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import Stripe from "stripe";
-import { env } from "~/env";
-
-const stripe = env.STRIPE_SECRET_KEY ? new Stripe(env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-12-18.acacia",
-}) : null;
+import { whop } from "~/lib/whop";
 
 export const subscriptionRouter = createTRPCRouter({
   current: protectedProcedure
     .query(async ({ ctx }) => {
+      // Get current user's subscription from database
       const subscription = await ctx.db.subscription.findFirst({
-        where: {
-          userId: ctx.session.user.id,
-          status: "ACTIVE",
-          OR: [
-            { endDate: null },
-            { endDate: { gte: new Date() } }
-          ]
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
+        where: { userId: ctx.session.user.id },
+        orderBy: { createdAt: 'desc' },
       });
 
       return subscription;
     }),
 
-  createTripPassCheckout: protectedProcedure
-    .mutation(async ({ ctx }) => {
-      if (!stripe) {
-        throw new Error("Stripe is not configured");
-      }
-
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        line_items: [
-          {
-            price_data: {
-              currency: "usd",
-              product_data: {
-                name: "MongerMaps 7-Day Trip Pass",
-                description: "Full access to all MongerMaps features for 7 days",
-              },
-              unit_amount: 2900, // $29.00
-            },
-            quantity: 1,
-          },
-        ],
-        mode: "payment",
-        success_url: `${env.NEXTAUTH_URL}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${env.NEXTAUTH_URL}/thank-you-offer`,
-        metadata: {
-          userId: ctx.session.user.id,
-          subscriptionType: "TRIP_PASS",
-        },
-      });
-
-      return { checkoutUrl: session.url };
-    }),
-
-  createAnnualCheckout: protectedProcedure
-    .mutation(async ({ ctx }) => {
-      // For annual subscriptions, we use BTCPay Server
-      // This is a placeholder - implement BTCPay integration
-      
-      return {
-        btcPayUrl: `${env.BTCPAY_SERVER_URL}/invoice?storeId=${env.BTCPAY_STORE_ID}`,
-      };
-    }),
-
-  confirmStripePayment: protectedProcedure
+  // Check Whop membership status
+  checkWhopMembership: protectedProcedure
     .input(z.object({
-      sessionId: z.string(),
+      productId: z.string().optional(),
+    }))
+    .query(async ({ ctx, input }) => {
+      try {
+        if (!ctx.session.user.email) {
+          return { hasAccess: false, memberships: [] };
+        }
+
+        // Get user by email from Whop
+        const user = await whop.users.getByEmail(ctx.session.user.email);
+        
+        if (!user) {
+          return { hasAccess: false, memberships: [] };
+        }
+
+        const memberships = user.memberships || [];
+        const validMemberships = memberships.filter((membership: any) => {
+          if (!membership.valid) return false;
+          if (input.productId && membership.product_id !== input.productId) return false;
+          return true;
+        });
+
+        return {
+          hasAccess: validMemberships.length > 0,
+          memberships: validMemberships,
+          whopUser: {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+          },
+        };
+      } catch (error) {
+        console.error('Error checking Whop membership:', error);
+        return { hasAccess: false, memberships: [] };
+      }
+    }),
+
+  // Create Whop payment session
+  createWhopPayment: protectedProcedure
+    .input(z.object({
+      productId: z.string(),
+      planId: z.string().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      if (!stripe) {
-        throw new Error("Stripe is not configured");
-      }
+      try {
+        if (!ctx.session.user.email) {
+          throw new Error("User email is required");
+        }
 
-      const session = await stripe.checkout.sessions.retrieve(input.sessionId);
-
-      if (session.payment_status === "paid" && session.metadata?.userId === ctx.session.user.id) {
-        // Create subscription
-        const endDate = new Date();
-        endDate.setDate(endDate.getDate() + 7); // 7 days for Trip Pass
-
-        await ctx.db.subscription.create({
-          data: {
-            userId: ctx.session.user.id,
-            type: "TRIP_PASS",
-            status: "ACTIVE",
-            startDate: new Date(),
-            endDate,
-            stripeSessionId: session.id,
-            amount: 2900,
+        // Create payment with Whop SDK
+        const payment = await whop.payments.chargeUser({
+          userId: ctx.session.user.email, // Whop uses email as identifier
+          amount: 0, // Amount determined by product
+          currency: 'usd',
+          productId: input.productId,
+          planId: input.planId,
+          metadata: {
+            mongermaps_user_id: ctx.session.user.id,
+            mongermaps_email: ctx.session.user.email,
+            source: 'mongermaps_subscription',
           },
         });
 
+        return {
+          success: true,
+          paymentId: payment.id,
+          checkoutUrl: payment.checkout_session?.url || payment.url,
+        };
+      } catch (error) {
+        console.error('Error creating Whop payment:', error);
+        throw new Error('Failed to create payment session');
+      }
+    }),
+
+  // Sync local subscription with Whop membership
+  syncWithWhop: protectedProcedure
+    .input(z.object({
+      whopUserId: z.string(),
+      membershipId: z.string(),
+      productId: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        // Verify the membership exists and is valid
+        const whopUser = await whop.users.getUser(input.whopUserId);
+        
+        if (whopUser.email !== ctx.session.user.email) {
+          throw new Error("Email mismatch between accounts");
+        }
+
+        const membership = whopUser.memberships?.find(
+          (m: any) => m.id === input.membershipId && m.valid
+        );
+
+        if (!membership) {
+          throw new Error("Valid membership not found");
+        }
+
+        // Create or update local subscription record
+        const existingSubscription = await ctx.db.subscription.findFirst({
+          where: { userId: ctx.session.user.id },
+        });
+
+        if (existingSubscription) {
+          // Update existing subscription
+          await ctx.db.subscription.update({
+            where: { id: existingSubscription.id },
+            data: {
+              type: "ANNUAL", // Using existing enum values
+              status: "ACTIVE",
+              updatedAt: new Date(),
+            },
+          });
+        } else {
+          // Create new subscription
+          await ctx.db.subscription.create({
+            data: {
+              userId: ctx.session.user.id,
+              type: "ANNUAL", // Using existing enum values
+              status: "ACTIVE",
+              startDate: new Date(membership.created_at),
+              amount: 0, // Amount not tracked for Whop memberships
+            },
+          });
+        }
+
         return { success: true };
+      } catch (error) {
+        console.error('Error syncing with Whop:', error);
+        throw new Error('Failed to sync subscription');
+      }
+    }),
+
+  // Get subscription status for UI
+  getStatus: protectedProcedure
+    .query(async ({ ctx }) => {
+      // Check both local database and Whop
+      const localSubscription = await ctx.db.subscription.findFirst({
+        where: { userId: ctx.session.user.id },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      // Also check Whop membership
+      let whopMembership = null;
+      try {
+        if (ctx.session.user.email) {
+          const user = await whop.users.getByEmail(ctx.session.user.email);
+          if (user?.memberships) {
+            whopMembership = user.memberships.find((m: any) => m.valid);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking Whop membership:', error);
       }
 
-      throw new Error("Payment not completed or unauthorized");
+      return {
+        localSubscription,
+        whopMembership,
+        hasAccess: !!(localSubscription?.status === "ACTIVE" || whopMembership?.valid),
+      };
     }),
 });

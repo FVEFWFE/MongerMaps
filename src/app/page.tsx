@@ -5,6 +5,7 @@ import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Shell } from "~/components/shell";
+import CountUp from "~/components/CountUp";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -72,7 +73,7 @@ const cities = [
       internetSpeed: 85,
       airQuality: 45
     },
-    badges: ["Most Active", "Best Value", "24/7 Action"],
+    badges: ["Popular", "Most Active", "Best Value", "24/7 Action"],
     trending: true,
     image: "https://images.unsplash.com/photo-1545996124-0501ebae84d0?w=800&h=600&fit=crop",
     region: "asia",
@@ -2545,7 +2546,7 @@ function HomePageContent() {
   }, [activeFilters]);
 
   return (
-    <>
+    <div className={cursorEnabled ? 'cursor-hidden' : ''}>
       {cursorEnabled && (
         <TargetCursor 
           targetSelector=".cursor-target"
@@ -2694,8 +2695,18 @@ function HomePageContent() {
                         // 5. Affiliate Program
                         <Link href="/affiliate" key="affiliate-program">
                           <Card className="relative overflow-hidden transition-all cursor-pointer cursor-target group hover:shadow-xl hover:scale-[1.02] h-full">
-                            <div className="relative h-64 overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600">
-                              <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="relative h-64 overflow-hidden">
+                              {/* Background Image */}
+                              <div className="absolute inset-0">
+                                <img 
+                                  src="/affiliate.png" 
+                                  alt="MongerMaps Affiliate Program"
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black/40" />
+                              </div>
+                              {/* Content Overlay */}
+                              <div className="relative z-10 flex items-center justify-center h-full">
                                 <div className="text-center text-white p-4">
                                   <p className="text-xs italic opacity-90 mb-2">"Money is the world's greatest aphrodisiac"</p>
                                   <DollarSign className="h-12 w-12 mx-auto mb-3" />
@@ -2704,13 +2715,13 @@ function HomePageContent() {
                                   <p className="text-xs mt-2 opacity-75">$127 avg per referral</p>
                                 </div>
                               </div>
-                              <div className="absolute top-2 right-2">
+                              <div className="absolute top-2 right-2 z-20">
                                 <Badge className="bg-yellow-500 text-black">
                                   <Sparkles className="h-3 w-3 mr-1" />
                                   Hot
                                 </Badge>
                               </div>
-                              <div className="absolute bottom-2 left-2 right-2">
+                              <div className="absolute bottom-2 left-2 right-2 z-20">
                                 <Badge className="bg-black/70 text-white w-full justify-center">
                                   Start Earning →
                                 </Badge>
@@ -2853,7 +2864,7 @@ function HomePageContent() {
                   <div className="text-left">
                     <p className="font-semibold text-sm mb-2">What You're Escaping:</p>
                     <div className="text-xs text-muted-foreground space-y-1">
-                      <div>❌ 500 pages of ISG for one useful tip</div>
+                      <div>❌ 500 pages of ISG/Reddit for one useful tip</div>
                       <div>❌ Half the links dead. Info from 2019</div>
                       <div>❌ "No guests allowed sir" at 2am</div>
                       <div>❌ Same questions asked 1000 times</div>
@@ -2877,15 +2888,21 @@ function HomePageContent() {
               {/* Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">2.6M+</div>
+                  <div className="text-2xl font-bold text-primary">
+                    <CountUp from={0} to={2600000} duration={2.5} separator="," className="inline" />+
+                  </div>
                   <div className="text-xs text-muted-foreground">Field Reports Analyzed</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">847</div>
+                  <div className="text-2xl font-bold text-primary">
+                    <CountUp from={0} to={847} duration={2} className="inline" />
+                  </div>
                   <div className="text-xs text-muted-foreground">Cities Ranked</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">50K+</div>
+                  <div className="text-2xl font-bold text-primary">
+                    <CountUp from={0} to={50000} duration={2.2} separator="," className="inline" />+
+                  </div>
                   <div className="text-xs text-muted-foreground">Active Venues</div>
                 </div>
                 <div className="text-center">
@@ -2942,7 +2959,7 @@ function HomePageContent() {
         isPaid={isPaid}
         currentCity={selectedCity?.slug || "all"}
       />
-    </>
+    </div>
   );
 }
 

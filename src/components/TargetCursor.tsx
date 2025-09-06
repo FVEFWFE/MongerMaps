@@ -39,7 +39,7 @@ const TargetCursor = ({
   useEffect(() => {
     if (!cursorRef.current) return;
 
-    const originalCursor = document.body.style.cursor;
+    const originalCursor = document.body.style.cursor || 'auto';
     if (hideDefaultCursor) {
       document.body.style.cursor = 'none';
     }
@@ -162,6 +162,25 @@ const TargetCursor = ({
 
       gsap.set(cursorRef.current, { rotation: 0 });
 
+      // Update cursor icon based on target element
+      if (dotRef.current) {
+        const cursorType = target.getAttribute('data-cursor') || '';
+        const isFilterActive = target.classList.contains('bg-primary');
+        
+        let icon = '';
+        if (cursorType === 'add' || (target.closest('.cursor-target') && !isFilterActive)) {
+          icon = '+';
+        } else if (cursorType === 'remove' || isFilterActive) {
+          icon = '−';
+        } else if (cursorType === 'search' || target.closest('[data-cursor="search"]')) {
+          icon = '🔍';
+        } else if (target.closest('.city-card, [data-cursor="magnify"]')) {
+          icon = '🔍';
+        }
+        
+        dotRef.current.textContent = icon;
+      }
+
       const updateCorners = (mouseX?: number, mouseY?: number) => {
         const rect = target.getBoundingClientRect();
         const cursorRect = cursorRef.current!.getBoundingClientRect();
@@ -244,6 +263,11 @@ const TargetCursor = ({
       const leaveHandler = () => {
         activeTarget = null;
         isAnimatingToTarget = false;
+
+        // Clear cursor icon
+        if (dotRef.current) {
+          dotRef.current.textContent = '';
+        }
 
         if (cornersRef.current) {
           const corners = Array.from(cornersRef.current);
@@ -337,7 +361,7 @@ const TargetCursor = ({
 
   return (
     <div ref={cursorRef} className="target-cursor-wrapper">
-      <div ref={dotRef} className="target-cursor-dot" />
+      <div ref={dotRef} className="target-cursor-dot"></div>
       <div className="target-cursor-corner corner-tl" />
       <div className="target-cursor-corner corner-tr" />
       <div className="target-cursor-corner corner-br" />

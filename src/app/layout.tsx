@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { Providers } from "~/components/providers";
+import { PostHogPageView } from "~/components/posthog-pageview";
 
 export const metadata: Metadata = {
   title: "MongerMaps - The Bloomberg Terminal for Mongers",
@@ -16,9 +17,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable} dark`}>
-      <body className="font-sans antialiased bg-gray-950 text-gray-100">
+    <html lang="en" className={`${GeistSans.variable}`} suppressHydrationWarning>
+      <body className="font-sans antialiased">
         <Providers>
+          <PostHogPageView />
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </Providers>
       </body>

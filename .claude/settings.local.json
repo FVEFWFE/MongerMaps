@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:posthog.com)",
+      "WebSearch",
+      "Bash(npm install:*)",
+      "WebFetch(domain:nomads.com)",
+      "Bash(npm run dev:*)",
+      "WebFetch(domain:docs.whop.com)",
+      "WebFetch(domain:guides.whop.com)",
+      "Bash(npm uninstall:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
