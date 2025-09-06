@@ -5,6 +5,7 @@ import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Shell } from "~/components/shell";
+import CountUp from "~/components/CountUp";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -72,7 +73,7 @@ const cities = [
       internetSpeed: 85,
       airQuality: 45
     },
-    badges: ["Most Active", "Best Value", "24/7 Action"],
+    badges: ["Popular", "Most Active", "Best Value", "24/7 Action"],
     trending: true,
     image: "https://images.unsplash.com/photo-1545996124-0501ebae84d0?w=800&h=600&fit=crop",
     region: "asia",
@@ -2545,7 +2546,7 @@ function HomePageContent() {
   }, [activeFilters]);
 
   return (
-    <>
+    <div className={cursorEnabled ? 'cursor-hidden' : ''}>
       {cursorEnabled && (
         <TargetCursor 
           targetSelector=".cursor-target"
@@ -2853,7 +2854,7 @@ function HomePageContent() {
                   <div className="text-left">
                     <p className="font-semibold text-sm mb-2">What You're Escaping:</p>
                     <div className="text-xs text-muted-foreground space-y-1">
-                      <div>❌ 500 pages of ISG for one useful tip</div>
+                      <div>❌ 500 pages of ISG/Reddit for one useful tip</div>
                       <div>❌ Half the links dead. Info from 2019</div>
                       <div>❌ "No guests allowed sir" at 2am</div>
                       <div>❌ Same questions asked 1000 times</div>
@@ -2877,15 +2878,21 @@ function HomePageContent() {
               {/* Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">2.6M+</div>
+                  <div className="text-2xl font-bold text-primary">
+                    <CountUp from={0} to={2600000} duration={2.5} separator="," className="inline" />+
+                  </div>
                   <div className="text-xs text-muted-foreground">Field Reports Analyzed</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">847</div>
+                  <div className="text-2xl font-bold text-primary">
+                    <CountUp from={0} to={847} duration={2} className="inline" />
+                  </div>
                   <div className="text-xs text-muted-foreground">Cities Ranked</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">50K+</div>
+                  <div className="text-2xl font-bold text-primary">
+                    <CountUp from={0} to={50000} duration={2.2} separator="," className="inline" />+
+                  </div>
                   <div className="text-xs text-muted-foreground">Active Venues</div>
                 </div>
                 <div className="text-center">
@@ -2942,7 +2949,7 @@ function HomePageContent() {
         isPaid={isPaid}
         currentCity={selectedCity?.slug || "all"}
       />
-    </>
+    </div>
   );
 }
 

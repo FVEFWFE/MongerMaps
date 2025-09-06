@@ -90,10 +90,11 @@ export function CityCard({
   return (
     <Card 
       className={cn(
-        "relative overflow-hidden transition-all cursor-target group",
+        "relative overflow-hidden transition-all cursor-target group city-card",
         comingSoon && "opacity-75",
         "hover:shadow-xl hover:scale-[1.02]"
       )}
+      data-cursor="magnify"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

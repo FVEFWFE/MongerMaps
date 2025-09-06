@@ -14,12 +14,18 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 4px;
-  height: 4px;
+  width: 16px;
+  height: 16px;
   background: #fff;
   border-radius: 50%;
   transform: translate(-50%, -50%);
   will-change: transform;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: #000;
 }
 
 .target-cursor-corner {

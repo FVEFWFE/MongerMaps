@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
 
+import CountUp from "./CountUp";
+
 // Dynamically import DecryptedText to avoid SSR issues
 const DecryptedText = dynamic(() => import("./DecryptedText"), {
   ssr: false,
@@ -100,13 +102,13 @@ export function Shell({
           <div className="flex items-center space-x-3 mr-4">
             {/* Square Logo with Dropdown */}
             <DropdownMenu open={logoDropdownOpen} onOpenChange={setLogoDropdownOpen}>
-              <TooltipProvider>
+              <TooltipProvider delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <DropdownMenuTrigger asChild>
                       <button 
                         onClick={handleLogoClick}
-                        className="relative h-10 w-10 flex-shrink-0 group cursor-zoom-in focus:outline-none focus:ring-0 focus:border-0 focus-visible:outline-none focus-visible:ring-0"
+                        className="relative h-10 w-10 flex-shrink-0 group cursor-zoom-in cursor-magnetic focus:outline-none focus:ring-0 focus:border-0 focus-visible:outline-none focus-visible:ring-0"
                         title="Click to open nav, double click to go home"
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center group-hover:opacity-90 transition-opacity">
@@ -231,6 +233,7 @@ export function Shell({
             size="sm"
             onClick={() => setSearchOpen(true)}
             className="hidden md:flex items-center gap-2 text-muted-foreground cursor-target"
+            data-cursor="search"
           >
             <Search className="h-4 w-4" />
             <span className="hidden lg:inline">Search 2.6M+ field reports, venues with hot girls, cities...</span>
@@ -337,14 +340,9 @@ export function Shell({
                 speed={50}
                 maxIterations={8}
               />
-              <DecryptedText
-                text="2.6M+ Reports. No BS. Trusted by 12,000+ Vets."
-                className="text-muted-foreground font-medium"
-                speed={45}
-                maxIterations={15}
-                sequential={true}
-                revealDirection="start"
-              />
+              <span className="text-muted-foreground font-medium">
+                <CountUp from={0} to={2.6} duration={2} className="inline" />M+ Reports. No BS. Trusted by <CountUp from={0} to={12} duration={1.5} className="inline" />,000+ Vets.
+              </span>
             </div>
           </div>
           {children}
