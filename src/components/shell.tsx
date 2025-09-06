@@ -79,10 +79,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
                           <Bird className="h-6 w-6 text-white" />
                         </div>
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-lg font-bold text-foreground leading-tight">MongerMaps</span>
-                        <span className="text-xs text-muted-foreground">2.6M+ Reports. No BS.</span>
-                      </div>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold text-foreground leading-tight">MongerMaps</span>
+              <span className="text-xs text-muted-foreground">Find the Gems. Avoid the Rip-offs.</span>
+            </div>
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-64">
@@ -194,9 +194,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </Button>
 
           {/* Tagline */}
-          <div className="hidden xl:flex items-center mx-4 text-xs text-muted-foreground max-w-md">
-            <span className="italic">
-              Stop gambling on outdated forums. Our live, member-vetted map shows you where the real stunners are right now, with real-time prices and performance ratings.
+          <div className="hidden xl:flex flex-col mx-4 text-xs max-w-lg">
+            <span className="font-semibold text-foreground">Stop Wasting Your Travels on 'Starfish'.</span>
+            <span className="text-muted-foreground">
+              Live member-vetted map. Real stunners. Real-time prices. No outdated forums.
             </span>
           </div>
 
@@ -265,6 +266,15 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto">
+          {/* Philosophical Hook & Social Proof Bar */}
+          <div className="hidden lg:flex items-center justify-between px-6 py-3 bg-muted/20 border-b text-xs">
+            <span className="text-muted-foreground italic">
+              Because men who've earned their freedom deserve to enjoy it without getting scammed.
+            </span>
+            <span className="text-muted-foreground font-medium">
+              2.6M+ Reports. No BS. Trusted by 12,000+ Vets.
+            </span>
+          </div>
           {children}
         </main>
       </div>
