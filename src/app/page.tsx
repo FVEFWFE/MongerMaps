@@ -24,7 +24,11 @@ import {
   Grid3X3,
   ChevronDown,
   Search as SearchIcon,
-  Filter
+  Filter,
+  MessageCircle,
+  Bot,
+  UserPlus,
+  Heart
 } from "lucide-react";
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
@@ -674,120 +678,216 @@ export default function HomePage() {
                 <div className="relative">
                   {/* Grid Container */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[2560px]:grid-cols-6 gap-4">
-              {filteredCities.flatMap((city, index) => {
-                const items = [
-                  <CityCard
-                    key={city.slug}
-                    {...city}
-                    isPaid={isPaid}
-                    onClick={() => {
-                      setSelectedCity(city);
-                      setShowCityModal(true);
-                    }}
-                  />
-                ];
-                
-                // Insert benefit cards at strategic positions
-                if (index === 2) {
-                  // Guest-Friendly Hotels card
-                  items.push(
-                    <Card key="benefit-hotels" className="relative overflow-hidden transition-all cursor-pointer group hover:shadow-xl hover:scale-[1.02] h-full">
-                      <div className="relative h-64 overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="text-center text-white p-4">
-                            <div className="text-4xl mb-3">🏨</div>
-                            <h3 className="text-xl font-bold mb-2">Guest-Friendly Hotels</h3>
-                            <p className="text-sm opacity-90 mb-2">Never get cockblocked again</p>
-                            <p className="text-xs opacity-75">Database of 5000+ verified hotels</p>
-                          </div>
-                        </div>
-                        <div className="absolute bottom-2 left-2 right-2">
-                          <Badge className="bg-black/70 text-white w-full justify-center">
-                            Click to Access Database →
-                          </Badge>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                }
-                
-                if (index === 5) {
-                  // Scam Alerts card
-                  items.push(
-                    <Card key="benefit-scams" className="relative overflow-hidden transition-all cursor-pointer group hover:shadow-xl hover:scale-[1.02] h-full">
-                      <div className="relative h-64 overflow-hidden bg-gradient-to-br from-red-500 to-red-600">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="text-center text-white p-4">
-                            <div className="text-4xl mb-3">⚠️</div>
-                            <h3 className="text-xl font-bold mb-2">Real-Time Scam Alerts</h3>
-                            <p className="text-sm opacity-90 mb-2">Community warnings save you money</p>
-                            <p className="text-xs opacity-75">147 active alerts this week</p>
-                          </div>
-                        </div>
-                        <div className="absolute top-2 right-2">
-                          <Badge className="bg-yellow-500 text-black animate-pulse">
-                            LIVE
-                          </Badge>
-                        </div>
-                        <div className="absolute bottom-2 left-2 right-2">
-                          <Badge className="bg-black/70 text-white w-full justify-center">
-                            View Active Alerts →
-                          </Badge>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                }
-                
-                // Insert affiliate card after 8th city (moved from 6th)
-                if (index === 7) {
-                  items.push(
-                    <Link href="/affiliate" key="affiliate-card">
-                      <Card className="relative overflow-hidden transition-all cursor-pointer group hover:shadow-xl hover:scale-[1.02] h-full">
-                        <div className="relative h-64 overflow-hidden">
-                          {/* Placeholder for affiliate.png */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
-                            <div className="text-center text-white p-4">
-                              <DollarSign className="h-12 w-12 mx-auto mb-3" />
-                              <h3 className="text-xl font-bold mb-2">Earn Money</h3>
-                              <p className="text-sm opacity-90">Join our affiliate program</p>
-                              <p className="text-xs mt-2 opacity-75">Up to 40% commission</p>
+                    {(() => {
+                      // Define special cards for rightmost column
+                      const specialCards = [
+                        // 1. CamRiches.ai Ad
+                        <Card key="ad-camriches" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                          <div className="relative h-64 overflow-hidden bg-gradient-to-br from-purple-500 to-pink-600">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="text-center text-white p-4">
+                                <Bot className="h-12 w-12 mx-auto mb-3" />
+                                <h3 className="text-xl font-bold mb-2">CamRiches.ai</h3>
+                                <p className="text-sm opacity-90 mb-2">AI-Powered Cam Model Analytics</p>
+                                <p className="text-xs opacity-75">Find the highest earning models</p>
+                              </div>
+                            </div>
+                            <div className="absolute top-2 right-2">
+                              <Badge className="bg-white/20 text-white">AD</Badge>
+                            </div>
+                            <div className="absolute bottom-2 left-2 right-2">
+                              <Badge className="bg-black/70 text-white w-full justify-center">
+                                Learn More →
+                              </Badge>
                             </div>
                           </div>
-                          {/* Replace above div with this when you have the image:
-                          <Image
-                            src="/affiliate.png"
-                            alt="Join our affiliate program"
-                            fill
-                            className="object-cover"
-                          />
-                          */}
-                          
-                          {/* Hover overlay */}
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-                          
-                          {/* CTA Badge */}
-                          <div className="absolute top-2 right-2">
-                          <Badge className="bg-green-500 text-white">
-                            <Sparkles className="h-3 w-3 mr-1" />
-                            40% Commission
-                            </Badge>
+                        </Card>,
+                        
+                        // 2. Featured Members
+                        <Card key="featured-members" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                          <div className="relative h-64 overflow-hidden bg-gradient-to-br from-indigo-500 to-blue-600">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="text-center text-white p-4">
+                                <Users className="h-12 w-12 mx-auto mb-3" />
+                                <h3 className="text-xl font-bold mb-2">Featured Members</h3>
+                                <p className="text-sm opacity-90 mb-2">Learn from veteran mongers</p>
+                                <p className="text-xs opacity-75">2,847+ members worldwide</p>
+                              </div>
+                            </div>
+                            <div className="absolute bottom-2 left-2 right-2">
+                              <Badge className="bg-black/70 text-white w-full justify-center">
+                                View Members →
+                              </Badge>
+                            </div>
                           </div>
-                          
-                          {/* Bottom text */}
-                          <div className="absolute bottom-2 left-2 right-2">
-                            <Badge className="bg-black/70 text-white w-full justify-center">
-                              Click to Learn More →
-                            </Badge>
+                        </Card>,
+                        
+                        // 3. Underrated Location: Mombasa
+                        <Card key="suggestion-mombasa" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                          <div className="relative h-64 overflow-hidden bg-gradient-to-br from-orange-500 to-red-600">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="text-center text-white p-4">
+                                <MapPin className="h-12 w-12 mx-auto mb-3" />
+                                <h3 className="text-xl font-bold mb-2">Hidden Gem: Mombasa</h3>
+                                <p className="text-sm opacity-90 mb-2">Underrated mongering paradise</p>
+                                <p className="text-xs opacity-75">9.2/10 hotness • $30 ST</p>
+                              </div>
+                            </div>
+                            <div className="absolute top-2 right-2">
+                              <Badge className="bg-yellow-500 text-black">
+                                <Star className="h-3 w-3 mr-1" />
+                                Editor's Pick
+                              </Badge>
+                            </div>
+                            <div className="absolute bottom-2 left-2 right-2">
+                              <Badge className="bg-black/70 text-white w-full justify-center">
+                                Explore Mombasa →
+                              </Badge>
+                            </div>
                           </div>
-                        </div>
-                      </Card>
-                    </Link>
-                  );
-                }
-                
-                return items;
-              })}
+                        </Card>,
+                        
+                        // 4. Join Chat
+                        <Card key="join-chat" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                          <div className="relative h-64 overflow-hidden bg-gradient-to-br from-green-500 to-teal-600">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="text-center text-white p-4">
+                                <MessageCircle className="h-12 w-12 mx-auto mb-3" />
+                                <h3 className="text-xl font-bold mb-2">Live Chat</h3>
+                                <p className="text-sm opacity-90 mb-2">247 mongers online now</p>
+                                <p className="text-xs opacity-75">Get real-time advice</p>
+                              </div>
+                            </div>
+                            <div className="absolute top-2 right-2">
+                              <Badge className="bg-green-400 text-black animate-pulse">
+                                LIVE
+                              </Badge>
+                            </div>
+                            <div className="absolute bottom-2 left-2 right-2">
+                              <Button size="sm" className="w-full bg-white/20 hover:bg-white/30">
+                                Join the Chat →
+                              </Button>
+                            </div>
+                          </div>
+                        </Card>,
+                        
+                        // 5. Affiliate Program
+                        <Link href="/affiliate" key="affiliate-program">
+                          <Card className="relative overflow-hidden transition-all cursor-pointer group hover:shadow-xl hover:scale-[1.02] h-full">
+                            <div className="relative h-64 overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600">
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="text-center text-white p-4">
+                                  <DollarSign className="h-12 w-12 mx-auto mb-3" />
+                                  <h3 className="text-xl font-bold mb-2">Earn 40% Commission</h3>
+                                  <p className="text-sm opacity-90">Refer friends, get paid</p>
+                                  <p className="text-xs mt-2 opacity-75">$127 avg per referral</p>
+                                </div>
+                              </div>
+                              <div className="absolute top-2 right-2">
+                                <Badge className="bg-yellow-500 text-black">
+                                  <Sparkles className="h-3 w-3 mr-1" />
+                                  Hot
+                                </Badge>
+                              </div>
+                              <div className="absolute bottom-2 left-2 right-2">
+                                <Badge className="bg-black/70 text-white w-full justify-center">
+                                  Start Earning →
+                                </Badge>
+                              </div>
+                            </div>
+                          </Card>
+                        </Link>,
+                        
+                        // 6. Guest-Friendly Hotels
+                        <Card key="guest-hotels" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                          <div className="relative h-64 overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="text-center text-white p-4">
+                                <div className="text-4xl mb-3">🏨</div>
+                                <h3 className="text-xl font-bold mb-2">Guest-Friendly Hotels</h3>
+                                <p className="text-sm opacity-90 mb-2">Never get cockblocked</p>
+                                <p className="text-xs opacity-75">5000+ verified hotels</p>
+                              </div>
+                            </div>
+                            <div className="absolute bottom-2 left-2 right-2">
+                              <Badge className="bg-black/70 text-white w-full justify-center">
+                                Access Database →
+                              </Badge>
+                            </div>
+                          </div>
+                        </Card>,
+                        
+                        // 7. Scam Alerts
+                        <Card key="scam-alerts" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                          <div className="relative h-64 overflow-hidden bg-gradient-to-br from-red-500 to-red-600">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="text-center text-white p-4">
+                                <AlertTriangle className="h-12 w-12 mx-auto mb-3" />
+                                <h3 className="text-xl font-bold mb-2">Scam Alerts</h3>
+                                <p className="text-sm opacity-90 mb-2">Real-time warnings</p>
+                                <p className="text-xs opacity-75">147 active alerts</p>
+                              </div>
+                            </div>
+                            <div className="absolute top-2 right-2">
+                              <Badge className="bg-yellow-500 text-black animate-pulse">
+                                LIVE
+                              </Badge>
+                            </div>
+                            <div className="absolute bottom-2 left-2 right-2">
+                              <Badge className="bg-black/70 text-white w-full justify-center">
+                                View Alerts →
+                              </Badge>
+                            </div>
+                          </div>
+                        </Card>
+                      ];
+
+                      // Calculate grid columns based on screen size
+                      const getColumnsForBreakpoint = () => {
+                        if (typeof window !== 'undefined') {
+                          if (window.innerWidth >= 2560) return 6;
+                          if (window.innerWidth >= 1536) return 5;
+                          if (window.innerWidth >= 1280) return 4;
+                          if (window.innerWidth >= 1024) return 3;
+                          if (window.innerWidth >= 768) return 2;
+                        }
+                        return 6; // Default to max columns for SSR
+                      };
+
+                      const columns = getColumnsForBreakpoint();
+                      const gridItems = [];
+                      let cityIndex = 0;
+                      let specialCardIndex = 0;
+
+                      // Build grid with special cards in rightmost column
+                      for (let row = 0; row < Math.ceil((filteredCities.length + specialCards.length) / columns); row++) {
+                        for (let col = 0; col < columns; col++) {
+                          const position = row * columns + col;
+                          
+                          // Place special cards in rightmost column for first 7 rows
+                          if (col === columns - 1 && row < 7 && specialCardIndex < specialCards.length) {
+                            gridItems.push(specialCards[specialCardIndex]);
+                            specialCardIndex++;
+                          } else if (cityIndex < filteredCities.length) {
+                            const city = filteredCities[cityIndex];
+                            gridItems.push(
+                              <CityCard
+                                key={city.slug}
+                                {...city}
+                                isPaid={isPaid}
+                                onClick={() => {
+                                  setSelectedCity(city);
+                                  setShowCityModal(true);
+                                }}
+                              />
+                            );
+                            cityIndex++;
+                          }
+                        }
+                      }
+
+                      return gridItems;
+                    })()}
                   </div>
                   
                   {/* Blur Overlay - Only shows when filters are active, user is not paid, and there are many results */}
@@ -906,69 +1006,6 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Right Sidebar */}
-              <div className="w-64 flex-shrink-0 hidden 2xl:block p-4 md:p-6">
-            {/* Featured Members */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm">Featured Members</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {/* YouTube Video Embeds */}
-                <div className="space-y-3 mb-3">
-                  <div className="aspect-video rounded-lg overflow-hidden bg-muted">
-                    <iframe
-                      className="w-full h-full"
-                      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                      title="Featured Member Video 1"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                  <div className="aspect-video rounded-lg overflow-hidden bg-muted">
-                    <iframe
-                      className="w-full h-full"
-                      src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                      title="Featured Member Video 2"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground mb-3">2,847+ mongers worldwide</p>
-                {!isPaid && (
-                  <Button 
-                    size="sm" 
-                    className="w-full"
-                    onClick={() => handleUnlockFeature("community access")}
-                  >
-                    Join community
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <Card className="mt-4">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Link href="/make-money" className="block">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <DollarSign className="h-3 w-3 mr-2" />
-                    Make Money
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-              </div>
             </div>
           </div>
         </Shell>
