@@ -29,6 +29,7 @@ import { cn } from "~/lib/utils";
 import { PaywallModal } from "~/components/paywall-modal";
 import { SidebarFilters } from "~/components/sidebar-filters";
 import { CityCard } from "~/components/city-card";
+import { CityModal } from "~/components/city-modal";
 
 // Extended city data with Monger Rank factors
 const cities = [
@@ -282,6 +283,8 @@ export default function HomePage() {
   const { data: session } = useSession();
   const [showPaywall, setShowPaywall] = useState(false);
   const [paywallFeature, setPaywallFeature] = useState("");
+  const [selectedCity, setSelectedCity] = useState<typeof cities[0] | null>(null);
+  const [showCityModal, setShowCityModal] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({
     temperature: ["warm"],
     region: ["asia"],
@@ -323,9 +326,9 @@ export default function HomePage() {
   }, [activeFilters]);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-950 text-white">
       {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+      <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
         <div className="max-w-full mx-auto px-4">
           <div className="flex items-center justify-between h-12">
             <div className="flex items-center space-x-6">
@@ -352,10 +355,10 @@ export default function HomePage() {
             </div>
 
             <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="sm" className="text-xs text-gray-300 hover:text-white hover:bg-gray-700">
+              <Button variant="ghost" size="sm" className="text-xs text-gray-400 hover:text-white hover:bg-gray-800">
                 <Grid3X3 className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="sm" className="text-xs text-gray-300 hover:text-white hover:bg-gray-700">
+              <Button variant="ghost" size="sm" className="text-xs text-gray-400 hover:text-white hover:bg-gray-800">
                 Sort: Overall <ChevronDown className="h-4 w-4 ml-1" />
               </Button>
               {!isPaid && (
@@ -379,7 +382,7 @@ export default function HomePage() {
           <Button 
             variant="outline" 
             size="sm"
-            className="w-full text-sm border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+            className="w-full text-sm border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
           >
             <SearchIcon className="h-4 w-4 mr-2" />
             Filters
@@ -406,6 +409,10 @@ export default function HomePage() {
                   key={city.slug}
                   {...city}
                   isPaid={isPaid}
+                  onClick={() => {
+                    setSelectedCity(city);
+                    setShowCityModal(true);
+                  }}
                 />
               ))}
             </div>
@@ -415,7 +422,7 @@ export default function HomePage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="text-sm bg-transparent border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                className="text-sm bg-transparent border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
               >
                 Load more cities
               </Button>
@@ -425,7 +432,7 @@ export default function HomePage() {
           {/* Right Sidebar */}
           <div className="w-64 flex-shrink-0 hidden xl:block">
             {/* Trending Cities */}
-            <div className="bg-gray-800 rounded border border-gray-700 p-4 mb-4">
+            <div className="bg-gray-900 rounded border border-gray-800 p-4 mb-4">
               <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
                 Trending Now
               </h4>
@@ -434,9 +441,9 @@ export default function HomePage() {
                   <Link 
                     key={city.slug}
                     href={city.comingSoon ? "#" : `/city/${city.slug}`}
-                    className="flex items-center space-x-2 p-1 hover:bg-gray-700 rounded cursor-pointer"
+                    className="flex items-center space-x-2 p-1 hover:bg-gray-800 rounded cursor-pointer"
                   >
-                    <div className="w-8 h-8 rounded overflow-hidden bg-gray-600">
+                    <div className="w-8 h-8 rounded overflow-hidden bg-gray-700">
                       <span className="text-lg flex items-center justify-center h-full">
                         {city.flag}
                       </span>
@@ -454,13 +461,13 @@ export default function HomePage() {
             </div>
 
             {/* Community Box */}
-            <div className="bg-gray-800 rounded border border-gray-700 p-4 mb-4">
+            <div className="bg-gray-900 rounded border border-gray-800 p-4 mb-4">
               <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
                 Community
               </h4>
               <div className="grid grid-cols-8 gap-1 mb-3">
                 {Array.from({ length: 32 }).map((_, i) => (
-                  <div key={i} className="w-6 h-6 bg-gray-600 rounded-full" />
+                  <div key={i} className="w-6 h-6 bg-gray-700 rounded-full" />
                 ))}
               </div>
               <p className="text-xs text-gray-400 mb-3">2,847+ mongers worldwide</p>
@@ -476,7 +483,7 @@ export default function HomePage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-gray-800 rounded border border-gray-700 p-4">
+            <div className="bg-gray-900 rounded border border-gray-800 p-4">
               <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
                 Quick Actions
               </h4>
@@ -485,7 +492,7 @@ export default function HomePage() {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="w-full text-xs justify-start border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                    className="w-full text-xs justify-start border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <DollarSign className="h-3 w-3 mr-2" />
                     Make Money
@@ -495,7 +502,7 @@ export default function HomePage() {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="w-full text-xs justify-start border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                    className="w-full text-xs justify-start border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
                     <Target className="h-3 w-3 mr-2" />
                     Intel Database
@@ -511,6 +518,13 @@ export default function HomePage() {
         isOpen={showPaywall}
         onClose={() => setShowPaywall(false)}
         feature={paywallFeature}
+      />
+
+      <CityModal
+        isOpen={showCityModal}
+        onClose={() => setShowCityModal(false)}
+        city={selectedCity}
+        isPaid={isPaid}
       />
     </div>
   );

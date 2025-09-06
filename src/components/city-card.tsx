@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -43,6 +42,7 @@ interface CityCardProps {
   comingSoon?: boolean;
   image?: string;
   isPaid?: boolean;
+  onClick?: () => void;
 }
 
 export function CityCard({
@@ -57,7 +57,8 @@ export function CityCard({
   trending = false,
   comingSoon = false,
   image,
-  isPaid = false
+  isPaid = false,
+  onClick
 }: CityCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -95,7 +96,15 @@ export function CityCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Link href={comingSoon ? "#" : `/city/${slug}`} className="block">
+      <div 
+        className="block"
+        onClick={(e) => {
+          e.preventDefault();
+          if (onClick && !comingSoon) {
+            onClick();
+          }
+        }}
+      >
         {/* Image Container */}
         <div className="relative h-48 overflow-hidden">
           {/* City Image */}
@@ -221,8 +230,11 @@ export function CityCard({
             </Button>
           </div>
 
-          {/* Center Overlay - City Name */}
-          <div className="absolute inset-0 flex items-center justify-center">
+          {/* Center Overlay - City Name (hide on hover) */}
+          <div className={cn(
+            "absolute inset-0 flex items-center justify-center transition-opacity duration-300",
+            isHovered ? "opacity-0" : "opacity-100"
+          )}>
             <div className="text-center">
               <h3 className="text-white font-bold text-xl drop-shadow-lg">
                 {name}
@@ -284,7 +296,7 @@ export function CityCard({
             </div>
           )}
         </div>
-      </Link>
+      </div>
     </Card>
   );
 }
