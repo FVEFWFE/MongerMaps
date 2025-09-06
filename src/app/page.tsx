@@ -636,84 +636,26 @@ export default function HomePage() {
 
         {/* Main Content Area */}
         <div className="flex-1 p-4 md:p-6">
-          {/* Hero Section */}
-          <div className="mb-8 space-y-6">
-            {/* Main Hero */}
-            <div className="text-center py-8 px-4 bg-gradient-to-b from-background to-background/50 rounded-xl">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                Stop paying tourist prices. Start winning.
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground mb-2">
-                The most beautiful women. The best experiences. The fairest prices.
-              </p>
-              <p className="text-base md:text-lg text-muted-foreground mb-6">
-                Data from 2.6M+ field reports doesn't lie.
-              </p>
-              
-              {/* Social Proof */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6">
-                <Users className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium">
-                  Join 1000+ mongers who stopped clicking through dead forum links
-                </span>
-              </div>
-
-              {/* Value Props Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-6">
-                <div className="bg-card rounded-lg p-4 border">
-                  <div className="text-2xl mb-2">🏨</div>
-                  <div className="text-sm font-medium">Guest-Friendly Hotels</div>
-                  <div className="text-xs text-muted-foreground">Never get cockblocked</div>
-                </div>
-                <div className="bg-card rounded-lg p-4 border">
-                  <div className="text-2xl mb-2">💰</div>
-                  <div className="text-sm font-medium">Real Prices</div>
-                  <div className="text-xs text-muted-foreground">Stop paying tourist tax</div>
-                </div>
-                <div className="bg-card rounded-lg p-4 border">
-                  <div className="text-2xl mb-2">📍</div>
-                  <div className="text-sm font-medium">847 Cities Ranked</div>
-                  <div className="text-xs text-muted-foreground">Find your perfect spot</div>
-                </div>
-                <div className="bg-card rounded-lg p-4 border">
-                  <div className="text-2xl mb-2">⚠️</div>
-                  <div className="text-sm font-medium">Scam Alerts</div>
-                  <div className="text-xs text-muted-foreground">Real-time warnings</div>
-                </div>
-              </div>
-
-              {/* Problem/Solution */}
-              <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4 max-w-2xl mx-auto mb-6">
-                <h3 className="font-semibold text-sm mb-2 text-destructive">The Cure to Forum Hell</h3>
-                <div className="text-xs text-muted-foreground space-y-1 mb-3">
-                  <div>❌ 500 pages of ISG for one useful tip</div>
-                  <div>❌ Half the links dead. Info from 2019</div>
-                  <div>❌ "No guests allowed sir" at 2am</div>
-                </div>
-                <div className="text-sm font-medium text-primary">
-                  ✅ All forums, one platform. Organized. Real-time. Actionable.
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="space-y-3">
-                <Button 
-                  size="lg" 
-                  className="font-semibold"
-                  onClick={() => {
-                    if (!isPaid) {
-                      setShowPaywall(true);
-                      setPaywallFeature("full access");
-                    }
-                  }}
-                >
-                  Get Instant Access
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <p className="text-xs text-muted-foreground italic">
-                  Built by mongers who were sick of the same bullshit you are.
-                </p>
-              </div>
+          {/* Minimal Hero Section */}
+          <div className="text-center mb-6">
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">
+              Stop paying tourist prices. Start winning.
+            </h1>
+            <div className="flex items-center justify-center gap-3">
+              <Button 
+                size="sm"
+                className="font-semibold"
+                onClick={() => {
+                  if (!isPaid) {
+                    setShowPaywall(true);
+                    setPaywallFeature("full access");
+                  }
+                }}
+              >
+                Get Instant Access
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <span className="text-sm text-muted-foreground">or keep browsing ↓</span>
             </div>
           </div>
 
@@ -763,8 +705,60 @@ export default function HomePage() {
                   />
                 ];
                 
-                // Insert affiliate card after 6th city
+                // Insert benefit cards at strategic positions
+                if (index === 2) {
+                  // Guest-Friendly Hotels card
+                  items.push(
+                    <Card key="benefit-hotels" className="relative overflow-hidden transition-all cursor-pointer group hover:shadow-xl hover:scale-[1.02] h-full">
+                      <div className="relative h-64 overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-center text-white p-4">
+                            <div className="text-4xl mb-3">🏨</div>
+                            <h3 className="text-xl font-bold mb-2">Guest-Friendly Hotels</h3>
+                            <p className="text-sm opacity-90 mb-2">Never get cockblocked again</p>
+                            <p className="text-xs opacity-75">Database of 5000+ verified hotels</p>
+                          </div>
+                        </div>
+                        <div className="absolute bottom-2 left-2 right-2">
+                          <Badge className="bg-black/70 text-white w-full justify-center">
+                            Click to Access Database →
+                          </Badge>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                }
+                
                 if (index === 5) {
+                  // Scam Alerts card
+                  items.push(
+                    <Card key="benefit-scams" className="relative overflow-hidden transition-all cursor-pointer group hover:shadow-xl hover:scale-[1.02] h-full">
+                      <div className="relative h-64 overflow-hidden bg-gradient-to-br from-red-500 to-red-600">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-center text-white p-4">
+                            <div className="text-4xl mb-3">⚠️</div>
+                            <h3 className="text-xl font-bold mb-2">Real-Time Scam Alerts</h3>
+                            <p className="text-sm opacity-90 mb-2">Community warnings save you money</p>
+                            <p className="text-xs opacity-75">147 active alerts this week</p>
+                          </div>
+                        </div>
+                        <div className="absolute top-2 right-2">
+                          <Badge className="bg-yellow-500 text-black animate-pulse">
+                            LIVE
+                          </Badge>
+                        </div>
+                        <div className="absolute bottom-2 left-2 right-2">
+                          <Badge className="bg-black/70 text-white w-full justify-center">
+                            View Active Alerts →
+                          </Badge>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                }
+                
+                // Insert affiliate card after 8th city (moved from 6th)
+                if (index === 7) {
                   items.push(
                     <Link href="/affiliate" key="affiliate-card">
                       <Card className="relative overflow-hidden transition-all cursor-pointer group hover:shadow-xl hover:scale-[1.02] h-full">
@@ -826,8 +820,34 @@ export default function HomePage() {
 
           {/* Trust Section */}
           <div className="mt-12 pt-8 border-t">
-            <div className="text-center space-y-4">
-              <h3 className="text-lg font-semibold">Why MongerMaps?</h3>
+            <div className="text-center space-y-6">
+              {/* Forum Hell Section */}
+              <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-6 max-w-2xl mx-auto">
+                <h3 className="font-bold text-lg mb-3 text-destructive">The Cure to Forum Hell</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="text-left">
+                    <p className="font-semibold text-sm mb-2">What You're Escaping:</p>
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      <div>❌ 500 pages of ISG for one useful tip</div>
+                      <div>❌ Half the links dead. Info from 2019</div>
+                      <div>❌ "No guests allowed sir" at 2am</div>
+                      <div>❌ Same questions asked 1000 times</div>
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-sm mb-2">What You're Getting:</p>
+                    <div className="text-xs space-y-1">
+                      <div className="text-primary">✅ All forums, one platform</div>
+                      <div className="text-primary">✅ Organized by city & venue</div>
+                      <div className="text-primary">✅ Real-time verified intel</div>
+                      <div className="text-primary">✅ Instant search across 2.6M posts</div>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground italic">
+                  Built by mongers who were sick of the same bullshit you are.
+                </p>
+              </div>
               
               {/* Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
@@ -851,9 +871,6 @@ export default function HomePage() {
 
               {/* Final CTA */}
               <div className="bg-primary/5 rounded-lg p-6 max-w-2xl mx-auto">
-                <p className="text-sm text-muted-foreground mb-3">
-                  Stop wasting time on outdated forums. Stop getting scammed. Stop overpaying.
-                </p>
                 <p className="font-semibold mb-4">
                   Get the intel that veteran mongers pay thousands to learn the hard way.
                 </p>

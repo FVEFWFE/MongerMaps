@@ -57,7 +57,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex flex-col">
               <span className="text-lg font-bold text-foreground leading-tight">MongerMaps</span>
-              <span className="text-xs text-muted-foreground">2.6M+ Field Reports</span>
+              <span className="text-xs text-muted-foreground">2.6M+ Reports. No BS.</span>
             </div>
           </Link>
 
