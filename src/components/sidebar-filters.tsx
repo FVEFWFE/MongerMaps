@@ -58,101 +58,129 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
 
   const filterCategories: FilterCategory[] = [
     {
-      title: "What",
+      title: "Girl Quality & Availability",
+      layout: "half",
       options: [
-        // Temperature
+        { id: "stunner-density", label: "😍 Stunner Density", value: "stunner-density", type: "multi" },
+        { id: "gfe-available", label: "💕 GFE Available", value: "gfe-available", type: "multi" },
+        { id: "age-18-25", label: "👱‍♀️ 18-25 Age Range", value: "age-18-25", type: "multi" },
+        { id: "age-25-35", label: "👩 25-35 Age Range", value: "age-25-35", type: "multi" },
+        { id: "english-girls", label: "🗣️ English Speaking", value: "english-girls", type: "multi" },
+        { id: "freelancer", label: "🚶‍♀️ Freelancer Scene", value: "freelancer", type: "multi" },
+        { id: "bar-girls", label: "🍺 Bar Girl Scene", value: "bar-girls", type: "multi" },
+        { id: "natural", label: "🌿 Natural Beauty", value: "natural", type: "multi" },
+      ],
+    },
+    {
+      title: "Value for Money",
+      layout: "half",
+      options: [
+        { id: "bang-buck", label: "💎 Best Bang/Buck", value: "bang-buck", type: "multi" },
+        { id: "transparent", label: "📋 Transparent Pricing", value: "transparent", type: "multi" },
+        { id: "barfine-cheap", label: "💵 Barfine <$20", value: "barfine-cheap", type: "multi" },
+        { id: "barfine-mid", label: "💸 Barfine $20-50", value: "barfine-mid", type: "multi" },
+        { id: "st-focus", label: "⏱️ ST Friendly", value: "st-focus", type: "multi" },
+        { id: "lt-friendly", label: "🌙 LT Accommodating", value: "lt-friendly", type: "multi" },
+        { id: "massage-cheap", label: "💆 Cheap Massages", value: "massage-cheap", type: "multi" },
+        { id: "no-hidden", label: "✅ No Hidden Fees", value: "no-hidden", type: "multi" },
+      ],
+    },
+    {
+      title: "Scene Vibe",
+      layout: "half",
+      options: [
+        { id: "low-tourist", label: "👥 Low Tourist Density", value: "low-tourist", type: "multi" },
+        { id: "high-season", label: "📅 High Season Now", value: "high-season", type: "multi" },
+        { id: "low-season", label: "📉 Low Season Deals", value: "low-season", type: "multi" },
+        { id: "newbie-friendly", label: "🆕 Newbie Friendly", value: "newbie-friendly", type: "multi" },
+        { id: "no-starfish", label: "🚫 Low Starfish Risk", value: "no-starfish", type: "multi" },
+        { id: "bbfs-common", label: "⚠️ BBFS Common", value: "bbfs-common", type: "multi" },
+        { id: "party", label: "🎉 Party Scene", value: "party", type: "multi" },
+        { id: "relaxed", label: "😌 Relaxed Vibe", value: "relaxed", type: "multi" },
+      ],
+    },
+    {
+      title: "Logistics & Comfort",
+      layout: "half",
+      options: [
+        { id: "guest-friendly", label: "🏨 Guest Friendly Hotels", value: "guest-friendly", type: "multi" },
+        { id: "no-joiner", label: "🆓 No Joiner Fees", value: "no-joiner", type: "multi" },
+        { id: "joiner-cheap", label: "💵 Joiner <$10", value: "joiner-cheap", type: "multi" },
+        { id: "grab-available", label: "🚖 Grab/Taxi 24/7", value: "grab-available", type: "multi" },
+        { id: "low-atm-fees", label: "🏧 Low ATM Fees", value: "low-atm-fees", type: "multi" },
+        { id: "no-police", label: "👮 No Police Hassle", value: "no-police", type: "multi" },
+        { id: "walkable", label: "🚶 Walkable", value: "walkable", type: "multi" },
+        { id: "safe", label: "🔒 Very Safe", value: "safe", type: "multi" },
+      ],
+    },
+    {
+      title: "Special Interests",
+      layout: "half",
+      options: [
+        { id: "ladyboy", label: "🏳️‍⚧️ Ladyboy Scene", value: "ladyboy", type: "multi" },
+        { id: "no-ladyboy", label: "🚫 Minimal Ladyboys", value: "no-ladyboy", type: "multi" },
+        { id: "milf", label: "👩‍💼 MILF Available", value: "milf", type: "multi" },
+        { id: "fetish", label: "⛓️ Fetish Friendly", value: "fetish", type: "multi" },
+        { id: "soapy", label: "🛁 Soapy Massage", value: "soapy", type: "multi" },
+        { id: "threesome", label: "👯‍♀️ Easy Threesomes", value: "threesome", type: "multi" },
+        { id: "cannabis", label: "🌿 Cannabis OK", value: "cannabis", type: "multi" },
+        { id: "legal", label: "✅ Legal Scene", value: "legal", type: "multi" },
+      ],
+    },
+    {
+      title: "Risk & Safety",
+      layout: "half",
+      options: [
+        { id: "no-spiking", label: "🍹 No Drink Spiking", value: "no-spiking", type: "multi" },
+        { id: "low-pressure", label: "🍸 Low Lady Drink Push", value: "low-pressure", type: "multi" },
+        { id: "no-fake-police", label: "👮 No Fake Police", value: "no-fake-police", type: "multi" },
+        { id: "low-std", label: "🏥 Low STD Risk", value: "low-std", type: "multi" },
+        { id: "no-violence", label: "🛡️ No Violence Risk", value: "no-violence", type: "multi" },
+        { id: "scam-free", label: "✅ Low Scam Risk", value: "scam-free", type: "multi" },
+        { id: "virgin-safe", label: "🆕 Virgin Friendly", value: "virgin-safe", type: "multi" },
+        { id: "medical-good", label: "🏥 Good Healthcare", value: "medical-good", type: "multi" },
+      ],
+    },
+    {
+      title: "Social & Dating",
+      layout: "half",
+      options: [
+        { id: "tinder-works", label: "📱 Tinder Success", value: "tinder-works", type: "multi" },
+        { id: "sugar-scene", label: "🍯 Sugar Baby Scene", value: "sugar-scene", type: "multi" },
+        { id: "civilian-dating", label: "💑 Normal Dating OK", value: "civilian-dating", type: "multi" },
+        { id: "expat-community", label: "🌍 Big Expat Scene", value: "expat-community", type: "multi" },
+        { id: "low-stigma", label: "😊 Low Stigma", value: "low-stigma", type: "multi" },
+        { id: "wife-material", label: "💍 Wife Material", value: "wife-material", type: "multi" },
+        { id: "crypto-ok", label: "₿ Crypto Friendly", value: "crypto-ok", type: "multi" },
+        { id: "wingmen", label: "🤝 Easy Wingmen", value: "wingmen", type: "multi" },
+      ],
+    },
+    {
+      title: "Time & Season",
+      layout: "half",
+      options: [
+        { id: "best-now", label: "🔥 Best Time Now", value: "best-now", type: "multi" },
+        { id: "visa-runs", label: "🛂 Easy Visa Runs", value: "visa-runs", type: "multi" },
+        { id: "monthly-deals", label: "📅 Monthly Discounts", value: "monthly-deals", type: "multi" },
+        { id: "no-surge", label: "📊 No Holiday Surge", value: "no-surge", type: "multi" },
+        { id: "weather-good", label: "☀️ Good Weather Now", value: "weather-good", type: "multi" },
+        { id: "low-rain", label: "🌤️ Dry Season", value: "low-rain", type: "multi" },
+      ],
+    },
+    {
+      title: "Quick Filters",
+      options: [
         { id: "cold", label: "🍦 Cold now", value: "cold", type: "single" },
         { id: "mild", label: "🌤 Mild now", value: "mild", type: "single" },
         { id: "warm", label: "☀️ Warm now", value: "warm", type: "single", active: true },
-
-        // Cost
         { id: "budget", label: "💵<$1K/mo", value: "budget", type: "single" },
         { id: "cheap", label: "💸<$2K/mo", value: "cheap", type: "single" },
         { id: "mid", label: "💰<$3K/mo", value: "mid", type: "single" },
       ],
     },
     {
-      title: "Essential",
-      layout: "half",
+      title: "Regions",
       options: [
-        { id: "safe", label: "👮 Safe", value: "safe", type: "multi" },
-        { id: "internet", label: "📡 Fast internet", value: "internet", type: "multi" },
-        { id: "nightlife", label: "🌃 Nightlife", value: "nightlife", type: "multi" },
-        { id: "24hr", label: "🕐 24hr city", value: "24hr", type: "multi" },
-        { id: "english", label: "🗣️ English OK", value: "english", type: "multi" },
-        { id: "walkable", label: "🚶 Walkable", value: "walkable", type: "multi" },
-      ],
-    },
-    {
-      title: "Features",
-      layout: "half",
-      options: [
-        { id: "beach", label: "🏖️ Beach", value: "beach", type: "multi" },
-        { id: "legal", label: "✅ Legal scene", value: "legal", type: "multi" },
-        { id: "cannabis", label: "🌿 Cannabis OK", value: "cannabis", type: "multi" },
-        { id: "lgbtq", label: "🏳️‍🌈 LGBTQ+", value: "lgbtq", type: "multi" },
-        { id: "female", label: "👩 Female friendly", value: "female", type: "multi" },
-        { id: "value", label: "💎 Good value", value: "value", type: "multi" },
-      ],
-    },
-    {
-      title: "Women",
-      layout: "half",
-      options: [
-        { id: "attractive", label: "😍 Very attractive", value: "attractive", type: "multi" },
-        { id: "easy-find", label: "🔍 Easy to find hot", value: "easy-find", type: "multi" },
-        { id: "low-tattoos", label: "🚫 Low tattoos", value: "low-tattoos", type: "multi" },
-        { id: "high-tattoos", label: "🎨 Many tattoos", value: "high-tattoos", type: "multi" },
-        { id: "friendly", label: "😊 Friendly personality", value: "friendly", type: "multi" },
-        { id: "professional", label: "💼 Professional", value: "professional", type: "multi" },
-      ],
-    },
-    {
-      title: "Culture",
-      layout: "half",
-      options: [
-        { id: "conservative", label: "🏛️ Conservative", value: "conservative", type: "multi" },
-        { id: "liberal", label: "🗽 Liberal", value: "liberal", type: "multi" },
-        { id: "traditional", label: "🎎 Traditional", value: "traditional", type: "multi" },
-        { id: "modern", label: "🏙️ Modern", value: "modern", type: "multi" },
-      ],
-    },
-    {
-      title: "Infrastructure",
-      layout: "half",
-      options: [
-        { id: "fast-internet", label: "🚀 50+ Mbps", value: "fast-internet", type: "multi" },
-        { id: "ultra-internet", label: "⚡ 100+ Mbps", value: "ultra-internet", type: "multi" },
-        { id: "luxury-hotels", label: "🏨 5-star hotels", value: "luxury-hotels", type: "multi" },
-        { id: "good-hotels", label: "🏢 Good hotels", value: "good-hotels", type: "multi" },
-        { id: "beautiful-env", label: "🌺 Beautiful environment", value: "beautiful-env", type: "multi" },
-        { id: "urban", label: "🌆 Urban setting", value: "urban", type: "multi" },
-      ],
-    },
-    {
-      title: "Timezone",
-      layout: "half",
-      options: [
-        { id: "tz-us-east", label: "🕐 US East (±3h)", value: "tz-us-east", type: "multi" },
-        { id: "tz-us-west", label: "🕑 US West (±3h)", value: "tz-us-west", type: "multi" },
-        { id: "tz-europe", label: "🕒 Europe (±3h)", value: "tz-europe", type: "multi" },
-        { id: "tz-asia", label: "🕓 Asia (±3h)", value: "tz-asia", type: "multi" },
-      ],
-    },
-    {
-      title: "Vibe",
-      layout: "pair",
-      options: [
-        { id: "party", label: "🎉 Party Scene", value: "party", type: "single" },
-        { id: "relaxed", label: "😌 Relaxed", value: "relaxed", type: "single" },
-        { id: "gfe", label: "💕 GFE Focus", value: "gfe", type: "single" },
-        { id: "hardcore", label: "🔥 Hardcore", value: "hardcore", type: "single" },
-      ],
-    },
-    {
-      title: "Where",
-      options: [
-        // Regions
         { id: "north-america", label: "North America", value: "north-america", type: "multi" },
         { id: "latin-america", label: "Latin America", value: "latin-america", type: "multi" },
         { id: "europe", label: "Europe", value: "europe", type: "multi" },
@@ -178,7 +206,7 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
         size="sm"
         onClick={() => handleFilterToggle(category, option.value, option.type === "multi")}
         className={cn(
-          "text-xs h-6 px-2 justify-start",
+          "text-xs h-7 px-2 justify-start",
           layout === "half" && "flex-1",
           layout === "pair" && "flex-1",
           isActive
@@ -193,9 +221,9 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
   };
 
   return (
-    <div className={cn("w-80 flex-shrink-0", className)}>
+    <div className={cn("w-80 flex-shrink-0 overflow-y-auto", className)}>
       {/* Filters Container */}
-      <div className="bg-card rounded-lg border p-4 mb-4">
+      <div className="bg-card border-r p-4">
         {/* Filter Categories */}
         {filterCategories.map((category) => (
           <div key={category.title} className="mb-6 last:mb-0">
@@ -203,8 +231,8 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
               {category.title}
             </h4>
 
-            {/* Temperature and Cost filters - Full width */}
-            {category.title === "What" && (
+            {/* Quick Filters - Mixed layout */}
+            {category.title === "Quick Filters" && (
               <div className="space-y-2">
                 {/* Temperature row */}
                 <div className="flex flex-wrap gap-1">
@@ -221,103 +249,49 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
               </div>
             )}
 
-            {/* Essential filters - Half width grid */}
-            {category.title === "Essential" && (
+            {/* Half width grid layouts */}
+            {category.layout === "half" && (
               <div className="grid grid-cols-2 gap-1">
                 {category.options.map((option) =>
-                  renderFilterButton(option, "essential", category.layout)
+                  renderFilterButton(option, category.title.toLowerCase().replace(/\s+/g, "-"), category.layout)
                 )}
               </div>
             )}
 
-            {/* Features filters - Half width grid */}
-            {category.title === "Features" && (
-              <div className="grid grid-cols-2 gap-1">
+            {/* Regions - Full width */}
+            {category.title === "Regions" && (
+              <div className="flex flex-wrap gap-1">
                 {category.options.map((option) =>
-                  renderFilterButton(option, "features", category.layout)
-                )}
-              </div>
-            )}
-
-            {/* Women filters - Half width grid */}
-            {category.title === "Women" && (
-              <div className="grid grid-cols-2 gap-1">
-                {category.options.map((option) =>
-                  renderFilterButton(option, "women", category.layout)
-                )}
-              </div>
-            )}
-
-            {/* Culture filters - Half width grid */}
-            {category.title === "Culture" && (
-              <div className="grid grid-cols-2 gap-1">
-                {category.options.map((option) =>
-                  renderFilterButton(option, "culture", category.layout)
-                )}
-              </div>
-            )}
-
-            {/* Infrastructure filters - Half width grid */}
-            {category.title === "Infrastructure" && (
-              <div className="grid grid-cols-2 gap-1">
-                {category.options.map((option) =>
-                  renderFilterButton(option, "infrastructure", category.layout)
-                )}
-              </div>
-            )}
-
-            {/* Timezone filters - Half width grid */}
-            {category.title === "Timezone" && (
-              <div className="grid grid-cols-2 gap-1">
-                {category.options.map((option) =>
-                  renderFilterButton(option, "timezone", category.layout)
-                )}
-              </div>
-            )}
-
-            {/* Vibe filters - Pair layout */}
-            {category.title === "Vibe" && (
-              <div className="grid grid-cols-2 gap-1">
-                {category.options.map((option) =>
-                  renderFilterButton(option, "vibe", category.layout)
-                )}
-              </div>
-            )}
-
-            {/* Region filters - Grid layout */}
-            {category.title === "Where" && (
-              <div className="grid grid-cols-2 gap-1">
-                {category.options.map((option) =>
-                  renderFilterButton(option, "region", "half")
+                  renderFilterButton(option, "region", "full")
                 )}
               </div>
             )}
           </div>
         ))}
-      </div>
 
-      {/* Stats Box */}
-      <div className="bg-card rounded-lg border p-4">
-        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-          Stats
-        </h4>
-        <div className="space-y-2 text-xs">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Cities</span>
-            <span className="font-medium">12</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Members</span>
-            <span className="font-medium">2,847</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Reports Today</span>
-            <span className="font-medium">842</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Active Venues</span>
-            <span className="font-medium">1,247</span>
-          </div>
+        {/* Clear Filters */}
+        <div className="mt-6 pt-6 border-t">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full text-xs"
+            onClick={() => {
+              setActiveFilters({});
+              onFilterChange?.({});
+            }}
+          >
+            Clear all filters
+          </Button>
+        </div>
+
+        {/* Stats */}
+        <div className="mt-4 text-center">
+          <p className="text-xs text-muted-foreground">
+            2.6M+ field reports analyzed
+          </p>
+          <p className="text-xs text-muted-foreground">
+            847 cities ranked
+          </p>
         </div>
       </div>
     </div>

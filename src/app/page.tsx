@@ -531,6 +531,96 @@ export default function HomePage() {
         // Add vibe logic if needed
       }
 
+      // Girl Quality & Availability filters
+      const girlFilters = activeFilters['girl-quality-&-availability'];
+      if (girlFilters?.length > 0) {
+        for (const filter of girlFilters) {
+          if (filter === 'stunner-density' && city.women?.attractiveness !== 'high') return false;
+          if (filter === 'gfe-available' && !city.features?.includes('gfe')) return false;
+          if (filter === 'english-girls' && !city.features?.includes('english')) return false;
+          if (filter === 'natural' && city.women?.tattooPrevalence === 'high') return false;
+          if (filter === 'freelancer' && !city.features?.includes('freelancer')) return false;
+          if (filter === 'bar-girls' && !city.features?.includes('bar-girls')) return false;
+        }
+      }
+
+      // Value for Money filters
+      const valueFilters = activeFilters['value-for-money'];
+      if (valueFilters?.length > 0) {
+        for (const filter of valueFilters) {
+          if (filter === 'bang-buck' && !city.features?.includes('value')) return false;
+          if (filter === 'transparent' && !city.features?.includes('transparent')) return false;
+          if (filter === 'no-hidden' && !city.features?.includes('no-hidden')) return false;
+          if (filter === 'st-focus' && !city.features?.includes('st-focus')) return false;
+          if (filter === 'lt-friendly' && !city.features?.includes('lt-friendly')) return false;
+        }
+      }
+
+      // Scene Vibe filters
+      const sceneFilters = activeFilters['scene-vibe'];
+      if (sceneFilters?.length > 0) {
+        for (const filter of sceneFilters) {
+          if (filter === 'party' && !city.features?.includes('party')) return false;
+          if (filter === 'relaxed' && !city.features?.includes('relaxed')) return false;
+          if (filter === 'newbie-friendly' && !city.features?.includes('newbie-friendly')) return false;
+          if (filter === 'no-starfish' && !city.features?.includes('no-starfish')) return false;
+        }
+      }
+
+      // Logistics & Comfort filters
+      const logisticsFilters = activeFilters['logistics-&-comfort'];
+      if (logisticsFilters?.length > 0) {
+        for (const filter of logisticsFilters) {
+          if (filter === 'guest-friendly' && !city.features?.includes('guest-friendly')) return false;
+          if (filter === 'safe' && city.safety !== 'safe') return false;
+          if (filter === 'walkable' && !city.features?.includes('walkable')) return false;
+          if (filter === 'no-joiner' && !city.features?.includes('no-joiner')) return false;
+        }
+      }
+
+      // Special Interests filters
+      const specialFilters = activeFilters['special-interests'];
+      if (specialFilters?.length > 0) {
+        for (const filter of specialFilters) {
+          if (filter === 'legal' && !city.features?.includes('legal')) return false;
+          if (filter === 'cannabis' && !city.features?.includes('cannabis')) return false;
+          if (filter === 'ladyboy' && !city.features?.includes('ladyboy')) return false;
+          if (filter === 'milf' && !city.features?.includes('milf')) return false;
+          if (filter === 'soapy' && !city.features?.includes('soapy')) return false;
+        }
+      }
+
+      // Risk & Safety filters
+      const riskFilters = activeFilters['risk-&-safety'];
+      if (riskFilters?.length > 0) {
+        for (const filter of riskFilters) {
+          if (filter === 'scam-free' && !city.features?.includes('scam-free')) return false;
+          if (filter === 'no-violence' && city.safety !== 'safe') return false;
+          if (filter === 'virgin-safe' && !city.features?.includes('newbie-friendly')) return false;
+          if (filter === 'no-spiking' && !city.features?.includes('no-spiking')) return false;
+        }
+      }
+
+      // Social & Dating filters
+      const socialFilters = activeFilters['social-&-dating'];
+      if (socialFilters?.length > 0) {
+        for (const filter of socialFilters) {
+          if (filter === 'tinder-works' && !city.features?.includes('tinder-works')) return false;
+          if (filter === 'sugar-scene' && !city.features?.includes('sugar-scene')) return false;
+          if (filter === 'expat-community' && !city.features?.includes('expat-community')) return false;
+        }
+      }
+
+      // Time & Season filters
+      const timeFilters = activeFilters['time-&-season'];
+      if (timeFilters?.length > 0) {
+        for (const filter of timeFilters) {
+          if (filter === 'best-now' && !city.features?.includes('best-now')) return false;
+          if (filter === 'visa-runs' && !city.features?.includes('visa-runs')) return false;
+          if (filter === 'weather-good' && !city.features?.includes('weather-good')) return false;
+        }
+      }
+
       return true;
     });
   }, [activeFilters]);
