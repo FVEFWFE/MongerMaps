@@ -117,8 +117,9 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
       title: "Special Interests",
       layout: "half",
       options: [
-        { id: "ladyboy", label: "🏳️‍⚧️ Ladyboy Scene", value: "ladyboy", type: "multi" },
         { id: "no-ladyboy", label: "🚫 Minimal Ladyboys", value: "no-ladyboy", type: "multi" },
+        { id: "ladyboy", label: "🏳️‍⚧️ Ladyboy Scene", value: "ladyboy", type: "multi" },
+        { id: "minimal-tattoos", label: "🚫 Minimal Tattoos", value: "minimal-tattoos", type: "multi" },
         { id: "milf", label: "👩‍💼 MILF Available", value: "milf", type: "multi" },
         { id: "fetish", label: "⛓️ Fetish Friendly", value: "fetish", type: "multi" },
         { id: "soapy", label: "🛁 Soapy Massage", value: "soapy", type: "multi" },

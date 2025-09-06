@@ -585,6 +585,8 @@ export default function HomePage() {
           if (filter === 'legal' && !city.features?.includes('legal')) return false;
           if (filter === 'cannabis' && !city.features?.includes('cannabis')) return false;
           if (filter === 'ladyboy' && !city.features?.includes('ladyboy')) return false;
+          if (filter === 'no-ladyboy' && city.features?.includes('ladyboy')) return false;
+          if (filter === 'minimal-tattoos' && city.women?.tattooPrevalence !== 'low') return false;
           if (filter === 'milf' && !city.features?.includes('milf')) return false;
           if (filter === 'soapy' && !city.features?.includes('soapy')) return false;
         }
