@@ -628,22 +628,23 @@ export default function HomePage() {
   }, [activeFilters]);
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar Filters - Full height from top */}
-      <SidebarFilters 
-        onFilterChange={setActiveFilters}
-        className="hidden lg:block flex-shrink-0 h-screen sticky top-0"
-      />
-      
-      {/* Shell wraps everything else */}
-      <Shell>
-        <div className="flex w-full">
-          {/* Main Content Area with Right Sidebar */}
-          <div className="flex-1 flex gap-6">
-            {/* Content */}
-            <div className="flex-1 p-4 md:p-6">
-          {/* Minimal Hero Section */}
-          <div className="text-center mb-6">
+    <>
+      <div className="flex h-screen">
+        {/* Sidebar Filters - Full height from top */}
+        <SidebarFilters 
+          onFilterChange={setActiveFilters}
+          className="hidden lg:block flex-shrink-0 h-screen sticky top-0"
+        />
+        
+        {/* Shell wraps everything else */}
+        <Shell>
+          <div className="flex w-full">
+            {/* Main Content Area with Right Sidebar */}
+            <div className="flex-1 flex gap-6">
+              {/* Content */}
+              <div className="flex-1 p-4 md:p-6">
+                {/* Minimal Hero Section */}
+                <div className="text-center mb-6">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
               Stop paying tourist prices. Start winning.
             </h1>
@@ -663,21 +664,21 @@ export default function HomePage() {
               </Button>
               <span className="text-sm text-muted-foreground">or keep browsing ↓</span>
             </div>
-          </div>
+                </div>
 
-          {/* Mobile Filter Button */}
-          <div className="lg:hidden mb-4">
+                {/* Mobile Filter Button */}
+                <div className="lg:hidden mb-4">
             <Button 
               variant="outline" 
               size="sm"
               className="w-full text-sm"
             >
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
-          </div>
+            <Filter className="h-4 w-4 mr-2" />
+            Filters
+          </Button>
+                </div>
 
-          <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl md:text-2xl font-bold">Explore Cities</h2>
               <p className="text-muted-foreground">Filter by what matters to you</p>
@@ -690,14 +691,14 @@ export default function HomePage() {
                 Sort: Overall <ChevronDown className="h-4 w-4 ml-1" />
               </Button>
             </div>
-          </div>
+                </div>
 
-            <div className="text-sm text-muted-foreground mb-4">
+                <div className="text-sm text-muted-foreground mb-4">
               Showing {filteredCities.length} of {cities.length} cities
-            </div>
+                </div>
 
-            {/* Responsive Grid: 6 cols on 4K, 5 on 2K, 4 on XL, 3 on LG, 2 on MD, 1 on mobile */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[2560px]:grid-cols-6 gap-4">
+                {/* Responsive Grid: 6 cols on 4K, 5 on 2K, 4 on XL, 3 on LG, 2 on MD, 1 on mobile */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[2560px]:grid-cols-6 gap-4">
               {filteredCities.flatMap((city, index) => {
                 const items = [
                   <CityCard
@@ -812,20 +813,20 @@ export default function HomePage() {
                 
                 return items;
               })}
-            </div>
+                </div>
 
-          {/* Load More Button */}
-          <div className="text-center mt-8">
+                {/* Load More Button */}
+                <div className="text-center mt-8">
             <Button
               variant="outline"
               size="sm"
             >
               Load more cities
             </Button>
-          </div>
+                </div>
 
-          {/* Trust Section */}
-          <div className="mt-12 pt-8 border-t">
+                {/* Trust Section */}
+                <div className="mt-12 pt-8 border-t">
             <div className="text-center space-y-6">
               {/* Forum Hell Section */}
               <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-6 max-w-2xl mx-auto">
@@ -895,10 +896,11 @@ export default function HomePage() {
                 </Button>
               </div>
             </div>
-          </div>
+                </div>
+              </div>
 
-          {/* Right Sidebar */}
-          <div className="w-64 flex-shrink-0 hidden 2xl:block p-4 md:p-6">
+              {/* Right Sidebar */}
+              <div className="w-64 flex-shrink-0 hidden 2xl:block p-4 md:p-6">
             {/* Trending Cities */}
             <Card>
               <CardHeader className="pb-3">
@@ -988,10 +990,12 @@ export default function HomePage() {
                 </Link>
               </CardContent>
             </Card>
+              </div>
+            </div>
           </div>
-          </div>
-        </div>
-      </Shell>
+        </Shell>
+      </div>
+      
       <PaywallModal
         isOpen={showPaywall}
         onClose={() => setShowPaywall(false)}
@@ -1009,6 +1013,6 @@ export default function HomePage() {
         isPaid={isPaid}
         currentCity={selectedCity?.slug || "all"}
       />
-    </div>
+    </>
   );
 }
