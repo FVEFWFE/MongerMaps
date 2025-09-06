@@ -1,14 +1,16 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Bird, LayoutDashboard, MapPin, Database, Globe, User, Search, Copy, Menu, X, DollarSign } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import dynamic from "next/dynamic"
+import { Bird, Database, Globe, User, Search, Copy, DollarSign, ChevronDown, Gift, MapPin, MessageCircle, Users, Calendar, HelpCircle, Bug, Shield, Image, Moon, Heart, Shuffle, TrendingUp, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import {
   CommandDialog,
   CommandEmpty,
@@ -19,156 +21,377 @@ import {
 } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
 
-const navigation = [
-  { name: "Cities", href: "/", icon: Globe },
-  { name: "Pattaya", href: "/city/pattaya", icon: MapPin },
-  { name: "Bangkok", href: "/city/bangkok", icon: MapPin },
-  { name: "Angeles City", href: "/city/angeles", icon: MapPin },
-  { name: "Intel Database", href: "/intel-database", icon: Database },
-  { name: "Make Money", href: "/make-money", icon: DollarSign },
-  { name: "My Profile", href: "/profile", icon: User },
-]
+// Dynamically import BlurText to avoid SSR issues
+const BlurText = dynamic(() => import("~/components/BlurText"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center gap-8">
+      <span className="text-muted-foreground italic">
+        Because men who've earned their freedom deserve to enjoy it without getting scammed.
+      </span>
+      <span className="text-muted-foreground">•</span>
+      <span className="text-muted-foreground font-medium">
+        2.6M+ Reports. No BS. Trusted by 12,000+ Vets.
+      </span>
+    </div>
+  ),
+})
 
-export function Shell({ children }: { children: React.ReactNode }) {
+const navigation: { name: string; href: string; icon: any }[] = []
+
+export function Shell({ 
+  children,
+  onCursorToggle,
+  cursorEnabled = true 
+}: { 
+  children: React.ReactNode;
+  onCursorToggle?: () => void;
+  cursorEnabled?: boolean;
+}) {
   const pathname = usePathname()
+  const router = useRouter()
   const [searchOpen, setSearchOpen] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [logoDropdownOpen, setLogoDropdownOpen] = useState(false)
+  const [referralCode] = useState("MONGER123") // Demo referral code
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const clickCountRef = useRef(0)
+
+  const handleCopyReferral = () => {
+    navigator.clipboard.writeText(`https://mongermaps.com/ref/${referralCode}`)
+    // You could add a toast notification here
+  }
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    clickCountRef.current += 1
+    
+    if (clickCountRef.current === 1) {
+      // Single click - wait to see if it's a double click
+      clickTimeoutRef.current = setTimeout(() => {
+        // It was just a single click - open dropdown
+        if (clickCountRef.current === 1) {
+          setLogoDropdownOpen(true)
+        }
+        clickCountRef.current = 0
+      }, 250) // 250ms to detect double click
+    } else if (clickCountRef.current === 2) {
+      // Double click - clear timeout and go home with cleared filters
+      if (clickTimeoutRef.current) {
+        clearTimeout(clickTimeoutRef.current)
+      }
+      // Close dropdown if open
+      setLogoDropdownOpen(false)
+      // Navigate to home and clear filters
+      router.push('/?clear=true')
+      clickCountRef.current = 0
+    }
+  }
 
   return (
-    <div className="flex h-screen bg-background">
-      <aside
-        className={cn(
-          "w-64 fixed left-0 top-0 h-full bg-card border-r border-border flex flex-col z-50 transition-transform duration-200 ease-in-out",
-          "md:translate-x-0", // Always visible on desktop
-          mobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0", // Hidden on mobile unless menu open
-        )}
-      >
-        {/* Logo */}
-        <div className="p-6 border-b border-border">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Bird className="h-8 w-8 text-foreground" />
-              <span className="text-lg font-bold text-foreground">MongerMaps</span>
+    <div className="flex h-screen bg-background w-full">
+      {/* Main content wrapper */}
+      <div className="flex-1 flex flex-col w-full">
+        {/* Top Header - Only above main content, not filters */}
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex h-16 items-center px-4">
+          {/* Logo and Title */}
+          <div className="flex items-center space-x-3 mr-4">
+            {/* Square Logo with Dropdown */}
+            <DropdownMenu open={logoDropdownOpen} onOpenChange={setLogoDropdownOpen}>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <button 
+                        onClick={handleLogoClick}
+                        className="relative h-10 w-10 flex-shrink-0 group cursor-zoom-in focus:outline-none focus:ring-0 focus:border-0 focus-visible:outline-none focus-visible:ring-0"
+                        title="Click to open nav, double click to go home"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center group-hover:opacity-90 transition-opacity">
+                          <Bird className="h-6 w-6 text-white" />
+                        </div>
+                        {/* Dropdown arrow indicator */}
+                        <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5">
+                          <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                        </div>
+                      </button>
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to open nav, double click to go home</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+                  <DropdownMenuContent align="start" className="w-64">
+                    {/* General */}
+                    <DropdownMenuLabel className="text-xs text-muted-foreground">General</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => router.push('/')}>
+                          <Home className="mr-2 h-4 w-4" />
+                          <span>Frontpage</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={onCursorToggle}>
+                          <Moon className="mr-2 h-4 w-4" />
+                          <span>Cursor effect: {cursorEnabled ? 'On' : 'Off'}</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Moon className="mr-2 h-4 w-4" />
+                          <span>Dark mode</span>
+                        </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Heart className="mr-2 h-4 w-4" />
+                      <span>Your favorites</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Community */}
+                    <DropdownMenuLabel className="text-xs text-muted-foreground">Community</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={() => router.push('/chat')}>
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      <span>Chat</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Users className="mr-2 h-4 w-4" />
+                      <span>Friend finder</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Calendar className="mr-2 h-4 w-4" />
+                      <span>Host meetup</span>
+                      <span className="ml-auto text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded">new</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Calendar className="mr-2 h-4 w-4" />
+                      <span>Attend meetup</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Users className="mr-2 h-4 w-4" />
+                      <span>Swingers meetup</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Users className="mr-2 h-4 w-4" />
+                      <span>Gangbang meetup</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Tools */}
+                    <DropdownMenuLabel className="text-xs text-muted-foreground">Tools</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={() => router.push('/best')}>
+                      <TrendingUp className="mr-2 h-4 w-4" />
+                      <span>Best place now</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push('/random')}>
+                      <Shuffle className="mr-2 h-4 w-4" />
+                      <span>Random place</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push('/random-good')}>
+                      <Shuffle className="mr-2 h-4 w-4" />
+                      <span>Random good place</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push('/gallery')}>
+                      <Image className="mr-2 h-4 w-4" />
+                      <span>Gallery</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Help */}
+                    <DropdownMenuLabel className="text-xs text-muted-foreground">Help</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={() => router.push('/faq')}>
+                      <HelpCircle className="mr-2 h-4 w-4" />
+                      <span>FAQ & Help</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => window.open('https://github.com/mongermaps/feedback', '_blank')}>
+                      <Bug className="mr-2 h-4 w-4" />
+                      <span>Ideas + bugs</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push('/changelog')}>
+                      <TrendingUp className="mr-2 h-4 w-4" />
+                      <span>Changelog</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push('/legal')}>
+                      <Shield className="mr-2 h-4 w-4" />
+                      <span>TOS & Privacy policy</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+            </DropdownMenu>
+            
+            {/* Title Text - Not clickable */}
+            <div className="flex flex-col">
+              <span className="text-lg font-bold text-foreground leading-tight">MongerMaps.io</span>
+              <span className="text-xs text-muted-foreground">Find the Gems. Avoid the Rip-offs.</span>
             </div>
-            <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setMobileMenuOpen(false)}>
-              <X className="h-5 w-5" />
-            </Button>
           </div>
-        </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-4">
-          <ul className="space-y-2">
-            {navigation.map((item) => {
-              const Icon = item.icon
-              const isActive = pathname === item.href
-              return (
-                <li key={item.name}>
+          {/* Search right after logo */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSearchOpen(true)}
+            className="hidden md:flex items-center gap-2 text-muted-foreground cursor-target"
+          >
+            <Search className="h-4 w-4" />
+            <span className="hidden lg:inline">Search 2.6M+ field reports, venues with hot girls, cities...</span>
+            <span className="lg:hidden">Search</span>
+          </Button>
+
+          {/* Tagline */}
+          <div className="hidden xl:flex flex-col mx-4 text-xs max-w-lg">
+            <span className="font-semibold text-foreground">Stop Wasting Your Travels on 'Starfish'.</span>
+            <span className="text-muted-foreground">
+              Live member-vetted map. Real stunners. Real-time prices. No outdated forums.
+            </span>
+          </div>
+
+          {/* Navigation Links - hidden since empty */}
+          {navigation.length > 0 && (
+            <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center">
+              {navigation.map((item) => {
+                const isActive = pathname === item.href
+                return (
                   <Link
+                    key={item.name}
                     href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      "flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent",
+                      "text-sm font-medium transition-colors hover:text-primary",
+                      isActive ? "text-foreground" : "text-muted-foreground"
                     )}
                   >
-                    <Icon className="h-5 w-5" />
-                    <span>{item.name}</span>
+                    {item.name}
                   </Link>
-                </li>
-              )
-            })}
-          </ul>
-        </nav>
+                )
+              })}
+            </nav>
+          )}
 
-        <div className="p-4">
-          <Card className="border-border/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm">My Referral Code</CardTitle>
-            </CardHeader>
-            <CardContent className="pb-3">
-              <Button variant="default" size="sm" className="w-full">
-                <Copy className="h-4 w-4 mr-2" />
-                Copy Link
-              </Button>
-            </CardContent>
-            <CardFooter className="pt-0">
-              <p className="text-xs text-muted-foreground">4 Referrals = 1 Year Free</p>
-            </CardFooter>
-          </Card>
-        </div>
-      </aside>
+          {/* Right side actions */}
+          <div className="flex items-center space-x-4 ml-auto">
 
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setMobileMenuOpen(false)} />
-      )}
-
-      <div className="flex-1 md:ml-64 flex flex-col min-w-0">
-        {/* Top Header */}
-        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-6">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setMobileMenuOpen(true)}>
-              <Menu className="h-5 w-5" />
-            </Button>
-
-            <div className="flex-1 max-w-md">
-              <Button
-                variant="outline"
-                className="w-full justify-start text-muted-foreground bg-transparent"
-                onClick={() => setSearchOpen(true)}
-              >
-                <Search className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Search venues, reports, kinks...</span>
-                <span className="sm:hidden">Search...</span>
-              </Button>
-            </div>
-          </div>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-auto px-2 rounded-full">
-                <div className="flex items-center space-x-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>
-                      <User className="h-4 w-4" />
-                    </AvatarFallback>
+            {/* User Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                  <Avatar className="h-7 w-7">
+                    <AvatarFallback>U</AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium hidden sm:inline">Veteran_77</span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    My Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <div className="p-2">
+                  <div className="text-sm font-medium mb-2">My Referral Code</div>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 px-2 py-1 bg-muted rounded text-xs">{referralCode}</code>
+                    <Button size="sm" variant="outline" onClick={handleCopyReferral}>
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <div className="mt-2 text-xs text-muted-foreground flex items-center gap-1">
+                    <Gift className="h-3 w-3" />
+                    4 Referrals = 1 Year Free
+                  </div>
                 </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <span>Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <span>Logout</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
         </header>
 
-        <main className="flex-1 overflow-auto min-w-0">{children}</main>
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto">
+          {/* Philosophical Hook & Social Proof Bar */}
+          <div className="hidden lg:block px-6 py-3 bg-muted/20 border-b text-xs text-center">
+            <div className="flex items-center justify-center gap-8">
+              <BlurText
+                text="Because men who've earned their freedom deserve to enjoy it without getting scammed."
+                delay={100}
+                animateBy="words"
+                direction="top"
+                className="text-muted-foreground italic"
+              />
+              <BlurText
+                text="•"
+                delay={1500}
+                animateBy="letters"
+                direction="top"
+                className="text-muted-foreground"
+              />
+              <BlurText
+                text="2.6M+ Reports. No BS. Trusted by 12,000+ Vets."
+                delay={150}
+                animateBy="words"
+                direction="bottom"
+                className="text-muted-foreground font-medium"
+              />
+            </div>
+          </div>
+          {children}
+        </main>
       </div>
 
+      {/* Search Dialog */}
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <CommandInput placeholder="Search venues, reports, kinks..." />
+        <CommandInput placeholder="Search 2.6M+ field reports, venues with hot girls, cities..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Venues">
-            <CommandItem>Kinnaree</CommandItem>
-            <CommandItem>Sapphire A Go Go</CommandItem>
-            <CommandItem>Insomnia (FL)</CommandItem>
+          <CommandGroup heading="Cities">
+            <CommandItem>
+              <Globe className="mr-2 h-4 w-4" />
+              Pattaya
+            </CommandItem>
+            <CommandItem>
+              <Globe className="mr-2 h-4 w-4" />
+              Bangkok
+            </CommandItem>
+            <CommandItem>
+              <Globe className="mr-2 h-4 w-4" />
+              Angeles City
+            </CommandItem>
+            <CommandItem>
+              <Globe className="mr-2 h-4 w-4" />
+              Tijuana
+            </CommandItem>
+            <CommandItem>
+              <Globe className="mr-2 h-4 w-4" />
+              Medellin
+            </CommandItem>
           </CommandGroup>
-          <CommandGroup heading="Reports">
-            <CommandItem>Recent Pattaya Updates</CommandItem>
-            <CommandItem>Scam Alert: Walking Street</CommandItem>
+          <CommandGroup heading="Venues">
+            <CommandItem>
+              <MapPin className="mr-2 h-4 w-4" />
+              Walking Street
+            </CommandItem>
+            <CommandItem>
+              <MapPin className="mr-2 h-4 w-4" />
+              Soi 6
+            </CommandItem>
+            <CommandItem>
+              <MapPin className="mr-2 h-4 w-4" />
+              Nana Plaza
+            </CommandItem>
+          </CommandGroup>
+          <CommandGroup heading="Recent Reports">
+            <CommandItem>
+              <Database className="mr-2 h-4 w-4" />
+              Pattaya November Update
+            </CommandItem>
+            <CommandItem>
+              <Database className="mr-2 h-4 w-4" />
+              Bangkok Price Changes
+            </CommandItem>
           </CommandGroup>
         </CommandList>
       </CommandDialog>

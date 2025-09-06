@@ -6,6 +6,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
+import { FlagIcon } from "~/components/flag-icon";
 import { 
   Heart, 
   Wifi, 
@@ -89,7 +90,7 @@ export function CityCard({
   return (
     <Card 
       className={cn(
-        "relative overflow-hidden transition-all cursor-pointer group",
+        "relative overflow-hidden transition-all cursor-target group",
         comingSoon && "opacity-75",
         "hover:shadow-xl hover:scale-[1.02]"
       )}
@@ -105,8 +106,8 @@ export function CityCard({
           }
         }}
       >
-        {/* Image Container */}
-        <div className="relative h-48 overflow-hidden">
+        {/* Image Container - Changed to rectangular aspect ratio */}
+        <div className="relative h-64 overflow-hidden">
           {/* City Image */}
           <div className="absolute inset-0">
             {image ? (
@@ -125,80 +126,118 @@ export function CityCard({
           {/* Hover Overlay with Scores */}
           <div 
             className={cn(
-              "absolute inset-0 bg-black/70 transition-opacity duration-300 flex flex-col justify-center px-4 space-y-2",
-              isHovered ? "opacity-100" : "opacity-0"
+              "absolute inset-0 bg-black/85 transition-all duration-300 flex flex-col justify-center px-6 space-y-3",
+              isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
             )}
           >
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-white">Overall</span>
-                <div className="flex items-center gap-2">
-                  <div className={cn("h-2 w-20 rounded-full bg-gray-700")}>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-white font-medium text-sm">Overall</span>
+                <div className="flex items-center gap-3">
+                  <div className={cn("h-3 w-32 rounded-full bg-gray-700")}>
                     <div 
-                      className={cn("h-full rounded-full transition-all", getScoreColor(overallScore))}
-                      style={{ width: `${overallScore}%` }}
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500 ease-out",
+                        getScoreColor(overallScore),
+                        isHovered ? "animate-fill" : ""
+                      )}
+                      style={{ 
+                        width: isHovered ? `${overallScore}%` : '0%',
+                        transitionDelay: '0ms'
+                      }}
                     />
                   </div>
-                  <span className="text-white font-medium">{overallScore}</span>
+                  <span className="text-white font-bold text-sm w-8 text-right">{overallScore}</span>
                 </div>
               </div>
               
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-white">Cost</span>
-                <div className="flex items-center gap-2">
-                  <div className={cn("h-2 w-20 rounded-full bg-gray-700")}>
+              <div className="flex items-center justify-between">
+                <span className="text-white font-medium text-sm">Cost</span>
+                <div className="flex items-center gap-3">
+                  <div className={cn("h-3 w-32 rounded-full bg-gray-700")}>
                     <div 
-                      className={cn("h-full rounded-full transition-all", getScoreColor(costScore))}
-                      style={{ width: `${costScore}%` }}
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500 ease-out",
+                        getScoreColor(costScore),
+                        isHovered ? "animate-fill" : ""
+                      )}
+                      style={{ 
+                        width: isHovered ? `${costScore}%` : '0%',
+                        transitionDelay: '50ms'
+                      }}
                     />
                   </div>
-                  <span className="text-white font-medium">{costScore}</span>
+                  <span className="text-white font-bold text-sm w-8 text-right">{costScore}</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-white">Internet</span>
-                <div className="flex items-center gap-2">
-                  <div className={cn("h-2 w-20 rounded-full bg-gray-700")}>
+              <div className="flex items-center justify-between">
+                <span className="text-white font-medium text-sm">Internet</span>
+                <div className="flex items-center gap-3">
+                  <div className={cn("h-3 w-32 rounded-full bg-gray-700")}>
                     <div 
-                      className={cn("h-full rounded-full transition-all", getScoreColor(internetScore))}
-                      style={{ width: `${internetScore}%` }}
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500 ease-out",
+                        getScoreColor(internetScore),
+                        isHovered ? "animate-fill" : ""
+                      )}
+                      style={{ 
+                        width: isHovered ? `${internetScore}%` : '0%',
+                        transitionDelay: '100ms'
+                      }}
                     />
                   </div>
-                  <span className="text-white font-medium">{internetScore}</span>
+                  <span className="text-white font-bold text-sm w-8 text-right">{internetScore}</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-white">Safety</span>
-                <div className="flex items-center gap-2">
-                  <div className={cn("h-2 w-20 rounded-full bg-gray-700")}>
+              <div className="flex items-center justify-between">
+                <span className="text-white font-medium text-sm">Safety</span>
+                <div className="flex items-center gap-3">
+                  <div className={cn("h-3 w-32 rounded-full bg-gray-700")}>
                     <div 
-                      className={cn("h-full rounded-full transition-all", getScoreColor(safetyScore))}
-                      style={{ width: `${safetyScore}%` }}
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500 ease-out",
+                        getScoreColor(safetyScore),
+                        isHovered ? "animate-fill" : ""
+                      )}
+                      style={{ 
+                        width: isHovered ? `${safetyScore}%` : '0%',
+                        transitionDelay: '150ms'
+                      }}
                     />
                   </div>
-                  <span className="text-white font-medium">{safetyScore}</span>
+                  <span className="text-white font-bold text-sm w-8 text-right">{safetyScore}</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-white">Activity</span>
-                <div className="flex items-center gap-2">
-                  <div className={cn("h-2 w-20 rounded-full bg-gray-700")}>
+              <div className="flex items-center justify-between">
+                <span className="text-white font-medium text-sm">Activity</span>
+                <div className="flex items-center gap-3">
+                  <div className={cn("h-3 w-32 rounded-full bg-gray-700")}>
                     <div 
-                      className={cn("h-full rounded-full transition-all", getScoreColor(activityScore))}
-                      style={{ width: `${activityScore}%` }}
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500 ease-out",
+                        getScoreColor(activityScore),
+                        isHovered ? "animate-fill" : ""
+                      )}
+                      style={{ 
+                        width: isHovered ? `${activityScore}%` : '0%',
+                        transitionDelay: '200ms'
+                      }}
                     />
                   </div>
-                  <span className="text-white font-medium">{activityScore}</span>
+                  <span className="text-white font-bold text-sm w-8 text-right">{activityScore}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Top Overlays */}
-          <div className="absolute top-2 left-2 z-10">
+          {/* Top Overlays - Hide on hover */}
+          <div className={cn(
+            "absolute top-2 left-2 z-10 transition-opacity duration-300",
+            isHovered ? "opacity-0" : "opacity-100"
+          )}>
             <Badge 
               variant="secondary" 
               className="bg-black/70 text-white text-xs px-2 py-0.5 backdrop-blur-sm"
@@ -207,7 +246,10 @@ export function CityCard({
             </Badge>
           </div>
 
-          <div className="absolute top-2 right-2 z-10 flex items-center gap-1">
+          <div className={cn(
+            "absolute top-2 right-2 z-10 flex items-center gap-1 transition-opacity duration-300",
+            isHovered ? "opacity-0" : "opacity-100"
+          )}>
             {stats.internetSpeed && (
               <Badge 
                 variant="secondary" 
@@ -240,14 +282,17 @@ export function CityCard({
                 {name}
               </h3>
               <p className="text-white/90 text-sm drop-shadow-lg flex items-center justify-center gap-1">
-                <span className="text-lg">{flag}</span>
+                <FlagIcon country={country} className="w-6 h-4" />
                 {country}
               </p>
             </div>
           </div>
 
-          {/* Bottom Overlays */}
-          <div className="absolute bottom-2 left-2 right-2 flex justify-between items-end">
+          {/* Bottom Overlays - Hide on hover */}
+          <div className={cn(
+            "absolute bottom-2 left-2 right-2 flex justify-between items-end transition-opacity duration-300",
+            isHovered ? "opacity-0" : "opacity-100"
+          )}>
             <div className="flex items-center gap-2">
               {stats.temperature && (
                 <Badge 
@@ -286,9 +331,12 @@ export function CityCard({
             </Badge>
           </div>
 
-          {/* Trending Badge */}
+          {/* Trending Badge - Hide on hover */}
           {trending && (
-            <div className="absolute top-12 left-2">
+            <div className={cn(
+              "absolute top-12 left-2 transition-opacity duration-300",
+              isHovered ? "opacity-0" : "opacity-100"
+            )}>
               <Badge className="bg-red-500 text-white text-xs">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 HOT
