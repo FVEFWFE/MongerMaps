@@ -187,7 +187,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             className="hidden md:flex items-center gap-2 text-muted-foreground"
           >
             <Search className="h-4 w-4" />
-            <span className="hidden lg:inline">Search cities, venues with hot girls, 2.6M+ field reports...</span>
+            <span className="hidden lg:inline">Search 2.6M+ field reports, venues with hot girls, cities...</span>
             <span className="lg:hidden">Search</span>
           </Button>
 
@@ -284,7 +284,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       {/* Search Dialog */}
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <CommandInput placeholder="Search cities, venues with hot girls, 2.6M+ field reports..." />
+        <CommandInput placeholder="Search 2.6M+ field reports, venues with hot girls, cities..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Cities">
