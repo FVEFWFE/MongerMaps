@@ -31,6 +31,7 @@ import { PaywallModal } from "~/components/paywall-modal";
 import { SidebarFilters } from "~/components/sidebar-filters";
 import { CityCard } from "~/components/city-card";
 import { CityModal } from "~/components/city-modal";
+import { ChatWidget } from "~/components/chat-widget";
 
 // Extended city data with Monger Rank factors
 const cities = [
@@ -56,7 +57,7 @@ const cities = [
     },
     badges: ["Most Active", "Best Value", "24/7 Action"],
     trending: true,
-    image: "/bangkok-skyline-with-temples.jpg",
+    image: "https://images.unsplash.com/photo-1545996124-0501ebae84d0?w=800&h=600&fit=crop",
     region: "asia",
     temperature: "warm",
     cost: "cheap",
@@ -99,7 +100,7 @@ const cities = [
     },
     badges: ["Diverse Scene", "High-End Options"],
     trending: false,
-    image: "/bangkok-skyline-with-temples.jpg",
+    image: "https://images.unsplash.com/photo-1502139214982-d0ad755818d8?w=800&h=600&fit=crop",
     region: "asia",
     temperature: "warm",
     cost: "cheap",
@@ -141,7 +142,7 @@ const cities = [
     },
     badges: ["Best GFE", "Walkable"],
     trending: true,
-    image: "/placeholder.jpg",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=600&fit=crop",
     region: "asia",
     temperature: "warm",
     cost: "cheap",
@@ -183,7 +184,7 @@ const cities = [
     },
     badges: ["Emerging"],
     comingSoon: true,
-    image: "/placeholder.jpg",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=600&fit=crop",
     region: "asia",
     temperature: "warm",
     cost: "mid",
@@ -225,7 +226,7 @@ const cities = [
     },
     badges: ["Under the Radar"],
     comingSoon: true,
-    image: "/placeholder.jpg",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=600&fit=crop",
     region: "asia",
     temperature: "warm",
     cost: "cheap",
@@ -267,7 +268,7 @@ const cities = [
     },
     badges: ["Anything Goes"],
     comingSoon: true,
-    image: "/placeholder.jpg",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=600&fit=crop",
     region: "asia",
     temperature: "warm",
     cost: "cheap",
@@ -310,7 +311,7 @@ const cities = [
     },
     badges: ["Luxury", "Discrete"],
     comingSoon: true,
-    image: "/dubai-skyline-burj-khalifa.png",
+    image: "https://images.unsplash.com/photo-1524638431109-93d95c968f03?w=800&h=600&fit=crop",
     region: "middle-east",
     temperature: "warm",
     cost: "expensive",
@@ -352,7 +353,7 @@ const cities = [
     },
     badges: ["Euro Scene", "Safe"],
     comingSoon: true,
-    image: "/lisbon-colorful-buildings-and-trams.jpg",
+    image: "https://images.unsplash.com/photo-1485199692108-c3b5069de6a0?w=800&h=600&fit=crop",
     region: "europe",
     temperature: "mild",
     cost: "mid",
@@ -394,7 +395,7 @@ const cities = [
     },
     badges: ["Alternative", "Liberal"],
     comingSoon: true,
-    image: "/berlin-brandenburg-gate-and-modern-architecture.jpg",
+    image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&h=600&fit=crop",
     region: "europe",
     temperature: "mild",
     cost: "mid",
@@ -700,6 +701,11 @@ export default function HomePage() {
         onClose={() => setShowCityModal(false)}
         city={selectedCity}
         isPaid={isPaid}
+      />
+
+      <ChatWidget 
+        isPaid={isPaid}
+        currentCity={selectedCity?.slug || "all"}
       />
     </Shell>
   );

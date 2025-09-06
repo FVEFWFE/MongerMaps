@@ -6,6 +6,7 @@ import Image from "next/image"
 import { FlagIcon } from "./flag-icon"
 import { Badge } from "~/components/ui/badge"
 import { HotelDatabase } from "./hotel-database"
+import { GoingRates } from "./going-rates"
 
 interface CityModalProps {
   city: {
@@ -61,6 +62,7 @@ const tabs = [
   "Scores",
   "Venues",
   "Hotels",
+  "Going Rates",
   "Digital Nomad Guide", 
   "Pros and Cons",
   "Reviews",
@@ -211,6 +213,13 @@ export function CityModal({ city, isOpen, onClose, isPaid = false }: CityModalPr
         return (
           <div className="space-y-6">
             <HotelDatabase isPaid={isPaid} />
+          </div>
+        )
+
+      case "Going Rates":
+        return (
+          <div className="space-y-6">
+            <GoingRates city={city.slug} isPaid={isPaid} />
           </div>
         )
 
