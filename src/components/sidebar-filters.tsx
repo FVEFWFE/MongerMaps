@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
-import { SearchIcon } from "lucide-react";
 import { cn } from "~/lib/utils";
 
 interface FilterOption {
@@ -28,7 +26,6 @@ interface SidebarFiltersProps {
 }
 
 export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProps) {
-  const [searchQuery, setSearchQuery] = useState("");
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({
     temperature: ["warm"],
     region: ["asia"],
@@ -69,21 +66,33 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
         { id: "warm", label: "☀️ Warm now", value: "warm", type: "single", active: true },
 
         // Cost
-        { id: "cheap", label: "💵<$2K/mo", value: "cheap", type: "single" },
-        { id: "mid", label: "💸<$3K/mo", value: "mid", type: "single" },
-        { id: "expensive", label: "💰<$5K/mo", value: "expensive", type: "single" },
+        { id: "budget", label: "💵<$1K/mo", value: "budget", type: "single" },
+        { id: "cheap", label: "💸<$2K/mo", value: "cheap", type: "single" },
+        { id: "mid", label: "💰<$3K/mo", value: "mid", type: "single" },
       ],
     },
     {
-      title: "Quality",
+      title: "Essential",
       layout: "half",
       options: [
-        { id: "safe", label: "👮‍ Safe", value: "safe", type: "multi" },
-        { id: "quality", label: "⭐ High Quality", value: "quality", type: "multi" },
-        { id: "value", label: "💨 Good Value", value: "value", type: "multi" },
-        { id: "active", label: "🔥 Very Active", value: "active", type: "multi" },
-        { id: "growing", label: "📈 Growing Scene", value: "growing", type: "multi" },
-        { id: "veteran", label: "🏅 Veteran Approved", value: "veteran", type: "multi" },
+        { id: "safe", label: "👮 Safe", value: "safe", type: "multi" },
+        { id: "internet", label: "📡 Fast internet", value: "internet", type: "multi" },
+        { id: "nightlife", label: "🌃 Nightlife", value: "nightlife", type: "multi" },
+        { id: "24hr", label: "🕐 24hr city", value: "24hr", type: "multi" },
+        { id: "english", label: "🗣️ English OK", value: "english", type: "multi" },
+        { id: "walkable", label: "🚶 Walkable", value: "walkable", type: "multi" },
+      ],
+    },
+    {
+      title: "Features",
+      layout: "half",
+      options: [
+        { id: "beach", label: "🏖️ Beach", value: "beach", type: "multi" },
+        { id: "legal", label: "✅ Legal scene", value: "legal", type: "multi" },
+        { id: "cannabis", label: "🌿 Cannabis OK", value: "cannabis", type: "multi" },
+        { id: "lgbtq", label: "🏳️‍🌈 LGBTQ+", value: "lgbtq", type: "multi" },
+        { id: "female", label: "👩 Female friendly", value: "female", type: "multi" },
+        { id: "value", label: "💎 Good value", value: "value", type: "multi" },
       ],
     },
     {
@@ -100,13 +109,13 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
       title: "Where",
       options: [
         // Regions
-        { id: "north-america", label: "🌎 North America", value: "north-america", type: "multi" },
-        { id: "latin-america", label: "💃 Latin America", value: "latin-america", type: "multi" },
-        { id: "europe", label: "🇪🇺 Europe", value: "europe", type: "multi" },
-        { id: "africa", label: "🌍 Africa", value: "africa", type: "multi" },
-        { id: "middle-east", label: "🕌 Middle East", value: "middle-east", type: "multi" },
-        { id: "asia", label: "⛩️ Asia", value: "asia", type: "multi", active: true },
-        { id: "oceania", label: "🏄 Oceania", value: "oceania", type: "multi" },
+        { id: "north-america", label: "North America", value: "north-america", type: "multi" },
+        { id: "latin-america", label: "Latin America", value: "latin-america", type: "multi" },
+        { id: "europe", label: "Europe", value: "europe", type: "multi" },
+        { id: "africa", label: "Africa", value: "africa", type: "multi" },
+        { id: "middle-east", label: "Middle East", value: "middle-east", type: "multi" },
+        { id: "asia", label: "Asia", value: "asia", type: "multi", active: true },
+        { id: "oceania", label: "Oceania", value: "oceania", type: "multi" },
       ],
     },
   ];
@@ -141,21 +150,8 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
 
   return (
     <div className={cn("w-80 flex-shrink-0", className)}>
-      {/* Search and Filters Container */}
+      {/* Filters Container */}
       <div className="bg-card rounded-lg border p-4 mb-4">
-        {/* Search */}
-        <div className="relative mb-3">
-          <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-            <SearchIcon className="h-4 w-4" />
-          </div>
-          <Input
-            placeholder="Search cities..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8 h-8 text-sm"
-          />
-        </div>
-
         {/* Filter Categories */}
         {filterCategories.map((category) => (
           <div key={category.title} className="mb-6 last:mb-0">
@@ -181,11 +177,20 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
               </div>
             )}
 
-            {/* Quality filters - Half width grid */}
-            {category.title === "Quality" && (
+            {/* Essential filters - Half width grid */}
+            {category.title === "Essential" && (
               <div className="grid grid-cols-2 gap-1">
                 {category.options.map((option) =>
-                  renderFilterButton(option, "quality", category.layout)
+                  renderFilterButton(option, "essential", category.layout)
+                )}
+              </div>
+            )}
+
+            {/* Features filters - Half width grid */}
+            {category.title === "Features" && (
+              <div className="grid grid-cols-2 gap-1">
+                {category.options.map((option) =>
+                  renderFilterButton(option, "features", category.layout)
                 )}
               </div>
             )}

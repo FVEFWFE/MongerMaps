@@ -21,9 +21,6 @@ import { cn } from "@/lib/utils"
 
 const navigation = [
   { name: "Cities", href: "/", icon: Globe },
-  { name: "Pattaya", href: "/city/pattaya", icon: MapPin },
-  { name: "Bangkok", href: "/city/bangkok", icon: MapPin },
-  { name: "Angeles City", href: "/city/angeles", icon: MapPin },
   { name: "Intel Database", href: "/intel-database", icon: Database },
   { name: "Make Money", href: "/make-money", icon: DollarSign },
   { name: "My Profile", href: "/profile", icon: User },
@@ -120,7 +117,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 onClick={() => setSearchOpen(true)}
               >
                 <Search className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Search venues, reports, kinks...</span>
+                <span className="hidden sm:inline">Search cities, venues, reports...</span>
                 <span className="sm:hidden">Search...</span>
               </Button>
             </div>
@@ -158,9 +155,16 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </div>
 
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <CommandInput placeholder="Search venues, reports, kinks..." />
+        <CommandInput placeholder="Search cities, venues, reports..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Cities">
+            <CommandItem>Pattaya, Thailand</CommandItem>
+            <CommandItem>Bangkok, Thailand</CommandItem>
+            <CommandItem>Angeles City, Philippines</CommandItem>
+            <CommandItem>Tijuana, Mexico</CommandItem>
+            <CommandItem>Medellin, Colombia</CommandItem>
+          </CommandGroup>
           <CommandGroup heading="Venues">
             <CommandItem>Kinnaree</CommandItem>
             <CommandItem>Sapphire A Go Go</CommandItem>

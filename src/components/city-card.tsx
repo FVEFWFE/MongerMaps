@@ -6,6 +6,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
+import { FlagIcon } from "~/components/flag-icon";
 import { 
   Heart, 
   Wifi, 
@@ -240,7 +241,7 @@ export function CityCard({
                 {name}
               </h3>
               <p className="text-white/90 text-sm drop-shadow-lg flex items-center justify-center gap-1">
-                <span className="text-lg">{flag}</span>
+                <FlagIcon country={country} className="w-6 h-4" />
                 {country}
               </p>
             </div>
