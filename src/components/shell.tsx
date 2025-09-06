@@ -20,9 +20,7 @@ import {
 } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
 
-const navigation = [
-  { name: "Make Money Mongering", href: "/make-money", icon: DollarSign },
-]
+const navigation: { name: string; href: string; icon: any }[] = []
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -201,24 +199,26 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </span>
           </div>
 
-          {/* Navigation Links - pushed further right */}
-          <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
-                    isActive ? "text-foreground" : "text-muted-foreground"
-                  )}
-                >
-                  {item.name}
-                </Link>
-              )
-            })}
-          </nav>
+          {/* Navigation Links - hidden since empty */}
+          {navigation.length > 0 && (
+            <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center">
+              {navigation.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={cn(
+                      "text-sm font-medium transition-colors hover:text-primary",
+                      isActive ? "text-foreground" : "text-muted-foreground"
+                    )}
+                  >
+                    {item.name}
+                  </Link>
+                )
+              })}
+            </nav>
+          )}
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4 ml-auto">
@@ -267,13 +267,16 @@ export function Shell({ children }: { children: React.ReactNode }) {
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto">
           {/* Philosophical Hook & Social Proof Bar */}
-          <div className="hidden lg:flex items-center justify-between px-6 py-3 bg-muted/20 border-b text-xs">
-            <span className="text-muted-foreground italic">
-              Because men who've earned their freedom deserve to enjoy it without getting scammed.
-            </span>
-            <span className="text-muted-foreground font-medium">
-              2.6M+ Reports. No BS. Trusted by 12,000+ Vets.
-            </span>
+          <div className="hidden lg:block px-6 py-3 bg-muted/20 border-b text-xs text-center">
+            <div className="flex items-center justify-center gap-8">
+              <span className="text-muted-foreground italic">
+                Because men who've earned their freedom deserve to enjoy it without getting scammed.
+              </span>
+              <span className="text-muted-foreground">•</span>
+              <span className="text-muted-foreground font-medium">
+                2.6M+ Reports. No BS. Trusted by 12,000+ Vets.
+              </span>
+            </div>
           </div>
           {children}
         </main>
