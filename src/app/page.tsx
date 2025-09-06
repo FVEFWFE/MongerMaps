@@ -23,7 +23,8 @@ import {
   Zap,
   Grid3X3,
   ChevronDown,
-  Search as SearchIcon
+  Search as SearchIcon,
+  Filter
 } from "lucide-react";
 import { api } from "~/trpc/react";
 import { cn } from "~/lib/utils";
@@ -536,42 +537,41 @@ export default function HomePage() {
 
   return (
     <Shell>
-      <div className="p-4 md:p-6">
-        {/* Mobile Filter Button */}
-        <div className="lg:hidden mb-4">
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="w-full text-sm"
-          >
-            <SearchIcon className="h-4 w-4 mr-2" />
-            Filters
-          </Button>
-        </div>
+      <div className="flex gap-6 p-4 md:p-6">
+        {/* Sidebar Filters - Direct on left */}
+        <SidebarFilters 
+          onFilterChange={setActiveFilters}
+          className="hidden lg:block flex-shrink-0"
+        />
 
-        <div className="flex gap-6">
-          {/* Sidebar Filters - Now wider */}
-          <SidebarFilters 
-            onFilterChange={setActiveFilters}
-            className="hidden lg:block"
-          />
+        {/* Main Content Area */}
+        <div className="flex-1">
+          {/* Mobile Filter Button */}
+          <div className="lg:hidden mb-4">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="w-full text-sm"
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              Filters
+            </Button>
+          </div>
 
-          {/* Main Content Area */}
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold">Cities</h1>
-                <p className="text-muted-foreground">Best cities for mongering worldwide</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm">
-                  <Grid3X3 className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  Sort: Overall <ChevronDown className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold">Cities</h1>
+              <p className="text-muted-foreground">Best cities for mongering worldwide</p>
             </div>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm">
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm">
+                Sort: Overall <ChevronDown className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          </div>
 
             <div className="text-sm text-muted-foreground mb-4">
               Showing {filteredCities.length} of {cities.length} cities
@@ -592,19 +592,19 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Load More Button */}
-            <div className="text-center mt-8">
-              <Button
-                variant="outline"
-                size="sm"
-              >
-                Load more cities
-              </Button>
-            </div>
+          {/* Load More Button */}
+          <div className="text-center mt-8">
+            <Button
+              variant="outline"
+              size="sm"
+            >
+              Load more cities
+            </Button>
           </div>
+        </div>
 
-          {/* Right Sidebar */}
-          <div className="w-64 flex-shrink-0 hidden 2xl:block">
+        {/* Right Sidebar */}
+        <div className="w-64 flex-shrink-0 hidden 2xl:block">
             {/* Trending Cities */}
             <Card>
               <CardHeader className="pb-3">
@@ -687,7 +687,6 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </div>
-        </div>
       </div>
 
       <PaywallModal

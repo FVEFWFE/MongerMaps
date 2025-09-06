@@ -4,11 +4,11 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Bird, LayoutDashboard, MapPin, Database, Globe, User, Search, Copy, Menu, X, DollarSign } from "lucide-react"
+import { Bird, Database, Globe, User, Search, Copy, DollarSign, ChevronDown, Gift, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import {
   CommandDialog,
   CommandEmpty,
@@ -23,156 +23,158 @@ const navigation = [
   { name: "Cities", href: "/", icon: Globe },
   { name: "Intel Database", href: "/intel-database", icon: Database },
   { name: "Make Money", href: "/make-money", icon: DollarSign },
-  { name: "My Profile", href: "/profile", icon: User },
 ]
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [searchOpen, setSearchOpen] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [referralCode] = useState("MONGER123") // Demo referral code
+
+  const handleCopyReferral = () => {
+    navigator.clipboard.writeText(`https://mongermaps.com/ref/${referralCode}`)
+    // You could add a toast notification here
+  }
 
   return (
-    <div className="flex h-screen bg-background">
-      <aside
-        className={cn(
-          "w-64 fixed left-0 top-0 h-full bg-card border-r border-border flex flex-col z-50 transition-transform duration-200 ease-in-out",
-          "md:translate-x-0", // Always visible on desktop
-          mobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0", // Hidden on mobile unless menu open
-        )}
-      >
-        {/* Logo */}
-        <div className="p-6 border-b border-border">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Bird className="h-8 w-8 text-foreground" />
-              <span className="text-lg font-bold text-foreground">MongerMaps</span>
-            </div>
-            <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setMobileMenuOpen(false)}>
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
+    <div className="flex flex-col h-screen bg-background">
+      {/* Top Header */}
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex h-14 items-center px-4">
+          {/* Logo on the left */}
+          <Link href="/" className="flex items-center space-x-3 mr-8">
+            <Bird className="h-6 w-6 text-foreground" />
+            <span className="text-lg font-bold text-foreground">MongerMaps</span>
+          </Link>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-4">
-          <ul className="space-y-2">
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center space-x-6 flex-1">
             {navigation.map((item) => {
-              const Icon = item.icon
               const isActive = pathname === item.href
               return (
-                <li key={item.name}>
-                  <Link
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={cn(
-                      "flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent",
-                    )}
-                  >
-                    <Icon className="h-5 w-5" />
-                    <span>{item.name}</span>
-                  </Link>
-                </li>
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary",
+                    isActive ? "text-foreground" : "text-muted-foreground"
+                  )}
+                >
+                  {item.name}
+                </Link>
               )
             })}
-          </ul>
-        </nav>
+          </nav>
 
-        <div className="p-4">
-          <Card className="border-border/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm">My Referral Code</CardTitle>
-            </CardHeader>
-            <CardContent className="pb-3">
-              <Button variant="default" size="sm" className="w-full">
-                <Copy className="h-4 w-4 mr-2" />
-                Copy Link
-              </Button>
-            </CardContent>
-            <CardFooter className="pt-0">
-              <p className="text-xs text-muted-foreground">4 Referrals = 1 Year Free</p>
-            </CardFooter>
-          </Card>
-        </div>
-      </aside>
-
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setMobileMenuOpen(false)} />
-      )}
-
-      <div className="flex-1 md:ml-64 flex flex-col min-w-0">
-        {/* Top Header */}
-        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:px-6">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setMobileMenuOpen(true)}>
-              <Menu className="h-5 w-5" />
+          {/* Right side actions */}
+          <div className="flex items-center space-x-4 ml-auto">
+            {/* Search */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSearchOpen(true)}
+              className="hidden md:flex items-center gap-2 text-muted-foreground"
+            >
+              <Search className="h-4 w-4" />
+              <span className="hidden lg:inline">Search cities, venues, reports...</span>
+              <span className="lg:hidden">Search</span>
             </Button>
 
-            <div className="flex-1 max-w-md">
-              <Button
-                variant="outline"
-                className="w-full justify-start text-muted-foreground bg-transparent"
-                onClick={() => setSearchOpen(true)}
-              >
-                <Search className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Search cities, venues, reports...</span>
-                <span className="sm:hidden">Search...</span>
-              </Button>
-            </div>
-          </div>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-auto px-2 rounded-full">
-                <div className="flex items-center space-x-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>
-                      <User className="h-4 w-4" />
-                    </AvatarFallback>
+            {/* User Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                  <Avatar className="h-7 w-7">
+                    <AvatarFallback>U</AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium hidden sm:inline">Veteran_77</span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem asChild>
+                  <Link href="/profile" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    My Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <div className="p-2">
+                  <div className="text-sm font-medium mb-2">My Referral Code</div>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 px-2 py-1 bg-muted rounded text-xs">{referralCode}</code>
+                    <Button size="sm" variant="outline" onClick={handleCopyReferral}>
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <div className="mt-2 text-xs text-muted-foreground flex items-center gap-1">
+                    <Gift className="h-3 w-3" />
+                    4 Referrals = 1 Year Free
+                  </div>
                 </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <span>Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <span>Logout</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </header>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </header>
 
-        <main className="flex-1 overflow-auto min-w-0">{children}</main>
-      </div>
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        {children}
+      </main>
 
+      {/* Search Dialog */}
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
         <CommandInput placeholder="Search cities, venues, reports..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Cities">
-            <CommandItem>Pattaya, Thailand</CommandItem>
-            <CommandItem>Bangkok, Thailand</CommandItem>
-            <CommandItem>Angeles City, Philippines</CommandItem>
-            <CommandItem>Tijuana, Mexico</CommandItem>
-            <CommandItem>Medellin, Colombia</CommandItem>
+            <CommandItem>
+              <Globe className="mr-2 h-4 w-4" />
+              Pattaya
+            </CommandItem>
+            <CommandItem>
+              <Globe className="mr-2 h-4 w-4" />
+              Bangkok
+            </CommandItem>
+            <CommandItem>
+              <Globe className="mr-2 h-4 w-4" />
+              Angeles City
+            </CommandItem>
+            <CommandItem>
+              <Globe className="mr-2 h-4 w-4" />
+              Tijuana
+            </CommandItem>
+            <CommandItem>
+              <Globe className="mr-2 h-4 w-4" />
+              Medellin
+            </CommandItem>
           </CommandGroup>
           <CommandGroup heading="Venues">
-            <CommandItem>Kinnaree</CommandItem>
-            <CommandItem>Sapphire A Go Go</CommandItem>
-            <CommandItem>Insomnia (FL)</CommandItem>
+            <CommandItem>
+              <MapPin className="mr-2 h-4 w-4" />
+              Walking Street
+            </CommandItem>
+            <CommandItem>
+              <MapPin className="mr-2 h-4 w-4" />
+              Soi 6
+            </CommandItem>
+            <CommandItem>
+              <MapPin className="mr-2 h-4 w-4" />
+              Nana Plaza
+            </CommandItem>
           </CommandGroup>
-          <CommandGroup heading="Reports">
-            <CommandItem>Recent Pattaya Updates</CommandItem>
-            <CommandItem>Scam Alert: Walking Street</CommandItem>
+          <CommandGroup heading="Recent Reports">
+            <CommandItem>
+              <Database className="mr-2 h-4 w-4" />
+              Pattaya November Update
+            </CommandItem>
+            <CommandItem>
+              <Database className="mr-2 h-4 w-4" />
+              Bangkok Price Changes
+            </CommandItem>
           </CommandGroup>
         </CommandList>
       </CommandDialog>
