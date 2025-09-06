@@ -46,6 +46,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.6.0",
     "geist": "^1.4.3",
+    "gsap": "^3.13.0",
     "lucide-react": "^0.469.0",
     "mapbox-gl": "^3.9.3",
     "next": "^14.2.25",

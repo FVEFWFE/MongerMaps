@@ -201,7 +201,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             variant="outline"
             size="sm"
             onClick={() => setSearchOpen(true)}
-            className="hidden md:flex items-center gap-2 text-muted-foreground"
+            className="hidden md:flex items-center gap-2 text-muted-foreground cursor-target"
           >
             <Search className="h-4 w-4" />
             <span className="hidden lg:inline">Search 2.6M+ field reports, venues with hot girls, cities...</span>

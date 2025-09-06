@@ -38,6 +38,12 @@ import { SidebarFilters } from "~/components/sidebar-filters";
 import { CityCard } from "~/components/city-card";
 import { CityModal } from "~/components/city-modal";
 import { ChatWidget } from "~/components/chat-widget";
+import dynamic from "next/dynamic";
+
+// Dynamically import TargetCursor to avoid SSR issues
+const TargetCursor = dynamic(() => import("~/components/TargetCursor"), {
+  ssr: false,
+});
 
 // Extended city data with Monger Rank factors
 const cities = [
@@ -2534,6 +2540,11 @@ function HomePageContent() {
 
   return (
     <>
+      <TargetCursor 
+        targetSelector=".cursor-target"
+        spinDuration={3}
+        hideDefaultCursor={true}
+      />
       <div className="flex h-screen">
         {/* Sidebar Filters - Full height from top */}
         <SidebarFilters 
@@ -2583,7 +2594,7 @@ function HomePageContent() {
                       // Define special cards for rightmost column
                       const specialCards = [
                         // 1. CamRiches.ai Ad
-                        <Card key="ad-camriches" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                        <Card key="ad-camriches" className="relative overflow-hidden transition-all cursor-zoom-in cursor-target group hover:shadow-xl hover:scale-[1.02] h-full">
                           <div className="relative h-64 overflow-hidden bg-gradient-to-br from-purple-500 to-pink-600">
                             <div className="absolute inset-0 flex items-center justify-center">
                               <div className="text-center text-white p-4">
@@ -2605,7 +2616,7 @@ function HomePageContent() {
                         </Card>,
                         
                         // 2. Featured Members
-                        <Card key="featured-members" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                        <Card key="featured-members" className="relative overflow-hidden transition-all cursor-zoom-in cursor-target group hover:shadow-xl hover:scale-[1.02] h-full">
                           <div className="relative h-64 overflow-hidden bg-gradient-to-br from-indigo-500 to-blue-600">
                             <div className="absolute inset-0 flex items-center justify-center">
                               <div className="text-center text-white p-4">
@@ -2624,7 +2635,7 @@ function HomePageContent() {
                         </Card>,
                         
                         // 3. Underrated Location: Mombasa
-                        <Card key="suggestion-mombasa" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                        <Card key="suggestion-mombasa" className="relative overflow-hidden transition-all cursor-zoom-in cursor-target group hover:shadow-xl hover:scale-[1.02] h-full">
                           <div className="relative h-64 overflow-hidden bg-gradient-to-br from-orange-500 to-red-600">
                             <div className="absolute inset-0 flex items-center justify-center">
                               <div className="text-center text-white p-4">
@@ -2649,7 +2660,7 @@ function HomePageContent() {
                         </Card>,
                         
                         // 4. Join Chat
-                        <Card key="join-chat" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                        <Card key="join-chat" className="relative overflow-hidden transition-all cursor-zoom-in cursor-target group hover:shadow-xl hover:scale-[1.02] h-full">
                           <div className="relative h-64 overflow-hidden bg-gradient-to-br from-green-500 to-teal-600">
                             <div className="absolute inset-0 flex items-center justify-center">
                               <div className="text-center text-white p-4">
@@ -2674,7 +2685,7 @@ function HomePageContent() {
                         
                         // 5. Affiliate Program
                         <Link href="/affiliate" key="affiliate-program">
-                          <Card className="relative overflow-hidden transition-all cursor-pointer group hover:shadow-xl hover:scale-[1.02] h-full">
+                          <Card className="relative overflow-hidden transition-all cursor-pointer cursor-target group hover:shadow-xl hover:scale-[1.02] h-full">
                             <div className="relative h-64 overflow-hidden bg-gradient-to-br from-emerald-500 to-green-600">
                               <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="text-center text-white p-4">
@@ -2701,7 +2712,7 @@ function HomePageContent() {
                         </Link>,
                         
                         // 6. Guest-Friendly Hotels
-                        <Card key="guest-hotels" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                        <Card key="guest-hotels" className="relative overflow-hidden transition-all cursor-zoom-in cursor-target group hover:shadow-xl hover:scale-[1.02] h-full">
                           <div className="relative h-64 overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600">
                             <div className="absolute inset-0 flex items-center justify-center">
                               <div className="text-center text-white p-4">
@@ -2720,7 +2731,7 @@ function HomePageContent() {
                         </Card>,
                         
                         // 7. Scam Alerts
-                        <Card key="scam-alerts" className="relative overflow-hidden transition-all cursor-zoom-in group hover:shadow-xl hover:scale-[1.02] h-full">
+                        <Card key="scam-alerts" className="relative overflow-hidden transition-all cursor-zoom-in cursor-target group hover:shadow-xl hover:scale-[1.02] h-full">
                           <div className="relative h-64 overflow-hidden bg-gradient-to-br from-red-500 to-red-600">
                             <div className="absolute inset-0 flex items-center justify-center">
                               <div className="text-center text-white p-4">
