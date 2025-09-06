@@ -43,16 +43,22 @@ export function Shell({ children }: { children: React.ReactNode }) {
     clickCountRef.current += 1
     
     if (clickCountRef.current === 1) {
-      // Single click - open dropdown
+      // Single click - wait to see if it's a double click
       clickTimeoutRef.current = setTimeout(() => {
-        setLogoDropdownOpen(true)
+        // It was just a single click - open dropdown
+        if (clickCountRef.current === 1) {
+          setLogoDropdownOpen(true)
+        }
         clickCountRef.current = 0
-      }, 300)
+      }, 250) // 250ms to detect double click
     } else if (clickCountRef.current === 2) {
-      // Double click - go home and clear all filters
+      // Double click - clear timeout and go home with cleared filters
       if (clickTimeoutRef.current) {
         clearTimeout(clickTimeoutRef.current)
       }
+      // Close dropdown if open
+      setLogoDropdownOpen(false)
+      // Navigate to home and clear filters
       router.push('/?clear=true')
       clickCountRef.current = 0
     }
@@ -68,14 +74,15 @@ export function Shell({ children }: { children: React.ReactNode }) {
           {/* Logo and Title */}
           <div className="flex items-center space-x-3 mr-4">
             {/* Square Logo with Dropdown */}
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenu open={logoDropdownOpen} onOpenChange={setLogoDropdownOpen}>
+            <DropdownMenu open={logoDropdownOpen} onOpenChange={setLogoDropdownOpen}>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
                     <DropdownMenuTrigger asChild>
                       <button 
                         onClick={handleLogoClick}
                         className="relative h-10 w-10 flex-shrink-0 group cursor-zoom-in focus:outline-none focus:ring-0"
+                        title="Click to open nav, double click to go home"
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center group-hover:opacity-90 transition-opacity">
                           <Bird className="h-6 w-6 text-white" />
@@ -86,6 +93,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
                         </div>
                       </button>
                     </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to open nav, double click to go home</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
                   <DropdownMenuContent align="start" className="w-64">
                     {/* General */}
                     <DropdownMenuLabel className="text-xs text-muted-foreground">General</DropdownMenuLabel>
@@ -174,13 +187,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                       <span>TOS & Privacy policy</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
-                  </DropdownMenu>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Click to open nav, double click to go home</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            </DropdownMenu>
             
             {/* Title Text - Not clickable */}
             <div className="flex flex-col">
