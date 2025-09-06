@@ -2856,7 +2856,7 @@ function HomePageContent() {
                               setShowPaywall(true);
                               setPaywallFeature("filtered results");
                             }}
-                            className="font-semibold"
+                            className="font-semibold cursor-target"
                           >
                             Get Instant Access
                             <ArrowRight className="ml-2 h-4 w-4" />
@@ -2925,7 +2925,7 @@ function HomePageContent() {
                 </p>
                 <Button 
                   size="lg" 
-                  className="font-semibold"
+                  className="font-semibold cursor-target"
                   onClick={() => {
                     if (!isPaid) {
                       setShowPaywall(true);

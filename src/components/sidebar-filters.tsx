@@ -209,7 +209,7 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
         size="sm"
         onClick={() => handleFilterToggle(category, option.value, option.type === "multi")}
         className={cn(
-          "text-xs h-7 px-2 justify-start",
+          "text-xs h-7 px-2 justify-start cursor-target",
           layout === "half" && "flex-1",
           layout === "pair" && "flex-1",
           isActive

@@ -19,8 +19,8 @@
 
 /* Custom scrollbar styles */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -37,6 +37,10 @@
 }
 
 @layer base {
+  * {
+    cursor: none !important;
+  }
+  
   :root {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
