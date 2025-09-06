@@ -243,12 +243,12 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
       <div className={cn(
         "w-80 flex-shrink-0 overflow-y-auto",
         // Custom scrollbar styles for dark UI
-        "[&::-webkit-scrollbar]:w-2",
+        "[&::-webkit-scrollbar]:w-1.5",
         "[&::-webkit-scrollbar-track]:bg-transparent",
-        "[&::-webkit-scrollbar-thumb]:bg-zinc-700",
+        "[&::-webkit-scrollbar-thumb]:bg-zinc-700/50",
         "[&::-webkit-scrollbar-thumb]:rounded-full",
-        "[&::-webkit-scrollbar-thumb:hover]:bg-zinc-600",
-        "scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent",
+        "[&::-webkit-scrollbar-thumb:hover]:bg-zinc-600/70",
+        "scrollbar-thin scrollbar-thumb-zinc-700/50 scrollbar-track-transparent",
         className
       )}>
       {/* Logo Section at Top (Optional - uncomment to use) */}

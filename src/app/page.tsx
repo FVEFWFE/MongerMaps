@@ -790,9 +790,9 @@ export default function HomePage() {
               })}
                   </div>
                   
-                  {/* Blur Overlay - Only shows when filters are active and user is not paid */}
-                  {Object.keys(activeFilters).length > 0 && !isPaid && (
-                    <div className="absolute inset-x-0 bottom-0 pointer-events-none" style={{ top: '48rem' }}>
+                  {/* Blur Overlay - Only shows when filters are active, user is not paid, and there are many results */}
+                  {Object.keys(activeFilters).length > 0 && !isPaid && filteredCities.length > 20 && (
+                    <div className="absolute inset-x-0 bottom-0 pointer-events-none" style={{ top: '120rem' }}>
                       {/* Gradient blur effect */}
                       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/80 to-background backdrop-blur-[2px]" />
                       
