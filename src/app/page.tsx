@@ -537,15 +537,15 @@ export default function HomePage() {
 
   return (
     <Shell>
-      <div className="flex gap-6 p-4 md:p-6">
-        {/* Sidebar Filters - Direct on left */}
+      <div className="flex gap-6">
+        {/* Sidebar Filters - Extended to top */}
         <SidebarFilters 
           onFilterChange={setActiveFilters}
-          className="hidden lg:block flex-shrink-0"
+          className="hidden lg:block flex-shrink-0 h-screen sticky top-0"
         />
 
         {/* Main Content Area */}
-        <div className="flex-1">
+        <div className="flex-1 p-4 md:p-6">
           {/* Mobile Filter Button */}
           <div className="lg:hidden mb-4">
             <Button 
@@ -690,16 +690,6 @@ export default function HomePage() {
                   >
                     <DollarSign className="h-3 w-3 mr-2" />
                     Make Money
-                  </Button>
-                </Link>
-                <Link href="/intel-database" className="block">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <Target className="h-3 w-3 mr-2" />
-                    Intel Database
                   </Button>
                 </Link>
               </CardContent>

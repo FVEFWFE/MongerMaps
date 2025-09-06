@@ -21,8 +21,7 @@ import { cn } from "@/lib/utils"
 
 const navigation = [
   { name: "Cities", href: "/", icon: Globe },
-  { name: "Intel Database", href: "/intel-database", icon: Database },
-  { name: "Make Money", href: "/make-money", icon: DollarSign },
+  { name: "Make Money Mongering", href: "/make-money", icon: DollarSign },
 ]
 
 export function Shell({ children }: { children: React.ReactNode }) {
@@ -41,13 +40,25 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-14 items-center px-4">
           {/* Logo on the left */}
-          <Link href="/" className="flex items-center space-x-3 mr-8">
+          <Link href="/" className="flex items-center space-x-3 mr-4">
             <Bird className="h-6 w-6 text-foreground" />
             <span className="text-lg font-bold text-foreground">MongerMaps</span>
           </Link>
 
-          {/* Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-6 flex-1">
+          {/* Search right after logo */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSearchOpen(true)}
+            className="hidden md:flex items-center gap-2 text-muted-foreground mr-8"
+          >
+            <Search className="h-4 w-4" />
+            <span className="hidden lg:inline">Search cities, venues, reports...</span>
+            <span className="lg:hidden">Search</span>
+          </Button>
+
+          {/* Navigation Links - pushed further right */}
+          <nav className="hidden md:flex items-center space-x-6 flex-1 justify-center">
             {navigation.map((item) => {
               const isActive = pathname === item.href
               return (
@@ -67,17 +78,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4 ml-auto">
-            {/* Search */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSearchOpen(true)}
-              className="hidden md:flex items-center gap-2 text-muted-foreground"
-            >
-              <Search className="h-4 w-4" />
-              <span className="hidden lg:inline">Search cities, venues, reports...</span>
-              <span className="lg:hidden">Search</span>
-            </Button>
 
             {/* User Menu */}
             <DropdownMenu>
