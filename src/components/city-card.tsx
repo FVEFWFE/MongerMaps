@@ -136,8 +136,15 @@ export function CityCard({
                 <div className="flex items-center gap-3">
                   <div className={cn("h-3 w-32 rounded-full bg-gray-700")}>
                     <div 
-                      className={cn("h-full rounded-full transition-all", getScoreColor(overallScore))}
-                      style={{ width: `${overallScore}%` }}
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500 ease-out",
+                        getScoreColor(overallScore),
+                        isHovered ? "animate-fill" : ""
+                      )}
+                      style={{ 
+                        width: isHovered ? `${overallScore}%` : '0%',
+                        transitionDelay: '0ms'
+                      }}
                     />
                   </div>
                   <span className="text-white font-bold text-sm w-8 text-right">{overallScore}</span>
@@ -149,8 +156,15 @@ export function CityCard({
                 <div className="flex items-center gap-3">
                   <div className={cn("h-3 w-32 rounded-full bg-gray-700")}>
                     <div 
-                      className={cn("h-full rounded-full transition-all", getScoreColor(costScore))}
-                      style={{ width: `${costScore}%` }}
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500 ease-out",
+                        getScoreColor(costScore),
+                        isHovered ? "animate-fill" : ""
+                      )}
+                      style={{ 
+                        width: isHovered ? `${costScore}%` : '0%',
+                        transitionDelay: '50ms'
+                      }}
                     />
                   </div>
                   <span className="text-white font-bold text-sm w-8 text-right">{costScore}</span>
@@ -162,8 +176,15 @@ export function CityCard({
                 <div className="flex items-center gap-3">
                   <div className={cn("h-3 w-32 rounded-full bg-gray-700")}>
                     <div 
-                      className={cn("h-full rounded-full transition-all", getScoreColor(internetScore))}
-                      style={{ width: `${internetScore}%` }}
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500 ease-out",
+                        getScoreColor(internetScore),
+                        isHovered ? "animate-fill" : ""
+                      )}
+                      style={{ 
+                        width: isHovered ? `${internetScore}%` : '0%',
+                        transitionDelay: '100ms'
+                      }}
                     />
                   </div>
                   <span className="text-white font-bold text-sm w-8 text-right">{internetScore}</span>
@@ -175,8 +196,15 @@ export function CityCard({
                 <div className="flex items-center gap-3">
                   <div className={cn("h-3 w-32 rounded-full bg-gray-700")}>
                     <div 
-                      className={cn("h-full rounded-full transition-all", getScoreColor(safetyScore))}
-                      style={{ width: `${safetyScore}%` }}
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500 ease-out",
+                        getScoreColor(safetyScore),
+                        isHovered ? "animate-fill" : ""
+                      )}
+                      style={{ 
+                        width: isHovered ? `${safetyScore}%` : '0%',
+                        transitionDelay: '150ms'
+                      }}
                     />
                   </div>
                   <span className="text-white font-bold text-sm w-8 text-right">{safetyScore}</span>
@@ -188,8 +216,15 @@ export function CityCard({
                 <div className="flex items-center gap-3">
                   <div className={cn("h-3 w-32 rounded-full bg-gray-700")}>
                     <div 
-                      className={cn("h-full rounded-full transition-all", getScoreColor(activityScore))}
-                      style={{ width: `${activityScore}%` }}
+                      className={cn(
+                        "h-full rounded-full transition-all duration-500 ease-out",
+                        getScoreColor(activityScore),
+                        isHovered ? "animate-fill" : ""
+                      )}
+                      style={{ 
+                        width: isHovered ? `${activityScore}%` : '0%',
+                        transitionDelay: '200ms'
+                      }}
                     />
                   </div>
                   <span className="text-white font-bold text-sm w-8 text-right">{activityScore}</span>

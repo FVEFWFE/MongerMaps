@@ -2332,6 +2332,7 @@ function HomePageContent() {
   const [paywallFeature, setPaywallFeature] = useState("");
   const [selectedCity, setSelectedCity] = useState<typeof cities[0] | null>(null);
   const [showCityModal, setShowCityModal] = useState(false);
+  const [cursorEnabled, setCursorEnabled] = useState(true);
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   
   const isPaid = session?.user?.isPaid;
@@ -2545,11 +2546,13 @@ function HomePageContent() {
 
   return (
     <>
-      <TargetCursor 
-        targetSelector=".cursor-target"
-        spinDuration={8}
-        hideDefaultCursor={true}
-      />
+      {cursorEnabled && (
+        <TargetCursor 
+          targetSelector=".cursor-target"
+          spinDuration={8}
+          hideDefaultCursor={true}
+        />
+      )}
       <div className="flex h-screen">
         {/* Sidebar Filters - Full height from top */}
         <SidebarFilters 
@@ -2558,7 +2561,10 @@ function HomePageContent() {
         />
         
         {/* Shell wraps everything else */}
-        <Shell>
+        <Shell 
+          onCursorToggle={() => setCursorEnabled(!cursorEnabled)}
+          cursorEnabled={cursorEnabled}
+        >
           <div className="flex w-full">
             {/* Main Content Area with Right Sidebar */}
             <div className="flex-1 flex gap-6">
@@ -2576,33 +2582,6 @@ function HomePageContent() {
           </Button>
                 </div>
 
-                {/* Animated Philosophical Hook and Social Proof */}
-                <div className="mb-6 text-center space-y-3">
-                  <BlurText
-                    text="Because men who've earned their freedom deserve to enjoy it without getting scammed."
-                    delay={100}
-                    animateBy="words"
-                    direction="top"
-                    className="text-sm text-muted-foreground italic"
-                  />
-                  <div className="flex items-center justify-center gap-2">
-                    <BlurText
-                      text="•"
-                      delay={1500}
-                      animateBy="letters"
-                      direction="top"
-                      className="text-primary"
-                    />
-                  </div>
-                  <BlurText
-                    text="2.6M+ Reports. No BS. Trusted by 12,000+ Vets."
-                    delay={150}
-                    animateBy="words"
-                    direction="bottom"
-                    className="text-xs font-semibold text-primary/80"
-                  />
-                </div>
-
                 <div className="flex items-center justify-end mb-6">
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="sm">
@@ -2614,9 +2593,6 @@ function HomePageContent() {
             </div>
                 </div>
 
-                <div className="text-sm text-muted-foreground mb-4">
-              Showing {filteredCities.length} of {cities.length} cities
-                </div>
 
                 {/* Responsive Grid with Blur Paywall */}
                 <div className="relative">

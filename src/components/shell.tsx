@@ -4,6 +4,7 @@ import type React from "react"
 import { useState, useRef } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import dynamic from "next/dynamic"
 import { Bird, Database, Globe, User, Search, Copy, DollarSign, ChevronDown, Gift, MapPin, MessageCircle, Users, Calendar, HelpCircle, Bug, Shield, Image, Moon, Heart, Shuffle, TrendingUp, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
@@ -20,9 +21,33 @@ import {
 } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
 
+// Dynamically import BlurText to avoid SSR issues
+const BlurText = dynamic(() => import("~/components/BlurText"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center gap-8">
+      <span className="text-muted-foreground italic">
+        Because men who've earned their freedom deserve to enjoy it without getting scammed.
+      </span>
+      <span className="text-muted-foreground">•</span>
+      <span className="text-muted-foreground font-medium">
+        2.6M+ Reports. No BS. Trusted by 12,000+ Vets.
+      </span>
+    </div>
+  ),
+})
+
 const navigation: { name: string; href: string; icon: any }[] = []
 
-export function Shell({ children }: { children: React.ReactNode }) {
+export function Shell({ 
+  children,
+  onCursorToggle,
+  cursorEnabled = true 
+}: { 
+  children: React.ReactNode;
+  onCursorToggle?: () => void;
+  cursorEnabled?: boolean;
+}) {
   const pathname = usePathname()
   const router = useRouter()
   const [searchOpen, setSearchOpen] = useState(false)
@@ -102,14 +127,18 @@ export function Shell({ children }: { children: React.ReactNode }) {
                   <DropdownMenuContent align="start" className="w-64">
                     {/* General */}
                     <DropdownMenuLabel className="text-xs text-muted-foreground">General</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => router.push('/')}>
-                      <Home className="mr-2 h-4 w-4" />
-                      <span>Frontpage</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Moon className="mr-2 h-4 w-4" />
-                      <span>Dark mode</span>
-                    </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push('/')}>
+                          <Home className="mr-2 h-4 w-4" />
+                          <span>Frontpage</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={onCursorToggle}>
+                          <Moon className="mr-2 h-4 w-4" />
+                          <span>Cursor effect: {cursorEnabled ? 'On' : 'Off'}</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Moon className="mr-2 h-4 w-4" />
+                          <span>Dark mode</span>
+                        </DropdownMenuItem>
                     <DropdownMenuItem>
                       <Heart className="mr-2 h-4 w-4" />
                       <span>Your favorites</span>
@@ -286,13 +315,27 @@ export function Shell({ children }: { children: React.ReactNode }) {
           {/* Philosophical Hook & Social Proof Bar */}
           <div className="hidden lg:block px-6 py-3 bg-muted/20 border-b text-xs text-center">
             <div className="flex items-center justify-center gap-8">
-              <span className="text-muted-foreground italic">
-                Because men who've earned their freedom deserve to enjoy it without getting scammed.
-              </span>
-              <span className="text-muted-foreground">•</span>
-              <span className="text-muted-foreground font-medium">
-                2.6M+ Reports. No BS. Trusted by 12,000+ Vets.
-              </span>
+              <BlurText
+                text="Because men who've earned their freedom deserve to enjoy it without getting scammed."
+                delay={100}
+                animateBy="words"
+                direction="top"
+                className="text-muted-foreground italic"
+              />
+              <BlurText
+                text="•"
+                delay={1500}
+                animateBy="letters"
+                direction="top"
+                className="text-muted-foreground"
+              />
+              <BlurText
+                text="2.6M+ Reports. No BS. Trusted by 12,000+ Vets."
+                delay={150}
+                animateBy="words"
+                direction="bottom"
+                className="text-muted-foreground font-medium"
+              />
             </div>
           </div>
           {children}
