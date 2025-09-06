@@ -35,10 +35,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-background">
-      {/* Top Header - Increased height for square logo */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center px-4">
+    <div className="flex h-screen bg-background">
+      {/* Main content wrapper */}
+      <div className="flex-1 flex flex-col">
+        {/* Top Header - Only above main content, not filters */}
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex h-16 items-center px-4">
           {/* Square Logo on the left */}
           <Link href="/" className="flex items-center space-x-3 mr-4">
             <div className="relative h-10 w-10 flex-shrink-0">
@@ -134,12 +136,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </DropdownMenu>
           </div>
         </div>
-      </header>
+        </header>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        {children}
-      </main>
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
+      </div>
 
       {/* Search Dialog */}
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>

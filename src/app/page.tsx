@@ -626,16 +626,18 @@ export default function HomePage() {
   }, [activeFilters]);
 
   return (
-    <Shell>
-      <div className="flex gap-6">
-        {/* Sidebar Filters - Extended to top */}
-        <SidebarFilters 
-          onFilterChange={setActiveFilters}
-          className="hidden lg:block flex-shrink-0 h-screen sticky top-0"
-        />
-
-        {/* Main Content Area */}
-        <div className="flex-1 p-4 md:p-6">
+    <div className="flex h-screen">
+      {/* Sidebar Filters - Full height from top */}
+      <SidebarFilters 
+        onFilterChange={setActiveFilters}
+        className="hidden lg:block flex-shrink-0 h-screen sticky top-0"
+      />
+      
+      {/* Shell wraps everything else */}
+      <Shell>
+        <div className="flex gap-6">
+          {/* Main Content Area */}
+          <div className="flex-1 p-4 md:p-6">
           {/* Minimal Hero Section */}
           <div className="text-center mb-6">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
@@ -769,7 +771,7 @@ export default function HomePage() {
                               <DollarSign className="h-12 w-12 mx-auto mb-3" />
                               <h3 className="text-xl font-bold mb-2">Earn Money</h3>
                               <p className="text-sm opacity-90">Join our affiliate program</p>
-                              <p className="text-xs mt-2 opacity-75">Up to 50% commission</p>
+                              <p className="text-xs mt-2 opacity-75">Up to 40% commission</p>
                             </div>
                           </div>
                           {/* Replace above div with this when you have the image:
@@ -786,9 +788,9 @@ export default function HomePage() {
                           
                           {/* CTA Badge */}
                           <div className="absolute top-2 right-2">
-                            <Badge className="bg-green-500 text-white">
-                              <Sparkles className="h-3 w-3 mr-1" />
-                              50% Commission
+                          <Badge className="bg-green-500 text-white">
+                            <Sparkles className="h-3 w-3 mr-1" />
+                            40% Commission
                             </Badge>
                           </div>
                           
@@ -923,10 +925,10 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            {/* Featured Mongermap Members */}
+            {/* Featured Members */}
             <Card className="mt-4">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm">Featured Mongermap Members</CardTitle>
+                <CardTitle className="text-sm">Featured Members</CardTitle>
               </CardHeader>
               <CardContent>
                 {/* YouTube Video Embeds */}
@@ -984,8 +986,8 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </div>
-      </div>
-
+        </div>
+      </Shell>
       <PaywallModal
         isOpen={showPaywall}
         onClose={() => setShowPaywall(false)}
@@ -1003,6 +1005,6 @@ export default function HomePage() {
         isPaid={isPaid}
         currentCity={selectedCity?.slug || "all"}
       />
-    </Shell>
+    </div>
   );
 }
