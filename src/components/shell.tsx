@@ -36,13 +36,29 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      {/* Top Header */}
+      {/* Top Header - Increased height for square logo */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-14 items-center px-4">
-          {/* Logo on the left */}
+        <div className="flex h-16 items-center px-4">
+          {/* Square Logo on the left */}
           <Link href="/" className="flex items-center space-x-3 mr-4">
-            <Bird className="h-6 w-6 text-foreground" />
-            <span className="text-lg font-bold text-foreground">MongerMaps</span>
+            <div className="relative h-10 w-10 flex-shrink-0">
+              {/* Square logo placeholder - replace with your actual logo */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-lg flex items-center justify-center">
+                <Bird className="h-6 w-6 text-white" />
+              </div>
+              {/* Alternative: Use an image
+              <Image 
+                src="/logo-square.png" 
+                alt="MongerMaps" 
+                fill 
+                className="object-contain rounded-lg"
+              />
+              */}
+            </div>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold text-foreground leading-tight">MongerMaps</span>
+              <span className="text-xs text-muted-foreground">2.6M+ Field Reports</span>
+            </div>
           </Link>
 
           {/* Search right after logo */}

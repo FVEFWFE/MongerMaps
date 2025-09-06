@@ -222,6 +222,23 @@ export function SidebarFilters({ onFilterChange, className }: SidebarFiltersProp
 
   return (
     <div className={cn("w-80 flex-shrink-0 overflow-y-auto", className)}>
+      {/* Logo Section at Top (Optional - uncomment to use) */}
+      {/*
+      <div className="bg-card border-r border-b p-6">
+        <div className="flex flex-col items-center space-y-3">
+          <div className="relative h-20 w-20">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-2xl shadow-xl flex items-center justify-center">
+              <Bird className="h-12 w-12 text-white" />
+            </div>
+          </div>
+          <div className="text-center">
+            <h1 className="text-xl font-bold">MongerMaps</h1>
+            <p className="text-xs text-muted-foreground">Global Monger Intel</p>
+          </div>
+        </div>
+      </div>
+      */}
+      
       {/* Filters Container */}
       <div className="bg-card border-r p-4">
         {/* Filter Categories */}
