@@ -49,10 +49,13 @@ model User {
   accounts         Account[]
   sessions         Session[]
   reports          Report[]
+  hotelReviews     HotelReview[]
   subscriptions    Subscription[]
   referrals        Referral[]
   referredBy       Referral?  @relation("ReferredUser")
   commissions      Commission[]
+  reputation       Int       @default(0)
+  badges           String[]  @default([])
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 }
@@ -112,6 +115,7 @@ model Venue {
   id            String      @id @default(cuid())
   name          String
   type          VenueType
+  city          String      @default("pattaya")
   district      String
   latitude      Float
   longitude     Float
@@ -120,13 +124,19 @@ model Venue {
   avgGfeScore   Float?
   avgPriceST    Float?
   avgPriceLT    Float?
+  avgDrinkPrice Float?
+  avgBarfine    Float?
   reports       Report[]
   scrapedPosts  ScrapedPost[]
+  priceHistory  PriceHistory[]
+  scamReports   ScamReport[]
+  isActive      Boolean     @default(true)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   
   @@index([type, district])
   @@index([avgGfeScore])
+  @@index([city])
 }
 
 enum VenueType {
@@ -136,6 +146,8 @@ enum VenueType {
   MASSAGE_PARLOR
   HOTEL
   RESTAURANT
+  DISCO
+  FREELANCER_SPOT
   OTHER
 }
 
@@ -209,4 +221,163 @@ enum CommissionStatus {
   PENDING
   PAID
   CANCELLED
+}
+
+// Hotel Model - Guest Friendly Database
+model Hotel {
+  id                String      @id @default(cuid())
+  name              String
+  city              String      @default("pattaya")
+  area              String      // Beach Road, Walking Street, Soi 6, etc.
+  address           String?
+  latitude          Float
+  longitude         Float
+  guestFriendly     GuestFriendlyStatus
+  joinerFee         Float?      // Amount in THB if applicable
+  priceRange        PriceRange
+  distanceToBeach   Int?        // meters
+  distanceToWalking Int?        // meters to Walking Street
+  distanceToSoi6    Int?        // meters to Soi 6
+  hasPool           Boolean     @default(false)
+  hasGym            Boolean     @default(false)
+  hasSafe           Boolean     @default(false)
+  nearbyATM         Boolean     @default(true)
+  wifiQuality       Int?        // 1-10 rating
+  reviews           HotelReview[]
+  scamReports       ScamReport[]
+  imageUrl          String?
+  bookingUrl        String?
+  agodaUrl          String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  
+  @@index([city, area])
+  @@index([guestFriendly])
+}
+
+enum GuestFriendlyStatus {
+  YES
+  NO
+  JOINER_FEE
+  UNKNOWN
+}
+
+enum PriceRange {
+  BUDGET      // < 1000 THB
+  MID         // 1000-2500 THB
+  HIGH        // 2500-5000 THB
+  LUXURY      // > 5000 THB
+}
+
+// Hotel Review Model
+model HotelReview {
+  id            String   @id @default(cuid())
+  hotelId       String
+  hotel         Hotel    @relation(fields: [hotelId], references: [id])
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  rating        Int      // 1-10
+  guestFriendly Boolean
+  joinerFee     Float?
+  comment       String?  @db.Text
+  stayDate      DateTime
+  createdAt     DateTime @default(now())
+  
+  @@index([hotelId])
+  @@index([userId])
+}
+
+// Price History Model
+model PriceHistory {
+  id          String   @id @default(cuid())
+  venueId     String
+  venue       Venue    @relation(fields: [venueId], references: [id])
+  serviceType ServiceType
+  price       Float
+  currency    String   @default("THB")
+  reportedBy  String
+  reportedAt  DateTime @default(now())
+  
+  @@index([venueId, serviceType])
+  @@index([reportedAt])
+}
+
+enum ServiceType {
+  SHORT_TIME
+  LONG_TIME
+  BARFINE
+  LADY_DRINK
+  ROOM_FEE
+  TIP
+}
+
+// Scam Report Model
+model ScamReport {
+  id          String   @id @default(cuid())
+  type        ScamType
+  severity    Int      // 1-10 (10 being most severe)
+  venueId     String?
+  venue       Venue?   @relation(fields: [venueId], references: [id])
+  hotelId     String?
+  hotel       Hotel?   @relation(fields: [hotelId], references: [id])
+  description String   @db.Text
+  location    String?
+  reportedBy  String
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  @@index([type, severity])
+  @@index([venueId])
+  @@index([hotelId])
+}
+
+enum ScamType {
+  OVERCHARGE
+  LADYBOY_DECEPTION
+  DRUGGING
+  THEFT
+  POLICE_SHAKEDOWN
+  FAKE_PROFILE
+  BAIT_SWITCH
+  BILL_PADDING
+  ATM_SCAM
+  OTHER
+}
+
+// City Rankings Model
+model CityRanking {
+  id              String   @id @default(cuid())
+  city            String   @unique
+  country         String
+  region          String
+  overallScore    Float    // 1-10
+  valueScore      Float    // 1-10
+  safetyScore     Float    // 1-10
+  varietyScore    Float    // 1-10
+  gfeScore        Float    // 1-10
+  reportCount     Int      @default(0)
+  activeVenues    Int      @default(0)
+  avgPriceST      Float?
+  avgPriceLT      Float?
+  lastUpdated     DateTime @default(now())
+  
+  @@index([overallScore])
+  @@index([region])
+}
+
+// Going Rates Model (Current Prices)
+model GoingRate {
+  id          String   @id @default(cuid())
+  city        String
+  area        String
+  serviceType ServiceType
+  venueType   VenueType
+  lowPrice    Float
+  avgPrice    Float
+  highPrice   Float
+  currency    String   @default("THB")
+  lastUpdated DateTime @default(now())
+  
+  @@unique([city, area, serviceType, venueType])
+  @@index([city, area])
 }

@@ -1,10 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { X, Star, Wifi, DollarSign, Sun, Users, MapPin, TrendingUp, MessageSquare, Camera, Cloud, BarChart, Building, Briefcase, Navigation, Heart, ChevronRight } from "lucide-react"
+import { X, Star, Wifi, DollarSign, Sun, Users, MapPin, TrendingUp, MessageSquare, Camera, Cloud, BarChart, Building, Briefcase, Navigation, Heart, ChevronRight, Check, Banknote, Info } from "lucide-react"
 import Image from "next/image"
 import { FlagIcon } from "./flag-icon"
 import { Badge } from "~/components/ui/badge"
+import { HotelDatabase } from "./hotel-database"
 
 interface CityModalProps {
   city: {
@@ -59,6 +60,7 @@ interface CityModalProps {
 const tabs = [
   "Scores",
   "Venues",
+  "Hotels",
   "Digital Nomad Guide", 
   "Pros and Cons",
   "Reviews",
@@ -202,6 +204,13 @@ export function CityModal({ city, isOpen, onClose, isPaid = false }: CityModalPr
                 <TrendingUp className="w-5 h-5 text-primary" />
               </div>
             </div>
+          </div>
+        )
+
+      case "Hotels":
+        return (
+          <div className="space-y-6">
+            <HotelDatabase isPaid={isPaid} />
           </div>
         )
 
